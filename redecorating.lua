@@ -38,4 +38,31 @@ minetest.register_node("luxury_decor:simple_flowerpot", {
     },
     sounds = default.node_sound_wood_defaults()
 })
+
+minetest.register_node("luxury_decor:luxury_flowerpot", {
+    description = "Luxury Flowerpot",
+    visual_scale = 0.5,
+    mesh = "luxury_flowerpot.obj",
+    inventory_image = "luxury_flowerpot_inv.png",
+    tiles = {"luxury_flowerpot.png"},
+    paramtype = "light",
+    paramtype2 = "facedir",
+    groups = {choppy = 2},
+    drawtype = "mesh",
+    collision_box = {
+        type = "fixed",
+        fixed = {
+            {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
+            --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
+            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
+        }
+    },
+    selection_box = {
+        type = "fixed",
+        fixed = {
+            {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        }
+    },
+    sounds = default.node_sound_wood_defaults()
+})
     

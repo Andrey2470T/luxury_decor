@@ -2,6 +2,7 @@ minetest.register_node("luxury_decor:grand_piano", {
     description = "Grand Piano",
     visual_scale = 0.5,
     mesh = "grand_piano.obj",
+    inventory_image = "grand_piano_inv.png",
     tiles = {"grand_piano.png"},
     --inventory_image = "simple_wooden_table_inv.png",
     paramtype = "light",

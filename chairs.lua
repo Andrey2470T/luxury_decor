@@ -140,6 +140,7 @@ minetest.register_node("luxury_decor:decorative_wooden_chair", {
     description = "Decorative Wooden Chair",
     visual_scale = 0.5,
     mesh = "decorative_wooden_chair.obj",
+    inventory_image = "decorative_chair_inv.png",
     tiles = {"dark_wood_material2.png"},
     paramtype = "light",
     paramtype2 = "facedir",

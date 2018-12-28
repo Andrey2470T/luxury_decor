@@ -2,6 +2,7 @@ minetest.register_node("luxury_decor:luxury_desk_lamp_off", {
     description = "Luxury Desk Lamp",
     visual_scale = 0.5,
     mesh = "luxury_desk_lamp.obj",
+    inventory_image = "luxury_desk_lamp_inv.png",
     tiles = {"luxury_desk_lamp.png"},
     paramtype = "light",
     paramtype2 = "facedir",
@@ -32,6 +33,7 @@ minetest.register_node("luxury_decor:luxury_desk_lamp_on", {
     description = "Luxury Desk Lamp",
     visual_scale = 0.5,
     mesh = "luxury_desk_lamp.obj",
+    inventory_image = "luxury_desk_lamp_inv.png",
     tiles = {"luxury_desk_lamp.png"},
     paramtype = "light",
     paramtype2 = "facedir",
@@ -64,7 +66,11 @@ minetest.register_node("luxury_decor:iron_chandelier", {
     description = "Iron Chandelier",
     visual_scale = 0.5,
     mesh = "iron_chandelier.obj",
-    tiles = {"iron_chandelier.png"},
+    inventory_image = "iron_chandelier_inv.png",
+    tiles = {{
+            name = "iron_chandelier_animated.png",
+            animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, lenght = 3.4}
+    }},
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {choppy = 2.5},
