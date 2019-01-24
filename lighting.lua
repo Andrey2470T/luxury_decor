@@ -69,12 +69,13 @@ minetest.register_node("luxury_decor:iron_chandelier", {
     inventory_image = "iron_chandelier_inv.png",
     tiles = {{
             name = "iron_chandelier_animated.png",
-            animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, lenght = 3.4}
+            animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, lenght = 4}
     }},
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {choppy = 2.5},
     drawtype = "mesh",
+    light_source = 12,
     collision_box = {
         type = "fixed",
         fixed = {
@@ -103,7 +104,7 @@ minetest.register_node("luxury_decor:wall_glass_lamp_off", {
     inventory_image = "wall_glass_lamp_inv.png",
     tiles = {"wall_glass_lamp.png"},
     paramtype = "light",
-    paramtype2 = "wallmounted",
+    paramtype2 = "facedir",
     groups = {choppy = 2.5},
     drawtype = "mesh",
     collision_box = {
@@ -123,7 +124,7 @@ minetest.register_node("luxury_decor:wall_glass_lamp_off", {
     sounds = default.node_sound_wood_defaults(),
     on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
         minetest.remove_node(pos)
-        minetest.set_node(pos, {name="luxury_decor:wall_glass_lamp_on"})
+        minetest.set_node(pos, {name="luxury_decor:wall_glass_lamp_on", param2 = minetest.get_node(pos).param2})
     end
 }) 
 
@@ -134,7 +135,7 @@ minetest.register_node("luxury_decor:wall_glass_lamp_on", {
     inventory_image = "wall_glass_lamp_inv.png",
     tiles = {"wall_glass_lamp.png"},
     paramtype = "light",
-    paramtype2 = "wallmounted",
+    paramtype2 = "facedir",
     groups = {choppy = 2.5, not_in_creative_inventory=1},
     drawtype = "mesh",
     drop = "luxury_decor:luxury_desk_lamp_off",
@@ -156,6 +157,6 @@ minetest.register_node("luxury_decor:wall_glass_lamp_on", {
     sounds = default.node_sound_wood_defaults(),
     on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
         minetest.remove_node(pos)
-        minetest.set_node(pos, {name="luxury_decor:wal_glass_lamp_off"})
+        minetest.set_node(pos, {name="luxury_decor:wall_glass_lamp_off", param2 = minetest.get_node(pos).param2})
     end
 }) 

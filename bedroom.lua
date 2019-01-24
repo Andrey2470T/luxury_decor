@@ -9,7 +9,7 @@ local rgb_colors = {
     ["cyan"] = "#00FFFF",
     ["darkgreen"] = "#008000",
     ["darkgrey"] = "#808080",
-    ["grey"] = "#COCOCO",
+    ["grey"] = "#C0C0C0",
     ["brown"] = "#A52A2A",
     ["orange"] = "#FF4500",
     ["pink"] = "#F08080",
@@ -52,7 +52,7 @@ for color, rgb_code in pairs(rgb_colors) do
                 if pointed_thing.type == "node" and x1 ~= x2 and y1 == y2 and z1 == z2 then
                     local single_bed_coords = pointed_thing.above or pointed_thing.under
                     minetest.remove_node(pos)
-                    minetest.set_node(single_bed_coords, "luxury_decor:royal_double_bed"
+                    minetest.set_node(single_bed_coords, {name="luxury_decor:royal_double_bed", param1=node.param1, param2=node.param2})
                 end
             end
         end
@@ -70,13 +70,13 @@ for color, rgb_code in pairs(rgb_colors) do
         collision_box = {
             type = "fixed",
             fixed = {
-                {-1.5, -0.5, -1.5, 1.5, 0.5, 1.5}
+                {-1.1, -0.5, -1.8, 1.1, 0.5, 0.5}
             }
         },
         selection_box = {
             type = "fixed",
             fixed = {
-                {-1.5, -0.5, -1.5, 1.5, 0.5, 1.5}
+                {-1.1, -0.5, -1.8, 1.1, 0.5, 0.5}
             }
         },
         sounds = default.node_sound_wood_defaults()

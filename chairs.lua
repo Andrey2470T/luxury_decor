@@ -1,61 +1,115 @@
 local is_chair_busy_by = {}
-local chairs = {}
+chairs = {}
 
-function chairs.attach_player_to_node (attacher, node, pos)    
+function chairs.attach_player_to_node (attacher, node, node_pos, pos)    
     attacher:set_pos(pos)
+    local phys_over = attacher:get_physics_override()
     attacher:set_physics_override({speed=0, jump=0})
-    attacher:get_meta():set_string("is_attached", minetest.serialize({node, pos, old_phys_over = attacher:get_physics_override()}))
+    attacher:get_meta():set_string("is_attached", minetest.serialize({node, node_pos=node_pos, pos, old_phys_over = phys_over}))
 end
 
 function chairs.disattach_player_from_node(disattacher)
-    local meta = disattacher.get_meta():get_string("is_attached")
-    local phys_over = meta.old_phys_over
-    attacher:set_physics_override({phys_over.speed, phys_over.jump})
+    local meta = disattacher:get_meta()
+    local is_attached = minetest.deserialize(meta:get_string("is_attached"))
+    local phys_over = is_attached.old_phys_over
+    disattacher:set_physics_override({speed=phys_over.speed, jump=phys_over.jump})
     meta:set_string("is_attached", "")
 end
 
--- "seats" table should contain: {[1]={is_busy={bool, player_obj}, pos=table}, [2]={is_busy={bool, player_obj}, pos=table}, ... [n]}
-function chairs.sit_player(sitter, node, sitter_anim)
-    --[[local player_meta = minetest.deserialize(sitter:get_meta():get_string("is_attached"))
-    if player_meta == "" or player_meta == nil then
+--[[function chairs.set_seat_pos(player, pos, dir, x_val, z_val)
+    local is_attached = minetest.deserialize(player:get_meta():get_string("is_attached"))
+    if is_attached ~= nil or is_attached ~= "" then
+        for axis, val in pairs(dir) do
+            if val ~= 0 then
+                local new_pos = pos
+                
+                
+                local dff = {
+                    ["x"] = {z={"-", "+"}},
+                    ["-x"] = {z={"+", "-"}},
+                    ["z"] = {x={"+", "-"}},
+                    ["-z"] = {x={"-", "+"}}
+                }
+                
+                new_pos[axis] = pos[axis] + val
+                
+                break
+            end
+        end
+        
+        local sdfd = {"x", "-x", "z", "-z"}
+        
+        for _, axis in ipairs(sdfd) do
+            local axis = tonumber(axis)
+            if axis == dir_axis then
+                local need_axis = pos[tonumber(string.sub(tostring(axis), 2))]
+                local need_sign = need_axis[string.sub(val, 1, 1)]
+    else
+        return]]
+
+
+function chairs.set_look_dir(player)
+    local is_attached = player:get_meta():get_string("is_attached")
+    if is_attached ~= nil or is_attached ~= "" then
+        local node_dir = is_attached.node.param2
+        local player_dir = player:get_look_dir()
+        local degrees = 0
+        local radians = 0
+        while node_dir ~= player_dir do
+            degrees = degrees + 57.2958
+            radians = degrees * math.pi / 180
+            player:set_look_horizontal(radians)
+            player_dir = player:get_look_dir()
+        end
+    else
         return
-    end]]
+    end
+end
+            
+        
+-- "seats" table should contain: {[1]={is_busy={bool, player_obj}, pos=table}, [2]={is_busy={bool, player_obj}, pos=table}, ... [n]}
+function chairs.sit_player(sitter, node, pos, sitter_anim)
+    
     local meta = minetest.get_meta(pos)
     local seats = minetest.deserialize(meta:get_string("seats_range"))
     
     for seat_num, seat_data in pairs(seats) do
-        if seat_data.is_busy.bool == false then
-            seat_data.is_busy.bool = true
-            seat_data.is_busy.player_obj = sitter
-            chairs.attach_player_to_node(sitter, node, seat_data.pos)
-            if #sitter_anim > 1 then
-                local random_anim = math.random(1, #sitter_anim)
-                sitter:set_animation(sitter_anim[random_anim])
-            else
-                sitter:set_animation(sitter_anim[1])
-            end
-            
-        end
-        
         if seat_num == #seats and seat_data.is_busy.bool == true then
             minetest.chat_send_player(sitter:get_player_name(), "All seats are busy!")
             return
         end
+        if seat_data.is_busy.bool == false then
+            seat_data.is_busy.bool = true
+            seat_data.is_busy.player = sitter:get_player_name()
+            meta:set_string("seats_range", minetest.serialize(seats))
+            chairs.attach_player_to_node(sitter, node, pos, seat_data.pos)
+            if #sitter_anim > 1 then
+                local random_anim = math.random(1, #sitter_anim)
+                sitter:set_animation(sitter_anim[random_anim][1], sitter_anim[random_anim][frame_speed], sitter_anim[random_anim][frame_blend])
+            else
+                sitter:set_animation(sitter_anim[1][1], sitter_anim[1][frame_speed], sitter_anim[1][frame_blend])
+            end
+            
+        end
+        
     end
 end
 
-function chairs.standup_player(player)
+function chairs.standup_player(player, pos, oldmetadata_seats)
+    local meta = minetest.get_meta(pos)
     local player_meta = minetest.deserialize(player:get_meta():get_string("is_attached"))
-    if player_meta ~= "" or player_meta ~= nil then
-        local seats = minetest.deserialize(minetest.get_meta():get_string("seats_range"))
+    minetest.debug(dump(player_meta))
+    if player_meta ~= nil then
+        local pos = player_meta.node_pos
+        local seats = minetest.deserialize(meta:get_string("seats_range")) or oldmetadata_seats or {}
         
         for seat_num, seat_data in pairs(seats) do
-            if seat_data.is_busy.player_obj == player then
+            if seat_data.is_busy.player == player:get_player_name() then
                 seat_data.is_busy.bool = false
-                seat_data.is_busy.player_obj = nil
-                
+                seat_data.is_busy.player = nil
+                meta:set_string("seats_range", minetest.serialize(seats))
                 chairs.disattach_player_from_node(player)
-                player:set_animation({x=1,y=1}, frame_speed=15, frame_blend=0))
+                player:set_animation({x=1,y=1}, 15, 0)
             end
         end
     else
@@ -63,20 +117,6 @@ function chairs.standup_player(player)
     end
 end
                 
-    
-
---[[function chairs.standup_player(player)
-    local meta = player:get_meta()
-    local is_attached_to = minetest.deserialize(meta:get_string("attached_to"))
-    --minetest.debug(dump(is_attached_to[4]))
-    player:set_animation(is_attached_to[6])
-    player:set_physics_override(is_attached_to[4])
-    
-    meta:set_string("attached_to", "")
-end]]
-    
-    
-    
 minetest.register_node("luxury_decor:kitchen_wooden_chair", {
     description = "Kitchen Wooden Chair",
     visual_scale = 0.5,
@@ -105,43 +145,33 @@ minetest.register_node("luxury_decor:kitchen_wooden_chair", {
     sounds = default.node_sound_wood_defaults(),
     on_construct = function (pos)
         local meta = minetest.get_meta(pos)
-        meta:set_string("seats_range", minetest.serialize({[1] = {is_busy={bool=false, player_obj=nil}, pos = {x = pos.x, y = pos.y, z = pos.z}}}))
+        meta:set_string("seats_range", minetest.serialize({[1] = {is_busy={bool=false, player=nil}, pos = {x = pos.x, y = pos.y+0.2, z = pos.z}}}))
+    end,
+    after_dig_node = function (pos, oldnode, oldmetadata, digger)
+        local seats = minetest.deserialize(oldmetadata.fields.seats_range)
+            if seats ~= nil then
+                for seat_num, seat_data in pairs(seats) do
+                    if seat_data.is_busy.player ~= nil then
+                        local player = minetest.get_player_by_name(seat_data.is_busy.player)
+                        chairs.standup_player(player, pos, seats)
+                    end
+                end
+            end
+        
     end,
     on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
         local meta = clicker:get_meta()
         local is_attached = minetest.deserialize(meta:get_string("is_attached"))
-        --minetest.debug(dump(is_attached_to))
         if is_attached == nil or is_attached == "" then
-            chairs.sit_player(clicker, node, {{{x=81, y=81}, frame_speed=15, frame_blend=0}})
+            chairs.sit_player(clicker, node, pos, {{{x=81, y=81}, frame_speed=15, frame_blend=0}})
+            chairs.set_look_dir(clicker)
             
         elseif is_attached ~= nil or is_attached ~= "" then
-            chairs.standup_player(clicker)
+            chairs.standup_player(clicker, pos)
             
         end
     end
             
-        --[[elseif clicker:get_player_name() ~= is_attached_to[3] and is_attached_to ~= nil then
-            minetest.chat_send_player(clicker:get_player_name(), "This bed is already busy!")
-        elseif clicker:get_player_name() == is_attached_to[3] and pos == is_attached_to[1][1] and minetest.get_node(pos).name == is_attached_to[1][2] then
-            minetest.debug("AAAAAAAAAAAAAAAAAAAAAAA")
-            chairs.standup_player(clicker)
-        end]]
-        --[[if is_attached_to ~= nil then
-            minetest.debug(clicker:get_player_name())
-            minetest.debug(is_attached_to[3])
-            minetest.debug(dump(pos))
-            minetest.debug(dump(is_attached_to[1][1]))
-            minetest.debug(minetest.get_node(pos).name)
-            minetest.debug(is_attached_to[1][2])
-            
-        end]]
-        
-        
-        --[[if minetest.get_node(pos).name ~= node.name then
-            is_chair_busy_by = nil
-            clicker:set_physics_override({speed=1.0})
-            default.player_set_animation(clicker, "stand", 30)
-        end]]
 
 })
  
@@ -175,17 +205,28 @@ minetest.register_node("luxury_decor:luxury_wooden_chair_with_cushion", {
     sounds = default.node_sound_wood_defaults(),
     on_construct = function (pos)
         local meta = minetest.get_meta(pos)
-        meta:set_string("seats_range", minetest.serialize({[1] = {is_busy={bool=false, player_obj=nil}, pos = {x = pos.x, y = pos.y+0.2, z = pos.z}}}))
+        meta:set_string("seats_range", minetest.serialize({[1] = {is_busy={bool=false, player=nil}, pos = {x = pos.x, y = pos.y+0.2, z = pos.z}}}))
+    end,
+    after_dig_node = function (pos, oldnode, oldmetadata, digger)
+        local seats = minetest.deserialize(oldmetadata.fields.seats_range)
+        if seats ~= nil then
+            for seat_num, seat_data in pairs(seats) do
+                if seat_data.is_busy.player ~= nil then
+                    local player = minetest.get_player_by_name(seat_data.is_busy.player)
+                    chairs.standup_player(player, pos, seats)
+                end
+            end
+        end
     end,
     on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
         local meta = clicker:get_meta()
         local is_attached = minetest.deserialize(meta:get_string("is_attached"))
-        --minetest.debug(dump(is_attached_to))
         if is_attached == nil or is_attached == "" then
-            chairs.sit_player(clicker, node, {{{x=81, y=81}, frame_speed=15, frame_blend=0}})
+            chairs.sit_player(clicker, node, pos, {{{x=81, y=81}, frame_speed=15, frame_blend=0}})
+            chairs.set_look_dir(clicker)
             
         elseif is_attached ~= nil or is_attached ~= "" then
-            chairs.standup_player(clicker)
+            chairs.standup_player(clicker, pos)
             
         end
     end
@@ -222,17 +263,29 @@ minetest.register_node("luxury_decor:decorative_wooden_chair", {
     sounds = default.node_sound_wood_defaults(),
     on_construct = function (pos)
         local meta = minetest.get_meta(pos)
-        meta:set_string("seats_range", minetest.serialize({[1] = {is_busy={bool=false, player_obj=nil}, pos = {x = pos.x, y = pos.y+0.2, z = pos.z}}}))
+        meta:set_string("seats_range", minetest.serialize({[1] = {is_busy={bool=false, player=nil}, pos = {x = pos.x, y = pos.y+0.6, z = pos.z}}}))
+    end,
+    after_dig_node = function (pos, oldnode, oldmetadata, digger)
+        local seats = minetest.deserialize(oldmetadata.fields.seats_range)
+        if seats ~= nil then
+            for seat_num, seat_data in pairs(seats) do
+                if seat_data.is_busy.player ~= nil then
+                    local player = minetest.get_player_by_name(seat_data.is_busy.player)
+                    chairs.standup_player(player, pos, seats)
+                end
+            end
+        end
+    
     end,
     on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
         local meta = clicker:get_meta()
         local is_attached = minetest.deserialize(meta:get_string("is_attached"))
-        --minetest.debug(dump(is_attached_to))
         if is_attached == nil or is_attached == "" then
-            chairs.sit_player(clicker, node, {{{x=81, y=81}, frame_speed=15, frame_blend=0}})
+            chairs.sit_player(clicker, node, pos, {{{x=81, y=81}, frame_speed=15, frame_blend=0}})
+            chairs.set_look_dir(clicker)
             
         elseif is_attached ~= nil or is_attached ~= "" then
-            chairs.standup_player(clicker)
+            chairs.standup_player(clicker, pos)
             
         end
     end
@@ -266,34 +319,39 @@ minetest.register_node("luxury_decor:round_wooden_chair", {
     sounds = default.node_sound_wood_defaults(),
     on_construct = function (pos)
         local meta = minetest.get_meta(pos)
-        meta:set_string("seats_range", minetest.serialize({[1] = {is_busy={bool=false, player_obj=nil}, pos = {x = pos.x, y = pos.y+0.2, z = pos.z}}}))
+        meta:set_string("seats_range", minetest.serialize({[1] = {is_busy={bool=false, player=nil}, pos = {x = pos.x, y = pos.y+0.2, z = pos.z}}}))
+    end,
+    after_dig_node = function (pos, oldnode, oldmetadata, digger)
+        local seats = minetest.deserialize(oldmetadata.fields.seats_range)
+        if seats ~= nil then
+            for seat_num, seat_data in pairs(seats) do
+                if seat_data.is_busy.player ~= nil then
+                    local player = minetest.get_player_by_name(seat_data.is_busy.player)
+                    chairs.standup_player(player, pos, seats)
+                end
+            end
+        end
     end,
     on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
         local meta = clicker:get_meta()
         local is_attached = minetest.deserialize(meta:get_string("is_attached"))
-        --minetest.debug(dump(is_attached_to))
         if is_attached == nil or is_attached == "" then
-            chairs.sit_player(clicker, node, {{{x=81, y=81}, frame_speed=15, frame_blend=0}})
+            chairs.sit_player(clicker, node, pos, {{{x=81, y=81}, frame_speed=15, frame_blend=0}})
+            chairs.set_look_dir(clicker)
             
         elseif is_attached ~= nil or is_attached ~= "" then
-            chairs.standup_player(clicker)
+            chairs.standup_player(clicker, pos)
             
         end
     end
 })
-minetest.register_on_dignode(function (pos, oldnode, digger)
-    local seats = minetest.get_meta(pos):get_string("seats_range")
-    for seat_num, seat_data in pairs(seats) do
-        if seat_data.is_busy.player_obj ~= nil then
-            chairs.standup_player(seat_data.is_busy.player_obj)
-        end
-    end
-end)
 
-minetest.register_on_joinplayer(function (player)
-    local is_attached = player:get_meta():get_string("is_attached")
+
+--[[minetest.register_on_joinplayer(function (player)
+    local is_attached = minetest.deserialize(player:get_meta():get_string("is_attached"))
+    --minetest.debug(dump(is_attached))
     
-    if is_attached ~= "" or is_attached ~= nil then
+    if is_attached ~= nil then
         local is_attached_to = is_attached.node
         chairs.standup_player(player)
         chairs.sit_player(player, is_attached_to, {{{x=81,y=81}, frame_speed=15, frame_blend=0}})
@@ -301,20 +359,6 @@ minetest.register_on_joinplayer(function (player)
 end)
     
     
-    
-    --[[local node = minetest.get_node(pos)
-    local objects = minetest.get_objects_inside_radius({x = pos.x - 0.5, y = pos.y, z = pos.z - 0.5}, 1)
-    for _, obj in ipairs(objects) do
-        if obj:is_player() then
-            local meta = minetest.deserialize(obj:get_meta():get_string("attached_to"))
-            if meta ~= nil and meta ~= "" then
-                obj:get_meta():set_string("attached_to", "")
-                obj:set_physics_override({speed=1.0,jump=1.0})
-                obj:set_animation({x=1, y=1})
-            end
-        end
-    end
-end)
 
 minetest.register_on_joinplayer(function (player)
     local meta = minetest.deserialize(player:get_meta():get_string("attached_to"))

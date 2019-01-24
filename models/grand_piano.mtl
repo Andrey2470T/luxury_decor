@@ -1,5 +1,5 @@
 # Blender MTL File: 'grand_piano.blend'
-# Material Count: 1
+# Material Count: 2
 
 newmtl Material
 Ns 96.078431
@@ -10,4 +10,15 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd /home/user/opt/minetest/mods/luxury_decor/textures/grand_piano.png
+map_Kd /home/andrey/opt/minetest/mods/luxury_decor/textures/grand_piano.png
+
+newmtl Material_NONE
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd grand_piano.png

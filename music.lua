@@ -24,8 +24,8 @@ minetest.register_node("luxury_decor:grand_piano", {
     },
     sounds = default.node_sound_wood_defaults(),
     on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
-	minetest.remove_node(pos)
-	minetest.set_node(pos, "luxury_decor:grand_piano_opened")
+        minetest.remove_node(pos)
+        minetest.set_node(pos, {name="luxury_decor:grand_piano_opened", param1=node.param1, param2=node.param2})
     end
 }) 
 
@@ -56,7 +56,7 @@ minetest.register_node("luxury_decor:grand_piano_opened", {
     },
     sounds = default.node_sound_wood_defaults(),
     on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
-	minetest.remove_node(pos)
-	minetest.set_node(pos, "luxury_decor:grand_piano")
+        minetest.remove_node(pos)
+        minetest.set_node(pos, {name="luxury_decor:grand_piano", param1=node.param1, param2=node.param2})
     end
 }) 

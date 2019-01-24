@@ -28,7 +28,8 @@ end
 *formspec - table with next keys: name, data (formspec string itself);
 *sound_play - table that can keep ONLY two sound names that needed to be played during opening and closing. Keys are: first is "open", second is "close".]]
 cabinets.open = function (opener, pos, node_replace, cabinet_name, clicked_button_name, formspec, sound_play)
-    local name = minetest.get_node(pos).name
+    local node = minetest.get_node(pos)
+    local name = node.name
     local meta = minetest.deserialize(minetest.get_meta(pos):get_string(name))
     
     -- The lower loop is running departments of the node as kitchen_wooden_cabinet_1... then it compares clicked_button_name is equal to the button name in the department.
@@ -63,7 +64,7 @@ cabinets.open = function (opener, pos, node_replace, cabinet_name, clicked_butto
     end
             
     minetest.remove_node(pos)
-    minetest.set_node(pos, node_replace)
+    minetest.set_node(pos, {name=node_replace, param1=node.param1, param2 = node.param2})
             
     if sound_play and sound_play["open"] then
         minetest.sound_play(sound_play["open"])
@@ -87,7 +88,8 @@ end
 
 
 cabinets.close = function (closer, pos, node_replace, cabinet_name, clicked_button_name, formspec, sound_play)
-    local name = minetest.get_node(pos).name
+    local node = minetest.get_node(pos)
+    local name = node.name
     local meta = minetest.deserialize(minetest.get_meta(pos):get_string(name))
     
     -- The lower loop is running departments of the node as kitchen_wooden_cabinet_1... then it compares clicked_button_name is equal to the button name in the department.
@@ -122,7 +124,7 @@ cabinets.close = function (closer, pos, node_replace, cabinet_name, clicked_butt
     end
             
     minetest.remove_node(pos)
-    minetest.set_node(pos, node_replace)
+    minetest.set_node(pos, {name=node_replace, param1=node.param1, param2=node.param2})
             
     if sound_play and sound_play["close"] then
         minetest.sound_play(sound_play["close"])
@@ -240,18 +242,20 @@ for cab, cab_boxes in pairs(kit_wood_cabs) do
         sounds = default.node_sound_wood_defaults(),
         on_construct = function (pos)
             local name = minetest.get_node(pos).name
-            local img_button1 = "image_button[0.5, 0;1, 2;" .. cab_boxes[1].img_button ..";" .. cab_boxes[1].button .. "]"
-            local img_button2 = "image_button[0.5, 0.3;1, 2;" .. cab_boxes[2].img_button .. ";" .. cab_boxes[2].button .. "]"
+            local img_button1 = "image_button[0.5, 0;1, 2;" .. cab_boxes[1].img_button ..";" .. cab_boxes[1].button .. ";]"
+            local img_button2 = "image_button[0.5, 3;1, 2;" .. cab_boxes[2].img_button .. ";" .. cab_boxes[2].button .. ";]"
             local list1 = "list[nodemeta:".. pos.x .. "," .. pos.y .. "," .. pos.z .. ";".. cab_boxes[1].listname .. ";1.5, 0;4, 2]"
-            local list2 = "list[nodemeta:".. pos.x .. "," .. pos.y .. "," .. pos.z .. ";".. cab_boxes[2].listname .. ";1.5, 0.3;4, 2]"                                                           
-            form = "size[6,5]" .. img_button1 .. img_button2 .. list1 .. list2 .. "]"
+            local list2 = "list[nodemeta:".. pos.x .. "," .. pos.y .. "," .. pos.z .. ";".. cab_boxes[2].listname .. ";1.5, 1;4, 2]"                                                           
+            form = "size[6,10]" .. img_button1 .. img_button2 .. list1 .. list2 .. "]"
             --minetest.debug(dump(cabinets))
             cabinets.put_data_into_cabinet(pos, "kitchen_wooden_cabinet", tostring(cabinet_num), cab_boxes, {name=name, data=form})
             local inv = minetest.get_inventory({type="node", pos=pos})
             inv:set_list(cab_boxes[1].listname, cab_boxes[1].inv_list)
             inv:set_list(cab_boxes[2].listname, cab_boxes[2].inv_list)
-            inv:set_size(cab_boxes[1].listname, 4*2)
-            inv:set_size(cab_boxes[2].listname, 4*2)
+            inv:set_size(cab_boxes[1].listname, cab_boxes[1].inv_size or 0)
+            inv:set_size(cab_boxes[2].listname, cab_boxes[2].inv_size or 0)
+            minetest.debug(dump(inv:get_list(cab_boxes[1].listname)))
+            minetest.debug(dump(inv:get_list(cab_boxes[2].listname)))
             -- Fills "form_size" of each cabinet with needed size and "form_data" of each box with datas to build formspec with lists.
             --[[for cab2, cab_boxes2 in pairs(kit_wood_cabs) do
                 cab_boxes2[cab2][form_size] = "size[8,4]"
@@ -265,6 +269,7 @@ for cab, cab_boxes in pairs(kit_wood_cabs) do
             minetest.show_formspec(clicker:get_player_name(), cab, form)  
         end,
         on_receive_fields = function (pos, formname, fields, sender)
+            minetest.debug("AAAAAAAAAAAAAAAAAAA")
             local name = minetest.get_node(pos).name
             local generalized_name = string.match(name, '^._-')
             
