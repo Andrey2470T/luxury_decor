@@ -1,5 +1,4 @@
 cabinets = {}
-cabs_table = {}
 
 --[[Arguments:
 *pos - position of clicked node;
@@ -15,8 +14,8 @@ cabinets.put_data_into_cabinet = function (pos, cabinet_name, cabinet_num, data,
         return
     end
     
-    meta:set_string(formspec["name"], formspec["data"])
-    return true
+    meta:set_string("formspec", formspec["data"])
+    return meta
 end
 
 --[[Arguments:
@@ -27,206 +26,347 @@ end
 *clicked_button_name - name of button that was clicked;
 *formspec - table with next keys: name, data (formspec string itself);
 *sound_play - table that can keep ONLY two sound names that needed to be played during opening and closing. Keys are: first is "open", second is "close".]]
-cabinets.open = function (opener, pos, node_replace, cabinet_name, clicked_button_name, formspec, sound_play)
+cabinets.open = function (opener, pos, node_replace, cabinet_name, clicked_button_name, formspec, sounds_play)
     local node = minetest.get_node(pos)
     local name = node.name
-    local meta = minetest.deserialize(minetest.get_meta(pos):get_string(name))
+    local name2 = string.sub(name, 14)
+    local meta = minetest.get_meta(pos)
+    
+    --local changed_depart_data
     
     -- The lower loop is running departments of the node as kitchen_wooden_cabinet_1... then it compares clicked_button_name is equal to the button name in the department.
-    for depart_num, depart_data in pairs(meta) do
-        if meta[depart_num]["button"] == clicked_button_name then
-            changed_part_data = meta
-            
-            -- Onwards it determines the department is "opened" or "closed", if "closed" sets opposite to this mode in changed_depart_data, else returns nil.
-            if meta[depart_num]["mode"] == "closed" then
-                changed_part_data[depart_num]["mode"] = "opened"
-            elseif meta[depart_num]["mode"] == "opened" then
-                return
-            end
-            
-            -- Here the loop is running cabs_table[name] table where "name" is "general" node name of all its "departments", then it`s running each "department" and comparing modes with mode of "changed_depart_data".
-            -- (To the comment above) comparing modes is needed to determine which registered part of general node contains departments with same modes.
-            for node_name, node_data in pairs(cabs_table[cabinet_name][name]) do
-                for depart_num2, depart_data2 in pairs(node_data) do
-                    if node_data[depart_num2]["mode"] == changed_part_data[depart_num2]["mode"] then
-                        -- For success it copies inventory list of the department and put to corresponding one of changed_
-                        changed_part_data[depart_num2]["inv_list"] = node_data[depart_num2]["inv_list"]
-                    else
-                        return
-                    end
-                    
+    
+    for depart_num, depart_data in pairs(cabs_table[cabinet_name][name2]) do
+        if type(depart_data) == "table" and depart_data.mode == "closed" and depart_data.button == clicked_button_name then
+            minetest.remove_node(pos)
+            minetest.set_node(pos, {name=node_replace, param1=node.param1, param2=node.param2})
+            if sounds_play and type(sounds_play) == "table" then
+                if sounds_play[depart_num] then
+                    minetest.sound_play(sounds_play[depart_num], {
+                        pos = pos,
+                        max_hear_distance = 15
+                    })
                 end
-                
             end
-        end
-        
-        
-    end
-            
-    minetest.remove_node(pos)
-    minetest.set_node(pos, {name=node_replace, param1=node.param1, param2 = node.param2})
-            
-    if sound_play and sound_play["open"] then
-        minetest.sound_play(sound_play["open"])
-    end
-            
-    local new_meta = minetest.get_meta(pos)
-    new_meta:set_string(formspec["name"], formspec["data"])
-    
-    local inv = minetest.get_inventory({type = "node", name = pos})
-    local lists = inv:get_lists()
-    
-    for _, depart_data in ipairs(changed_part_data) do
-        inv:set_list(depart_data["listname"], depart_data["inv_list"])
-        if depart_data["mode"] == "opened" then
-            inv:set_size(depart_data["listname"], depart_data["inv_size"])
+                
         end
     end
-        
-    minetest.show_formspec(opener:get_player_name(), node_replace, formspec[name])
 end
 
 
-cabinets.close = function (closer, pos, node_replace, cabinet_name, clicked_button_name, formspec, sound_play)
+cabinets.close = function (closer, pos, node_replace, cabinet_name, clicked_button_name, formspec, sounds_play)
     local node = minetest.get_node(pos)
     local name = node.name
-    local meta = minetest.deserialize(minetest.get_meta(pos):get_string(name))
+    local name2 = string.sub(name, 14)
+    local meta = minetest.get_meta(pos)
+    local inv = meta:get_inventory()
     
     -- The lower loop is running departments of the node as kitchen_wooden_cabinet_1... then it compares clicked_button_name is equal to the button name in the department.
-    for depart_num, depart_data in pairs(meta) do
-        if meta[depart_num]["button"] == clicked_button_name then
-            changed_part_data = meta
+    
+    for depart_num, depart_data in pairs(cabs_table[cabinet_name][name2]) do
+        if type(depart_data) == "table" and depart_data.mode == "opened" and depart_data.button == clicked_button_name then
+            local list = inv:get_list(depart_data.listname)
             
-            -- Onwards it determines the department is "opened" or "closed", if "closed" sets opposite to this mode in changed_depart_data, else returns nil.
-            if meta[depart_num]["mode"] == "opened" then
-                changed_part_data[depart_num]["mode"] = "closed"
-            elseif meta[depart_num]["mode"] == "closed" then
-                return
-            end
+            local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+            cabs_table[cabinet_name].inv_list[depart_num][str_pos] = list
             
-            -- Here the loop is running cabs_table[name] table where "name" is "general" node name of all its "departments", then it`s running each "department" and comparing modes with mode of "changed_depart_data".
-            -- (To the comment above) comparing modes is needed to determine which registered part of general node contains departments with same modes.
-            for node_name, node_data in pairs(cabs_table[cabinet_name][name]) do
-                for depart_num2, depart_data2 in pairs(node_data) do
-                    if node_data[depart_num2]["mode"] == changed_part_data[depart_num2]["mode"] then
-                        -- For success it copies inventory list of the department and put to corresponding one of changed_
-                        changed_part_data[depart_num2]["inv_list"] = node_data[depart_num2]["inv_list"]
-                    else
-                        return
-                    end
-                    
+            minetest.remove_node(pos)
+            minetest.set_node(pos, {name=node_replace, param1=node.param1, param2=node.param2})
+            if sounds_play and type(sounds_play) == "table" then
+                if sounds_play[depart_num] then
+                    minetest.sound_play(sounds_play[depart_num], {
+                        pos = pos,
+                        max_hear_distance = 15
+                    })
                 end
-                
             end
         end
-        
-        
     end
-            
-    minetest.remove_node(pos)
-    minetest.set_node(pos, {name=node_replace, param1=node.param1, param2=node.param2})
-            
-    if sound_play and sound_play["close"] then
-        minetest.sound_play(sound_play["close"])
-    end
-            
-    local new_meta = minetest.get_meta(pos)
-    new_meta:set_string(formspec["name"], formspec["data"])
-    
-    local inv = minetest.get_inventory({type = "node", name = pos})
-    local lists = inv:get_lists()
-    
-    for _, depart_data in ipairs(changed_part_data) do
-        inv:set_list(depart_data["listname"], depart_data["inv_list"])
-        if depart_data["mode"] == "opened" then
-            inv:set_size(depart_data["listname"], depart_data["inv_size"])
-        end
-    end
-        
-    minetest.show_formspec(closer:get_player_name(), node_replace, formspec[name])
 end
+           
                 
-                
-cabinets.define_needed_cabinet = function (formname, nodename)
-    for _, depart in ipairs(kit_wood_cabs[nodename]) do
-        if depart["button"] == formname then
-            modes = {}
-            for _, depart2 in ipairs(kit_wood_cabs[name]) do
-                modes[#modes+1] = depart2["mode"]
+local modes = {}
+cabinets.define_needed_cabinet = function (fields, nodename)
+    local substring = string.sub(nodename, 14)
+    local generalized_name
+    if string.find(substring, "fridge") then
+        generalized_name = string.sub(substring, 1, -8)
+    else
+        generalized_name = string.sub(substring, 1, -3)
+    end
+    for _, depart in ipairs(cabs_table[generalized_name][substring]) do
+        modes[#modes+1] = depart.mode
+    end
+    
+    for _, depart in ipairs(cabs_table[generalized_name][substring]) do
+        local name = depart.button
+        if fields[name] then
+            for num, depart2 in pairs(cabs_table[generalized_name][substring]) do
+                if depart2.button == depart.button then
+                    if depart2.mode == "closed" then
+                        modes[num] = "opened"
+                    elseif depart2.mode == "opened" then
+                        modes[num] = "closed"
+                    end
+                    break
+                end
             end
-            break
+            
         end
     end
-    for name, cab in pairs(kit_wood_cabs) do
+    
+    for name, cabs_list in pairs(cabs_table[generalized_name]) do
         local mode_num = 0
-        for name2, depart in ipairs(cab) do
+        for num, cab in pairs(cabs_list) do
             mode_num = mode_num + 1
-            if modes[mode_num] == depart["mode"] then
-                if modes[mode_num] == #modes then
-                    return name2
-                end
+            if cab.mode ~= modes[mode_num] then
+                break
+            end
+            if num == #cabs_list then
+                return name
             end
         end
     end
 end
 
-cabinets.define_mode = function (formname, nodename)
-    for _, depart in ipairs(kit_wood_cabs[nodename]) do
-        if depart["button"] == formname then
-            return depart["mode"]
+local number = 0
+cabinets.define_mode = function (fields, nodename)
+    local substring = string.sub(nodename, 14)
+    local general_name
+    if string.find(substring, "fridge") then
+        minetest.debug("YYYYY")
+        general_name = string.sub(substring, 1, -8)
+    else
+        general_name = string.sub(substring, 1, -3)
+    end
+    minetest.debug(general_name)
+    minetest.debug(substring)
+    for num, depart in pairs(cabs_table[general_name][substring]) do
+        if type(depart) == "table" then
+            local name = depart.button
+            if fields[name] then
+                return depart.mode
+            end
         end
     end
 end
 
-minetest.register_on_joinplayer(function (player)
-    minetest.debug(dump(cabinets))
-end)
 -- Create a table with external table for each cabinet sort (depends to boxes). Inside each second field a list of boxes and their datas.
 
-kit_wood_cabs = {
+cabs_table["kitchen_wooden_cabinet"] = {
     ["kitchen_wooden_cabinet_1"] = {
-        --form_size="",
-        {mode="closed", button = "kwc1_1", img_button = "close_button.png", listname = "kwc1_1", inv_list={}},
-        {mode="closed", button = "kwc1_2", img_button = "close_button.png", listname = "kwc1_2", inv_list={}}
+        {mode="closed", button = "kwc1_1", img_button = "open_button.png"},
+        {mode="closed", button = "kwc1_2", img_button = "open_button.png"},
         
     },
     ["kitchen_wooden_cabinet_2"] = {
-        --form_size="",
-        {mode="opened", button = "kwc2_1", img_button = "open_button.png", listname = "kwc2_1", inv_list={}, inv_size=4*2},
-        {mode="closed", button = "kwc2_2", img_button = "close_button.png", listname = "kwc2_2", inv_list={}},
+        {mode="opened", button = "kwc2_1", img_button = "close_button.png", listname = "kwc2_1", inv_size=6*2},
+        {mode="closed", button = "kwc2_2", img_button = "open_button.png"},
         not_in_creative_inventory=1
         
     },
     ["kitchen_wooden_cabinet_3"] = {
-        --form_size="",
-        {mode="closed", button = "kwc3_1", img_button = "close_button.png", listname = "kwc3_1", inv_list={}},
-        {mode="opened", button = "kwc3_2", img_button = "open_button.png", listname = "kwc3_2", inv_list={}, inv_size=4*2},
+        {mode="closed", button = "kwc3_1", img_button = "open_button.png"},
+        {mode="opened", button = "kwc3_2", img_button = "close_button.png", listname = "kwc3_2", inv_size=6*2},
         not_in_creative_inventory=1
         
     },
     ["kitchen_wooden_cabinet_4"] = {
-        --form_size="",
-        {mode="opened", button = "kwc4_1", img_button = "open_button.png", listname = "kwc4_1", inv_list={}, inv_size=4*2},
-        {mode="opened", button = "kwc4_2", img_button = "open_button.png", listname = "kwc4_2", inv_list={}, inv_size=4*2},
+        {mode="opened", button = "kwc4_1", img_button = "close_button.png", listname = "kwc4_1", inv_size=6*2},
+        {mode="opened", button = "kwc4_2", img_button = "close_button.png", listname = "kwc4_2", inv_size=6*2},
         not_in_creative_inventory=1
         
-    }
+    },
+    inv_list = {{}, {}} 
 }
-if not cabs_table["kitchen_wooden_cabinet"] then
-    cabs_table["kitchen_wooden_cabinet"] = kit_wood_cabs
-end
-                
+
+cabs_table["kitchen_wooden_cabinet_with_door"] = {
+    ["kitchen_wooden_cabinet_with_door_1"] = {
+        {mode="closed", button = "kwc_with_door1", img_button = "open_button.png"}
+        
+    },
+    ["kitchen_wooden_cabinet_with_door_2"] = {
+        {mode="opened", button = "kwc_with_door2", img_button = "close_button.png", listname = "kwc_with_door2", inv_size=6*4},
+        not_in_creative_inventory=1
+        
+    },
+    inv_list = {{}} 
+}
+
+cabs_table["kitchen_wooden_cabinet_with_door_and_drawer"] = {
+    ["kitchen_wooden_cabinet_with_door_and_drawer_1"] = {
+        {mode="closed", button = "kwc_with_door_and_drawer1_1", img_button = "open_button.png"},
+        {mode="closed", button = "kwc_with_door_and_drawer1_2", img_button = "open_button.png"},
+        
+    },
+    ["kitchen_wooden_cabinet_with_door_and_drawer_2"] = {
+        {mode="opened", button = "kwc_with_door_and_drawer2_1", img_button = "close_button.png", listname = "kwc_with_door_and_drawer2_1", inv_size=6},
+        {mode="closed", button = "kwc_with_door_and_drawer2_2", img_button = "open_button.png"},
+        not_in_creative_inventory=1
+        
+    },
+    ["kitchen_wooden_cabinet_with_door_and_drawer_3"] = {
+        {mode="closed", button = "kwc_with_door_and_drawer3_1", img_button = "open_button.png"},
+        {mode="opened", button = "kwc_with_door_and_drawer3_2", img_button = "close_button.png", listname = "kwc_with_door_and_drawer3_2", inv_size=6*3},
+        not_in_creative_inventory=1
+        
+    },
+    ["kitchen_wooden_cabinet_with_door_and_drawer_4"] = {
+        {mode="opened", button = "kwc_with_door_and_drawer4_1", img_button = "close_button.png", listname = "kwc_with_door_and_drawer4_1", inv_size=6},
+        {mode="opened", button = "kwc_with_door_and_drawer4_2", img_button = "close_button.png", listname = "kwc_with_door_and_drawer4_2", inv_size=6*3},
+        not_in_creative_inventory=1
+        
+    },
+    inv_list = {{}, {}} 
+}
+
+cabs_table["kitchen_wooden_cabinet_with_two_doors"] = {
+    ["kitchen_wooden_cabinet_with_two_doors_1"] = {
+        {mode="closed", button = "kwc_with_two_doors1", img_button = "open_button.png"}
+        
+    },
+    ["kitchen_wooden_cabinet_with_two_doors_2"] = {
+        {mode="opened", button = "kwc_with_two_doors2", img_button = "close_button.png", listname = "kwc_with_two_doors2", inv_size=6*4},
+        not_in_creative_inventory=1
+        
+    },
+    inv_list = {{}} 
+}
+
+cabs_table["kitchen_wooden_cabinet_with_two_doors_and_drawer"] = {
+    ["kitchen_wooden_cabinet_with_two_doors_and_drawer_1"] = {
+        {mode="closed", button = "kwc_with_two_doors_and_drawer1_1", img_button = "open_button.png"},
+        {mode="closed", button = "kwc_with_two_doors_and_drawer1_2", img_button = "open_button.png"},
+        
+    },
+    ["kitchen_wooden_cabinet_with_two_doors_and_drawer_2"] = {
+        {mode="opened", button = "kwc_with_two_doors_and_drawer2_1", img_button = "close_button.png", listname = "kwc_with_two_doors_and_drawer2_1", inv_size=6},
+        {mode="closed", button = "kwc_with_two_doors_and_drawer2_2", img_button = "open_button.png"},
+        not_in_creative_inventory=1
+        
+    },
+    ["kitchen_wooden_cabinet_with_two_doors_and_drawer_3"] = {
+        {mode="closed", button = "kwc_with_two_doors_and_drawer3_1", img_button = "open_button.png"},
+        {mode="opened", button = "kwc_with_two_doors_and_drawer3_2", img_button = "close_button.png", listname = "kwc_with_two_doors_and_drawer3_2", inv_size=6*3},
+        not_in_creative_inventory=1
+        
+    },
+    ["kitchen_wooden_cabinet_with_two_doors_and_drawer_4"] = {
+        {mode="opened", button = "kwc_with_two_doors_and_drawer4_1", img_button = "close_button.png", listname = "kwc_with_two_doors_and_drawer4_1", inv_size=6},
+        {mode="opened", button = "kwc_with_two_doors_and_drawer4_2", img_button = "close_button.png", listname = "kwc_with_two_doors_and_drawer4_2", inv_size=6*3},
+        not_in_creative_inventory=1
+        
+    },
+    inv_list = {{}, {}} 
+}
+
+cabs_table["kitchen_wooden_half_cabinet"] = {
+    ["kitchen_wooden_half_cabinet_1"] = {
+        {mode="closed", button = "kwc_half1", img_button = "open_button.png"}
+        
+    },
+    ["kitchen_wooden_half_cabinet_2"] = {
+        {mode="opened", button = "kwc_half2", img_button = "close_button.png", listname = "kwc_half2", inv_size=6*2},
+        not_in_creative_inventory=1
+        
+    },
+    inv_list = {{}} 
+}
+
+cabs_table["kitchen_wooden_threedrawer_cabinet"] = {
+    ["kitchen_wooden_threedrawer_cabinet_1"] = {
+        {mode="closed", button = "kwc_threedrawer1_1", img_button = "open_button.png"},
+        {mode="closed", button = "kwc_threedrawer1_2", img_button = "open_button.png"},
+        {mode="closed", button = "kwc_threedrawer1_3", img_button = "open_button.png"},
+        
+    },
+    ["kitchen_wooden_threedrawer_cabinet_2"] = {
+        {mode="opened", button = "kwc_threedrawer2_1", img_button = "close_button.png", listname = "kwc_threedrawer2_1", inv_size=6*2},
+        {mode="closed", button = "kwc_threedrawer2_2", img_button = "open_button.png"},
+        {mode="closed", button = "kwc_threedrawer2_3", img_button = "open_button.png"},
+        not_in_creative_inventory=1
+        
+    },
+    ["kitchen_wooden_threedrawer_cabinet_3"] = {
+        {mode="closed", button = "kwc_threedrawer3_1", img_button = "open_button.png"},
+        {mode="opened", button = "kwc_threedrawer3_2", img_button = "close_button.png", listname = "kwc_threedrawer3_2", inv_size=6*2},
+        {mode="closed", button = "kwc_threedrawer3_3", img_button = "open_button.png"},
+        not_in_creative_inventory=1
+        
+    },
+    ["kitchen_wooden_threedrawer_cabinet_4"] = {
+        {mode="closed", button = "kwc_threedrawer4_1", img_button = "open_button.png"},
+        {mode="closed", button = "kwc_threedrawer4_2", img_button = "open_button.png"},
+        {mode="opened", button = "kwc_threedrawer4_3", img_button = "close_button.png", listname = "kwc_threedrawer4_3", inv_size=6*2},
+        not_in_creative_inventory=1
+        
+    },
+    ["kitchen_wooden_threedrawer_cabinet_5"] = {
+        {mode="opened", button = "kwc_threedrawer5_1", img_button = "close_button.png", listname = "kwc_threedrawer5_1", inv_size=6*2},
+        {mode="closed", button = "kwc_threedrawer5_2", img_button = "open_button.png"},
+        {mode="opened", button = "kwc_threedrawer5_3", img_button = "close_button.png", listname = "kwc_threedrawer5_3", inv_size=6*2},
+        not_in_creative_inventory=1
+        
+    },
+    ["kitchen_wooden_threedrawer_cabinet_6"] = {
+        {mode="opened", button = "kwc_threedrawer6_1", img_button = "close_button.png", listname = "kwc_threedrawer6_1", inv_size=6*2},
+        {mode="opened", button = "kwc_threedrawer6_2", img_button = "close_button.png", listname = "kwc_threedrawer6_2", inv_size=6*2},
+        {mode="closed", button = "kwc_threedrawer6_3", img_button = "open_button.png"},
+        not_in_creative_inventory=1
+        
+    },
+    ["kitchen_wooden_threedrawer_cabinet_7"] = {
+        {mode="closed", button = "kwc_threedrawer7_1", img_button = "open_button.png"},
+        {mode="opened", button = "kwc_threedrawer7_2", img_button = "close_button.png", listname = "kwc_threedrawer7_2", inv_size=6*2},
+        {mode="opened", button = "kwc_threedrawer7_3", img_button = "close_button.png", listname = "kwc_threedrawer7_3", inv_size=6*2},
+        not_in_creative_inventory=1
+        
+    },
+    ["kitchen_wooden_threedrawer_cabinet_8"] = {
+        {mode="opened", button = "kwc_threedrawer8_1", img_button = "close_button.png", listname = "kwc_threedrawer8_1", inv_size=6*2},
+        {mode="opened", button = "kwc_threedrawer8_2", img_button = "close_button.png", listname = "kwc_threedrawer8_2", inv_size=6*2},
+        {mode="opened", button = "kwc_threedrawer8_3", img_button = "close_button.png", listname = "kwc_threedrawer8_3", inv_size=6*2},
+        not_in_creative_inventory=1
+        
+    },
+    inv_list = {{}, {}, {}} 
+}
+
+cabs_table["kitchen_wooden_cabinet_with_sink"] = {
+    ["kitchen_wooden_cabinet_with_sink_1"] = {
+        {mode="closed", button = "kwc_with_sink1", img_button = "open_button.png"}
+        
+    },
+    ["kitchen_wooden_cabinet_with_sink_2"] = {
+        {mode="opened", button = "kwc_with_sink2", img_button = "close_button.png", listname = "kwc_with_sink2", inv_size=3*3},
+        not_in_creative_inventory=1
+        
+    },
+    inv_list = {{}} 
+}
+
+cabs_table["fridge"] = {
+    ["fridge_closed"] = {
+        {mode="closed", button = "fridge_closed", img_button = "open_button.png"}
+        
+    },
+    ["fridge_opened"] = {
+        {mode="opened", button = "fridge_opened", img_button = "close_button.png", listname = "fridge_opened", inv_size=6*6},
+        not_in_creative_inventory=1
+        
+    },
+    inv_list = {{}} 
+}
 -- The loop is running the table above and register each cabinet sort.
 
-local cabinet_num = 0
-local form
-for cab, cab_boxes in pairs(kit_wood_cabs) do
-    cabinet_num = cabinet_num + 1
+for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet"]) do
+  if cab ~= "inv_list" then
     minetest.register_node("luxury_decor:"..cab, {
-        description = "Kitchen Wooden Cabinet",
+        description = "Kitchen Wooden Cabinet With Two Drawers",
         visual_scale = 0.5,
-        mesh = cab..".obj",
-        tiles = {"wood_material.png"},
+        inventory_image = "kitchen_wooden_cabinet_with_two_drawers.png",
+        mesh = cab..".b3d",
+        tiles = {"simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
         groups = {choppy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
@@ -244,293 +384,1299 @@ for cab, cab_boxes in pairs(kit_wood_cabs) do
             local name = minetest.get_node(pos).name
             local img_button1 = "image_button[0.5, 0;1, 2;" .. cab_boxes[1].img_button ..";" .. cab_boxes[1].button .. ";]"
             local img_button2 = "image_button[0.5, 3;1, 2;" .. cab_boxes[2].img_button .. ";" .. cab_boxes[2].button .. ";]"
-            local list1 = "list[nodemeta:".. pos.x .. "," .. pos.y .. "," .. pos.z .. ";".. cab_boxes[1].listname .. ";1.5, 0;4, 2]"
-            local list2 = "list[nodemeta:".. pos.x .. "," .. pos.y .. "," .. pos.z .. ";".. cab_boxes[2].listname .. ";1.5, 1;4, 2]"                                                           
-            form = "size[6,10]" .. img_button1 .. img_button2 .. list1 .. list2 .. "]"
-            --minetest.debug(dump(cabinets))
-            cabinets.put_data_into_cabinet(pos, "kitchen_wooden_cabinet", tostring(cabinet_num), cab_boxes, {name=name, data=form})
-            local inv = minetest.get_inventory({type="node", pos=pos})
-            inv:set_list(cab_boxes[1].listname, cab_boxes[1].inv_list)
-            inv:set_list(cab_boxes[2].listname, cab_boxes[2].inv_list)
-            inv:set_size(cab_boxes[1].listname, cab_boxes[1].inv_size or 0)
-            inv:set_size(cab_boxes[2].listname, cab_boxes[2].inv_size or 0)
-            minetest.debug(dump(inv:get_list(cab_boxes[1].listname)))
-            minetest.debug(dump(inv:get_list(cab_boxes[2].listname)))
-            -- Fills "form_size" of each cabinet with needed size and "form_data" of each box with datas to build formspec with lists.
-            --[[for cab2, cab_boxes2 in pairs(kit_wood_cabs) do
-                cab_boxes2[cab2][form_size] = "size[8,4]"
-                for box_num, cab_data in ipairs(cab_boxes2[2]) do
-                    cab_data[box_num][form_data] = inv_elems[1] .. "0.2, 0.1;0.5, 2" .. inv_elems[2] 
-                    if cab_data[
+            
+            local y = 0
+            local form = "size[9,10.5]" .. img_button1 .. img_button2 
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" and drawer.mode == "opened" then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    if not cabs_table["kitchen_wooden_cabinet"].inv_list[num][str_pos] then
+                       cabs_table["kitchen_wooden_cabinet"].inv_list[num][str_pos] = {}
+                   end
+                   local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";1.5,".. y .. ";6, 2]"
+                   form = form .. list
+                end
+                y= y+3
+            end
+            
+            form = form .. "list[current_player;main;0.5,6.5;8,4;]"
+            local meta = minetest.get_meta(pos)
+            meta:set_string("formspec", form)
+            
+            local inv = meta:get_inventory()
+            for num2, drawer2 in pairs(cab_boxes) do
+                if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_cabinet"].inv_list[num2][str_pos])
+                    inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
+                end
+                
+                
+            end
+            --[[local cabs_items_list = {}
+            local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+            local cab_num = 
+            for num, list in pairs(kit_wood_cabs.inv_list[cab_num]) do
+                cabs_items_list[num] = list[str_pos]
+                for num2, list2 in pairs(list) do
+                    for num3, itemstack in pairs(list2) do
+                         if itemstack ~= nil then
+                             minetest.debug(dump(cabs_items_list[num]))
+                             cabs_items_list[num][num2][num3] = itemstack:get_name()
+                         end
+                         
+                    end
+                end
+            end
+            local inv_lists = {}
+            for num, list in pairs(inv:get_lists()) do
+                inv_lists[num] = list
+                for num2, itemstack in pairs(list) do
+                    if itemstack ~= nil then
+                        inv_lists[num][num2] = itemstack:get_name()
+                    end
                 end
             end]]
-        end,
-        on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
-            minetest.show_formspec(clicker:get_player_name(), cab, form)  
+            --minetest.debug(dump(cabs_items_list))
+            --minetest.debug(dump(inv_lists))
+            inv:set_size("main", 8*4)
         end,
         on_receive_fields = function (pos, formname, fields, sender)
-            minetest.debug("AAAAAAAAAAAAAAAAAAA")
             local name = minetest.get_node(pos).name
-            local generalized_name = string.match(name, '^._-')
+            local generalized_name = string.sub(name, 14, -3)
+            local meta = minetest.get_meta(pos)
+            local defined_mode = cabinets.define_mode(fields, name)
+            local button_name
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" then
+                    local name = drawer.button
+                    if fields[name] then
+                        button_name = name
+                        break
+                    end
+                end
+            end
             
-            --[[for _, depart in ipairs(kit_wood_cabs[name]) do
-               if depart[button] == formname then
-                  if depart[mode] == "closed" then
-                     for _, depart2 in ipairs(kit_wood_cabs) do
-                        if ]]
-            local defined_mode = cabinets.define_mode(formname, name)
             if defined_mode == "closed" then
-               cabinets.open(sender, pos, cabinets.define_needed_cabinet(formname, name), generalized_name, formname, form)
+               cabinets.open(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"open_Drawer", "open_Drawer"})
             elseif defined_mode == "opened" then
-               cabinets.close(sender, pos, cabinets.define_needed_cabinet(formname, name), generalized_name, formname, form)
+               cabinets.close(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"close_Drawer", "close_Drawer"})
             end
             
                    
+        end,
+        after_dig_node = function (pos, oldnode, oldmetadata, digger)
+            local name = string.sub(oldnode.name, 14)
+            local generalized_name = string.sub(name, 1, -3)
+              
+            if cabs_table[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+                    for cab_pos, drawer_list in pairs(drawer_lists) do
+                        local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
+                        if cab_pos == str_pos then
+                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                        end
+                    end
+                end
+            end
+                    
         end
     })
+  end
 end
 
 
-
---[[Arguments:
-    *cabinet - table that contains name and position of the cabinet
-    *cabinet_boxes_data - table with cabinet data in what are names of cabinets are set in-world, position of each cabinet and their boxes datas, their modes ("opened"/"closed") and inventory formspecs.
- ]]
---[[cabinets_funcs.put_data_into_cabinet = function (cabinet, cabinet_boxes_data)
-    local name = cabinet[1]
-    if not cabinets[name] then
-        cabinets[name] = {}
-    end
-    
-    local pos = cabinet[2]
-    cabinets[name][pos] = {}
-    
-    for box_name, box in pairs(cabinet_boxes_data) do
-        local box = cabinet_boxes_data[box_name]
-        cabinets[name][pos][box_name] = box
-        local meta = minetest.get_meta(cabinets[name][pos][box_name][2])
-        meta:set_string("inventory", cabinets[name][pos][box_name][4])
-        --minetest.debug(dump(cabinet_boxes_data[box_name][2]))
-        --minetest.debug(dump(cabinet_boxes_data[box_name][1].name))
-        minetest.set_node(cabinet_boxes_data[box_name][2], cabinet_boxes_data[box_name][1])
-        --minetest.debug("DGSDGDSGFDSGSFDGSDGSD")
-        local box_meta = minetest.get_meta(cabinet_boxes_data[box_name][2])
-        box_meta:set_string(cabinet_boxes_data[box_name][1].name, minetest.serialize({cabinet[1], cabinet[2]}))
-        --minetest.debug("DDDDDDDDDDDD")
-    end
-    
-    minetest.debug(dump(cabinets[name][pos]))
-end
-    
-        
-Arguments:
-    *opener - Player
-    *cabinet - table that contains name and position of the cabinet
-    *cabinets_data - table that contains "name" field of the cabinet inside "pos" field of each set the cabinet in-world and its data (list of boxes inside)
-    *cabinet_box - table that contains data of clicked box (name, itemstring, pos, mode and inv)
-    *offset - table with coordinates (x, y, z) that means how many coordinate points this is needed to offset
-    *formspec - table that contains listname, itemstacks_list, formname and formspec itself]]
---[[cabinets_funcs.open = function (opener, cabinet, cabinets_data, cabinet_box, offset, formspec)
-    local name = cabinet[1]
-    local pos = cabinet[3]
-    local cabinet_box_name = cabinet_box[1]
-    if cabinets_data[name] then
-        if cabinets_data[pos] then
-            --for _, box in ipairs(cabinets_data[pos]) do
-            local inv = minetest.get_inventory({type="node", pos = pos})
-            local lists = inv:get_lists()
-            local list = lists[1]
-            cabinets[name][pos][cabinet_box_name][4] = {formspec[1], formspec[2], formspec[3], formspec[4]}
-            cabinets[name][pos][cabinet_box_name][3] = "opened"
-            --cabinets_data[cabinet_pos][cabinet_box[2] .. tostring(#cabinets_data[cabinet_pos])][3] = list
-            --cabinets_data[cabinet_pos][cabinet_box[2] .. tostring(#cabinets_data[cabinet_pos])][4] = formspec_data_field
-            minetest.remove_node(cabinet_box[2])
-            local new_pos = {x=pos.x + offset.x, y=pos.y + offset.y, z=pos.z + offset.z}
-            cabinets[name][pos][cabinet_box_name][2] = new_pos
-            minetest.set_node(new_pos, cabinet_box[2])
+for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_door"]) do
+  if cab ~= "inv_list" then
+    minetest.register_node("luxury_decor:"..cab, {
+        description = "Kitchen Wooden Cabinet With Door",
+        visual_scale = 0.5,
+        inventory_image = "kitchen_wooden_cabinet_with_door.png",
+        mesh = cab..".b3d",
+        tiles = {"simple_kitchen_cabinet.png"},
+        paramtype = "light",
+        paramtype2 = "facedir",
+        groups = {choppy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
+        drawtype = "mesh",
+        collision_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        },
+        selection_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        },
+        sounds = default.node_sound_wood_defaults(),
+        on_construct = function (pos)
+            local name = minetest.get_node(pos).name
+            local img_button = "image_button[0.5, 0.5;2, 4;" .. cab_boxes[1].img_button ..";" .. cab_boxes[1].button .. ";]"
             
-            local meta = minetest.get_meta(new_pos)
-            meta:set_string("inventory", cabinets[name][pos][cabinet_box_name][4][4])
-            local new_inv = minetest.get_inventory({type="node", pos=new_pos})
-            local new_lists = new_inv:get_lists()
-            local new_list = new_lists[1]
-            
-            for _, itemstack in ipairs(new_list) do
-                new_inv:add_item(cabinets[name][pos][cabinet_box_name][4][1], itemstack:get_count())
+            local form = "size[9,10.5]" .. img_button 
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" and drawer.mode == "opened" then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    if not cabs_table["kitchen_wooden_cabinet_with_door"].inv_list[num][str_pos] then
+                       cabs_table["kitchen_wooden_cabinet_with_door"].inv_list[num][str_pos] = {}
+                   end
+                   local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";2.5, 0.5;6, 4]"
+                   form = form .. list
+                end
             end
             
-            minetest.show_formspec(opener, cabinets[name][pos][cabinet_box_name][4][3], cabinets[name][pos][cabinet_box_name][4][4])
+            form = form .. "list[current_player;main;0.5,5;8,4;]"
+            local meta = minetest.get_meta(pos)
+            meta:set_string("formspec", form)
+            
+            local inv = meta:get_inventory()
+            for num2, drawer2 in pairs(cab_boxes) do
+                if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_cabinet_with_door"].inv_list[num2][str_pos])
+                    inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
+                end
+                
+                
+            end
+            --[[local cabs_items_list = {}
+            local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+            local cab_num = 
+            for num, list in pairs(kit_wood_cabs.inv_list[cab_num]) do
+                cabs_items_list[num] = list[str_pos]
+                for num2, list2 in pairs(list) do
+                    for num3, itemstack in pairs(list2) do
+                         if itemstack ~= nil then
+                             minetest.debug(dump(cabs_items_list[num]))
+                             cabs_items_list[num][num2][num3] = itemstack:get_name()
+                         end
+                         
+                    end
+                end
+            end
+            local inv_lists = {}
+            for num, list in pairs(inv:get_lists()) do
+                inv_lists[num] = list
+                for num2, itemstack in pairs(list) do
+                    if itemstack ~= nil then
+                        inv_lists[num][num2] = itemstack:get_name()
+                    end
+                end
+            end]]
+            --minetest.debug(dump(cabs_items_list))
+            --minetest.debug(dump(inv_lists))
+            inv:set_size("main", 8*4)
+        end,
+        on_receive_fields = function (pos, formname, fields, sender)
+            local name = minetest.get_node(pos).name
+            local generalized_name = string.sub(name, 14, -3)
+            local meta = minetest.get_meta(pos)
+            local defined_mode = cabinets.define_mode(fields, name)
+            local button_name
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" then
+                    local name = drawer.button
+                    if fields[name] then
+                        button_name = name
+                        break
+                    end
+                end
+            end
+            
+            if defined_mode == "closed" then
+               cabinets.open(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"open_Cabinet"})
+            elseif defined_mode == "opened" then
+               cabinets.close(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"close_Cabinet"})
+            end
+            
+                   
+        end,
+        after_dig_node = function (pos, oldnode, oldmetadata, digger)
+            local name = string.sub(oldnode.name, 14)
+            local generalized_name = string.sub(name, 1, -3)
+            
+            if cabs_table[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+                    for cab_pos, drawer_list in pairs(drawer_lists) do
+                        local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
+                        if cab_pos == str_pos then
+                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                        end
+                    end
+                end
+            end
+            
         end
-    end
-end]]
-
---[[Arguments:
-    *Same ones as for cabinets_funcs.open(), expect "offset" where should be new position for new node placing]]
---[[cabinets_funcs.close = function (closer, cabinet, cabinets_data, cabinet_box, offset)
-    local name = cabinet[1]
-    local pos = cabinet[2]
-    local cabinet_box_name = cabinet_box[1]
-    local inv = minetest.get_inventory({type="node", pos=pos})
-    local lists = inv:get_lists()
-    local list = lists[1]
-    
-    cabinets[name][pos][cabinet_box_name][4][2] = list
-    cabinets[name][pos][cabinet_box_name][3] = "closed"
-    
-    minetest.remove_node(cabinet_box[2])
-    local new_pos = {x=pos.x + offset.x, y=pos.y + offset.y, z=pos.z + offset.z}
-    cabinets[name][pos][cabinet_box_name][1] = new_pos
-    minetest.add_node(new_pos, cabinet_box[2])
+    })
+  end
 end
+
+for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_door_and_drawer"]) do
+  if cab ~= "inv_list" then
+    minetest.register_node("luxury_decor:"..cab, {
+        description = "Kitchen Wooden Cabinet With Door And Drawer",
+        visual_scale = 0.5,
+        inventory_image = "kitchen_wooden_cabinet_with_door_and_drawer.png",
+        mesh = cab..".b3d",
+        tiles = {"simple_kitchen_cabinet.png"},
+        paramtype = "light",
+        paramtype2 = "facedir",
+        groups = {choppy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
+        drawtype = "mesh",
+        collision_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        },
+        selection_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        },
+        sounds = default.node_sound_wood_defaults(),
+        on_construct = function (pos)
+            local name = minetest.get_node(pos).name
+            local img_button1 = "image_button[0.5, 0;1, 2;" .. cab_boxes[1].img_button ..";" .. cab_boxes[1].button .. ";]"
+            local img_button2 = "image_button[0.5, 3;1, 3;" .. cab_boxes[2].img_button .. ";" .. cab_boxes[2].button .. ";]"
             
-        
-        
-minetest.register_node("luxury_decor:kitchen_wooden_cabinet", {
-    description = "Kitchen Wooden Cabinet",
+            local y = 0
+            local y_size = 1
+            local form = "size[9,11.5]" .. img_button1 .. img_button2 
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" and drawer.mode == "opened" then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    if not cabs_table["kitchen_wooden_cabinet_with_door_and_drawer"].inv_list[num][str_pos] then
+                       cabs_table["kitchen_wooden_cabinet_with_door_and_drawer"].inv_list[num][str_pos] = {}
+                   end
+                   local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";1.5,".. y .. ";6," .. y_size .."]"
+                   form = form .. list
+                end
+                y= y+3
+                y_size=y_size+2
+            end
+            
+            form = form .. "list[current_player;main;0.5,6.5;8,4;]"
+            local meta = minetest.get_meta(pos)
+            meta:set_string("formspec", form)
+            
+            local inv = meta:get_inventory()
+            for num2, drawer2 in pairs(cab_boxes) do
+                if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_cabinet_with_door_and_drawer"].inv_list[num2][str_pos])
+                    inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
+                end
+                
+                
+            end
+            --[[local cabs_items_list = {}
+            local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+            local cab_num = 
+            for num, list in pairs(kit_wood_cabs.inv_list[cab_num]) do
+                cabs_items_list[num] = list[str_pos]
+                for num2, list2 in pairs(list) do
+                    for num3, itemstack in pairs(list2) do
+                         if itemstack ~= nil then
+                             minetest.debug(dump(cabs_items_list[num]))
+                             cabs_items_list[num][num2][num3] = itemstack:get_name()
+                         end
+                         
+                    end
+                end
+            end
+            local inv_lists = {}
+            for num, list in pairs(inv:get_lists()) do
+                inv_lists[num] = list
+                for num2, itemstack in pairs(list) do
+                    if itemstack ~= nil then
+                        inv_lists[num][num2] = itemstack:get_name()
+                    end
+                end
+            end]]
+            --minetest.debug(dump(cabs_items_list))
+            --minetest.debug(dump(inv_lists))
+            inv:set_size("main", 8*4)
+        end,
+        on_receive_fields = function (pos, formname, fields, sender)
+            local name = minetest.get_node(pos).name
+            local generalized_name = string.sub(name, 14, -3)
+            local meta = minetest.get_meta(pos)
+            local defined_mode = cabinets.define_mode(fields, name)
+            local button_name
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" then
+                    local name = drawer.button
+                    if fields[name] then
+                        button_name = name
+                        break
+                    end
+                end
+            end
+            
+            if defined_mode == "closed" then
+               cabinets.open(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"open_Drawer", "open_Cabinet"})
+            elseif defined_mode == "opened" then
+               cabinets.close(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"close_Drawer", "close_Cabinet"})
+            end
+            
+                   
+        end,
+        after_dig_node = function (pos, oldnode, oldmetadata, digger)
+            local name = string.sub(oldnode.name, 14)
+            local generalized_name = string.sub(name, 1, -3)
+            
+            if cabs_table[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+                    for cab_pos, drawer_list in pairs(drawer_lists) do
+                        local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
+                        if cab_pos == str_pos then
+                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                        end
+                    end
+                end
+            end
+            
+        end
+    })
+  end
+end
+
+for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_two_doors"]) do
+  if cab ~= "inv_list" then
+    minetest.register_node("luxury_decor:"..cab, {
+        description = "Kitchen Wooden Cabinet With Two Doors",
+        visual_scale = 0.5,
+        inventory_image = "kitchen_wooden_cabinet_with_two_doors.png",
+        mesh = cab..".b3d",
+        tiles = {"simple_kitchen_cabinet.png"},
+        paramtype = "light",
+        paramtype2 = "facedir",
+        groups = {choppy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
+        drawtype = "mesh",
+        collision_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        },
+        selection_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        },
+        sounds = default.node_sound_wood_defaults(),
+        on_construct = function (pos)
+            local name = minetest.get_node(pos).name
+            local img_button = "image_button[0.5, 0.5;2, 4;" .. cab_boxes[1].img_button ..";" .. cab_boxes[1].button .. ";]"
+            
+            local form = "size[9,10.5]" .. img_button 
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" and drawer.mode == "opened" then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    if not cabs_table["kitchen_wooden_cabinet_with_two_doors"].inv_list[num][str_pos] then
+                       cabs_table["kitchen_wooden_cabinet_with_two_doors"].inv_list[num][str_pos] = {}
+                   end
+                   local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";2.5, 0.5;6, 4]"
+                   form = form .. list
+                end
+            end
+            
+            form = form .. "list[current_player;main;0.5,5;8,4;]"
+            local meta = minetest.get_meta(pos)
+            meta:set_string("formspec", form)
+            
+            local inv = meta:get_inventory()
+            for num2, drawer2 in pairs(cab_boxes) do
+                if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_cabinet_with_two_doors"].inv_list[num2][str_pos])
+                    inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
+                end
+                
+                
+            end
+            --[[local cabs_items_list = {}
+            local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+            local cab_num = 
+            for num, list in pairs(kit_wood_cabs.inv_list[cab_num]) do
+                cabs_items_list[num] = list[str_pos]
+                for num2, list2 in pairs(list) do
+                    for num3, itemstack in pairs(list2) do
+                         if itemstack ~= nil then
+                             minetest.debug(dump(cabs_items_list[num]))
+                             cabs_items_list[num][num2][num3] = itemstack:get_name()
+                         end
+                         
+                    end
+                end
+            end
+            local inv_lists = {}
+            for num, list in pairs(inv:get_lists()) do
+                inv_lists[num] = list
+                for num2, itemstack in pairs(list) do
+                    if itemstack ~= nil then
+                        inv_lists[num][num2] = itemstack:get_name()
+                    end
+                end
+            end]]
+            --minetest.debug(dump(cabs_items_list))
+            --minetest.debug(dump(inv_lists))
+            inv:set_size("main", 8*4)
+        end,
+        on_receive_fields = function (pos, formname, fields, sender)
+            local name = minetest.get_node(pos).name
+            local generalized_name = string.sub(name, 14, -3)
+            local meta = minetest.get_meta(pos)
+            local defined_mode = cabinets.define_mode(fields, name)
+            local button_name
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" then
+                    local name = drawer.button
+                    if fields[name] then
+                        button_name = name
+                        break
+                    end
+                end
+            end
+            
+            if defined_mode == "closed" then
+               cabinets.open(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"open_Cabinet"})
+            elseif defined_mode == "opened" then
+               cabinets.close(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"close_Cabinet"})
+            end
+            
+                   
+        end,
+        after_dig_node = function (pos, oldnode, oldmetadata, digger)
+            local name = string.sub(oldnode.name, 14)
+            local generalized_name = string.sub(name, 1, -3)
+            
+            if cabs_table[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+                    for cab_pos, drawer_list in pairs(drawer_lists) do
+                        local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
+                        if cab_pos == str_pos then
+                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                        end
+                    end
+                end
+            end
+            
+        end
+    })
+  end
+end
+
+for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_two_doors_and_drawer"]) do
+  if cab ~= "inv_list" then
+    minetest.register_node("luxury_decor:"..cab, {
+        description = "Kitchen Wooden Cabinet With Two Drawers And Drawer",
+        visual_scale = 0.5,
+        inventory_image = "kitchen_wooden_cabinet_with_two_doors_and_drawer.png",
+        mesh = cab..".b3d",
+        tiles = {"simple_kitchen_cabinet.png"},
+        paramtype = "light",
+        paramtype2 = "facedir",
+        groups = {choppy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
+        drawtype = "mesh",
+        collision_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        },
+        selection_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        },
+        sounds = default.node_sound_wood_defaults(),
+        on_construct = function (pos)
+            local name = minetest.get_node(pos).name
+            local img_button1 = "image_button[0.5, 0;1, 2;" .. cab_boxes[1].img_button ..";" .. cab_boxes[1].button .. ";]"
+            local img_button2 = "image_button[0.5, 3;1, 3;" .. cab_boxes[2].img_button .. ";" .. cab_boxes[2].button .. ";]"
+            
+            local y = 0
+            local y_size = 1
+            local form = "size[9,11.5]" .. img_button1 .. img_button2 
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" and drawer.mode == "opened" then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    if not cabs_table["kitchen_wooden_cabinet_with_two_doors_and_drawer"].inv_list[num][str_pos] then
+                       cabs_table["kitchen_wooden_cabinet_with_two_doors_and_drawer"].inv_list[num][str_pos] = {}
+                   end
+                   local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";1.5,".. y .. ";6," .. y_size .."]"
+                   form = form .. list
+                end
+                y= y+3
+                y_size=y_size+2
+            end
+            
+            form = form .. "list[current_player;main;0.5,6.5;8,4;]"
+            local meta = minetest.get_meta(pos)
+            meta:set_string("formspec", form)
+            
+            local inv = meta:get_inventory()
+            for num2, drawer2 in pairs(cab_boxes) do
+                if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_cabinet_with_two_doors_and_drawer"].inv_list[num2][str_pos])
+                    inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
+                end
+                
+                
+            end
+            --[[local cabs_items_list = {}
+            local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+            local cab_num = 
+            for num, list in pairs(kit_wood_cabs.inv_list[cab_num]) do
+                cabs_items_list[num] = list[str_pos]
+                for num2, list2 in pairs(list) do
+                    for num3, itemstack in pairs(list2) do
+                         if itemstack ~= nil then
+                             minetest.debug(dump(cabs_items_list[num]))
+                             cabs_items_list[num][num2][num3] = itemstack:get_name()
+                         end
+                         
+                    end
+                end
+            end
+            local inv_lists = {}
+            for num, list in pairs(inv:get_lists()) do
+                inv_lists[num] = list
+                for num2, itemstack in pairs(list) do
+                    if itemstack ~= nil then
+                        inv_lists[num][num2] = itemstack:get_name()
+                    end
+                end
+            end]]
+            --minetest.debug(dump(cabs_items_list))
+            --minetest.debug(dump(inv_lists))
+            inv:set_size("main", 8*4)
+        end,
+        on_receive_fields = function (pos, formname, fields, sender)
+            local name = minetest.get_node(pos).name
+            local generalized_name = string.sub(name, 14, -3)
+            local meta = minetest.get_meta(pos)
+            local defined_mode = cabinets.define_mode(fields, name)
+            local button_name
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" then
+                    local name = drawer.button
+                    if fields[name] then
+                        button_name = name
+                        break
+                    end
+                end
+            end
+            
+            if defined_mode == "closed" then
+               cabinets.open(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"open_Drawer", "open_Cabinet"})
+            elseif defined_mode == "opened" then
+               cabinets.close(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"close_Drawer", "close_Cabinet"})
+            end
+            
+                   
+        end,
+        after_dig_node = function (pos, oldnode, oldmetadata, digger)
+            local name = string.sub(oldnode.name, 14)
+            local generalized_name = string.sub(name, 1, -3)
+            
+            if cabs_table[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+                    for cab_pos, drawer_list in pairs(drawer_lists) do
+                        local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
+                        if cab_pos == str_pos then
+                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                        end
+                    end
+                end
+            end
+            
+        end
+    })
+  end
+end
+
+for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_half_cabinet"]) do
+  if cab ~= "inv_list" then
+    minetest.register_node("luxury_decor:"..cab, {
+        description = "Kitchen Wooden Half-Cabinet",
+        visual_scale = 0.5,
+        inventory_image = "kitchen_wooden_half_cabinet.png",
+        mesh = cab..".b3d",
+        tiles = {"simple_kitchen_cabinet.png"},
+        paramtype = "light",
+        paramtype2 = "facedir",
+        groups = {choppy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
+        drawtype = "mesh",
+        collision_box = {
+            type = "fixed",
+            fixed = {-0.5, 0, -0.5, 0.5, 0.5, 0.5}
+        },
+        selection_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.04, -0.5, 0.5, 0.5, 0.5}
+        },
+        sounds = default.node_sound_wood_defaults(),
+        on_construct = function (pos)
+            local name = minetest.get_node(pos).name
+            local img_button = "image_button[0.5, 0.5;1, 2;" .. cab_boxes[1].img_button ..";" .. cab_boxes[1].button .. ";]"
+            
+            local form = "size[9,8.5]" .. img_button 
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" and drawer.mode == "opened" then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    if not cabs_table["kitchen_wooden_half_cabinet"].inv_list[num][str_pos] then
+                       cabs_table["kitchen_wooden_half_cabinet"].inv_list[num][str_pos] = {}
+                   end
+                   local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";1.5, 0.5;6, 2]"
+                   form = form .. list
+                end
+            end
+            
+            form = form .. "list[current_player;main;0.5,4;8,4;]"
+            local meta = minetest.get_meta(pos)
+            meta:set_string("formspec", form)
+            
+            local inv = meta:get_inventory()
+            for num2, drawer2 in pairs(cab_boxes) do
+                if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_half_cabinet"].inv_list[num2][str_pos])
+                    inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
+                end
+                
+                
+            end
+            --[[local cabs_items_list = {}
+            local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+            local cab_num = 
+            for num, list in pairs(kit_wood_cabs.inv_list[cab_num]) do
+                cabs_items_list[num] = list[str_pos]
+                for num2, list2 in pairs(list) do
+                    for num3, itemstack in pairs(list2) do
+                         if itemstack ~= nil then
+                             minetest.debug(dump(cabs_items_list[num]))
+                             cabs_items_list[num][num2][num3] = itemstack:get_name()
+                         end
+                         
+                    end
+                end
+            end
+            local inv_lists = {}
+            for num, list in pairs(inv:get_lists()) do
+                inv_lists[num] = list
+                for num2, itemstack in pairs(list) do
+                    if itemstack ~= nil then
+                        inv_lists[num][num2] = itemstack:get_name()
+                    end
+                end
+            end]]
+            --minetest.debug(dump(cabs_items_list))
+            --minetest.debug(dump(inv_lists))
+            inv:set_size("main", 8*4)
+        end,
+        on_receive_fields = function (pos, formname, fields, sender)
+            local name = minetest.get_node(pos).name
+            local generalized_name = string.sub(name, 14, -3)
+            local meta = minetest.get_meta(pos)
+            local defined_mode = cabinets.define_mode(fields, name)
+            local button_name
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" then
+                    local name = drawer.button
+                    if fields[name] then
+                        button_name = name
+                        break
+                    end
+                end
+            end
+            
+            if defined_mode == "closed" then
+               cabinets.open(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"open_Drawer"})
+            elseif defined_mode == "opened" then
+               cabinets.close(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"close_Drawer"})
+            end
+            
+                   
+        end,
+        after_dig_node = function (pos, oldnode, oldmetadata, digger)
+            local name = string.sub(oldnode.name, 14)
+            local generalized_name = string.sub(name, 1, -3)
+            
+            if cabs_table[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+                    for cab_pos, drawer_list in pairs(drawer_lists) do
+                        local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
+                        if cab_pos == str_pos then
+                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                        end
+                    end
+                end
+            end
+            
+        end
+    })
+  end
+end
+
+for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_threedrawer_cabinet"]) do
+  if cab ~= "inv_list" then
+    minetest.register_node("luxury_decor:"..cab, {
+        description = "Kitchen Wooden Cabinet With Three Drawers",
+        visual_scale = 0.5,
+        inventory_image = "kitchen_wooden_cabinet_with_three_drawers.png",
+        mesh = cab..".b3d",
+        tiles = {"simple_kitchen_cabinet.png"},
+        paramtype = "light",
+        paramtype2 = "facedir",
+        groups = {choppy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
+        drawtype = "mesh",
+        collision_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        },
+        selection_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        },
+        sounds = default.node_sound_wood_defaults(),
+        on_construct = function (pos)
+            local name = minetest.get_node(pos).name
+            local img_button1 = "image_button[0.5, 0;1, 2;" .. cab_boxes[1].img_button ..";" .. cab_boxes[1].button .. ";]"
+            local img_button2 = "image_button[0.5, 2.5;1, 2;" .. cab_boxes[2].img_button .. ";" .. cab_boxes[2].button .. ";]"
+            local img_button3 = "image_button[0.5, 5;1, 2;" .. cab_boxes[2].img_button .. ";" .. cab_boxes[3].button .. ";]"
+            
+            local y = 0
+            local form = "size[9,11.5]" .. img_button1 .. img_button2 .. img_button3
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" and drawer.mode == "opened" then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    if not cabs_table["kitchen_wooden_threedrawer_cabinet"].inv_list[num][str_pos] then
+                       cabs_table["kitchen_wooden_threedrawer_cabinet"].inv_list[num][str_pos] = {}
+                   end
+                   local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";1.5,".. y .. ";6, 2]"
+                   form = form .. list
+                end
+                y= y+2.5
+            end
+            
+            form = form .. "list[current_player;main;0.5,7.5;8,4;]"
+            local meta = minetest.get_meta(pos)
+            meta:set_string("formspec", form)
+            
+            local inv = meta:get_inventory()
+            for num2, drawer2 in pairs(cab_boxes) do
+                if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_threedrawer_cabinet"].inv_list[num2][str_pos])
+                    inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
+                end
+                
+                
+            end
+            --[[local cabs_items_list = {}
+            local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+            local cab_num = 
+            for num, list in pairs(kit_wood_cabs.inv_list[cab_num]) do
+                cabs_items_list[num] = list[str_pos]
+                for num2, list2 in pairs(list) do
+                    for num3, itemstack in pairs(list2) do
+                         if itemstack ~= nil then
+                             minetest.debug(dump(cabs_items_list[num]))
+                             cabs_items_list[num][num2][num3] = itemstack:get_name()
+                         end
+                         
+                    end
+                end
+            end
+            local inv_lists = {}
+            for num, list in pairs(inv:get_lists()) do
+                inv_lists[num] = list
+                for num2, itemstack in pairs(list) do
+                    if itemstack ~= nil then
+                        inv_lists[num][num2] = itemstack:get_name()
+                    end
+                end
+            end]]
+            --minetest.debug(dump(cabs_items_list))
+            --minetest.debug(dump(inv_lists))
+            inv:set_size("main", 8*4)
+        end,
+        on_receive_fields = function (pos, formname, fields, sender)
+            local name = minetest.get_node(pos).name
+            local generalized_name = string.sub(name, 14, -3)
+            local meta = minetest.get_meta(pos)
+            local defined_mode = cabinets.define_mode(fields, name)
+            local button_name
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" then
+                    local name = drawer.button
+                    if fields[name] then
+                        button_name = name
+                        break
+                    end
+                end
+            end
+            
+            if defined_mode == "closed" then
+               cabinets.open(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"open_Drawer", "open_Drawer", "open_Drawer"})
+            elseif defined_mode == "opened" then
+               cabinets.close(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"close_Drawer", "close_Drawer", "close_Drawer"})
+            end
+            
+                   
+        end,
+        after_dig_node = function (pos, oldnode, oldmetadata, digger)
+            local name = string.sub(oldnode.name, 14)
+            local generalized_name = string.sub(name, 1, -3)
+              
+            if cabs_table[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+                    for cab_pos, drawer_list in pairs(drawer_lists) do
+                        local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
+                        if cab_pos == str_pos then
+                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                        end
+                    end
+                end
+            end
+                    
+        end
+    })
+  end
+end
+
+for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_sink"]) do
+  if cab ~= "inv_list" then
+    minetest.register_node("luxury_decor:"..cab, {
+        description = "Kitchen Wooden Cabinet With Sink",
+        visual_scale = 0.5,
+        inventory_image = "kitchen_wooden_cabinet_with_sink.png",
+        mesh = cab..".b3d",
+        tiles = {"simple_kitchen_cabinet_with_sink.png"},
+        paramtype = "light",
+        paramtype2 = "facedir",
+        groups = {choppy=3, snappy=2, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
+        drawtype = "mesh",
+        collision_box = {
+            type = "fixed",
+            fixed = {
+                {-0.5, -0.5, -0.5, 0.5, 0.25, 0.5},
+                {-0.5, 0.25, -0.5, -0.4, 0.5, 0.5},
+                {0.4, 0.25, -0.5, 0.5, 0.5, 0.5},
+                {-0.4, 0.25, -0.5, 0.4, 0.5, -0.4},
+                {-0.4, 0.25, 0.4, 0.4, 0.5, 0.5}
+            },
+        },
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-0.5, -0.5, -0.5, 0.5, 0.25, 0.5},
+                {-0.5, 0.25, -0.5, -0.4, 0.5, 0.5},
+                {0.4, 0.25, -0.5, 0.5, 0.5, 0.5},
+                {-0.4, 0.25, -0.5, 0.4, 0.5, -0.4},
+                {-0.4, 0.25, 0.4, 0.4, 0.5, 0.5}
+            },
+        },
+        sounds = default.node_sound_wood_defaults(),
+        on_construct = function (pos)
+            local name = minetest.get_node(pos).name
+            local img_button = "image_button[0.5, 0.5;2, 3;" .. cab_boxes[1].img_button ..";" .. cab_boxes[1].button .. ";]"
+            
+            local form = "size[9,8.5]" .. img_button 
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" and drawer.mode == "opened" then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    if not cabs_table["kitchen_wooden_cabinet_with_sink"].inv_list[num][str_pos] then
+                       cabs_table["kitchen_wooden_cabinet_with_sink"].inv_list[num][str_pos] = {}
+                   end
+                   local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";2.5, 0.5;3, 3]"
+                   local trash_button = "button[2.5, 3.5;3, 1;kwc_trash;Trash Items]"
+                   form = form .. list .. trash_button
+                end
+            end
+            
+            form = form .. "list[current_player;main;0.5,4.5;8,4;]"
+            local meta = minetest.get_meta(pos)
+            meta:set_string("formspec", form)
+            
+            local inv = meta:get_inventory()
+            for num2, drawer2 in pairs(cab_boxes) do
+                if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_cabinet_with_sink"].inv_list[num2][str_pos])
+                    inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
+                end
+                
+                
+            end
+            --[[local cabs_items_list = {}
+            local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+            local cab_num = 
+            for num, list in pairs(kit_wood_cabs.inv_list[cab_num]) do
+                cabs_items_list[num] = list[str_pos]
+                for num2, list2 in pairs(list) do
+                    for num3, itemstack in pairs(list2) do
+                         if itemstack ~= nil then
+                             minetest.debug(dump(cabs_items_list[num]))
+                             cabs_items_list[num][num2][num3] = itemstack:get_name()
+                         end
+                         
+                    end
+                end
+            end
+            local inv_lists = {}
+            for num, list in pairs(inv:get_lists()) do
+                inv_lists[num] = list
+                for num2, itemstack in pairs(list) do
+                    if itemstack ~= nil then
+                        inv_lists[num][num2] = itemstack:get_name()
+                    end
+                end
+            end]]
+            --minetest.debug(dump(cabs_items_list))
+            --minetest.debug(dump(inv_lists))
+            inv:set_size("main", 8*4)
+        end,
+        on_receive_fields = function (pos, formname, fields, sender)
+            local name = minetest.get_node(pos).name
+            local generalized_name = string.sub(name, 14, -3)
+            if fields["kwc_trash"] then
+                local meta = minetest.get_meta(pos)
+                local inv = meta:get_inventory()
+                local list = inv:get_list("kwc_with_sink2")
+                local stacks_list = {}
+                for num, stack in pairs(list) do
+                    stacks_list[num] = stack:get_name()
+                end
+                minetest.debug(dump(stacks_list))
+                for num, item in pairs(list) do
+                    if inv:get_stack("kwc_with_sink2", num) ~= "" or inv:get_stack("kwc_with_sink2", num) ~= nil then
+                        inv:set_stack("kwc_with_sink2", num, "")
+                    end
+                    
+                end
+                local list2 = meta:get_inventory():get_list("kwc_with_sink2")
+                local stacks_list2 = {}
+                for num, stack in pairs(list2) do
+                    stacks_list2[num] = stack:get_name()
+                end
+                minetest.debug(dump(stacks_list2))
+                --minetest.debug(dump(cabs_table[generalized_name].inv_list[1][str_pos]))
+                return true
+            end
+            
+            local meta = minetest.get_meta(pos)
+            local defined_mode = cabinets.define_mode(fields, name)
+            local button_name
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" then
+                    local name = drawer.button
+                    if fields[name] then
+                        button_name = name
+                        break
+                    end
+                end
+            end
+            
+            if defined_mode == "closed" then
+               cabinets.open(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"open_Cabinet"})
+            elseif defined_mode == "opened" then
+               cabinets.close(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"close_Cabinet"})
+            end
+            
+                   
+        end,
+        after_dig_node = function (pos, oldnode, oldmetadata, digger)
+            local name = string.sub(oldnode.name, 14)
+            local generalized_name = string.sub(name, 1, -3)
+            
+            if cabs_table[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+                    for cab_pos, drawer_list in pairs(drawer_lists) do
+                        local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
+                        if cab_pos == str_pos then
+                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                        end
+                    end
+                end
+            end
+            
+        end
+    })
+  end
+end
+
+minetest.register_node("luxury_decor:kitchen_tap_off", {
+    description = "Kitchen Tap (off)",
     visual_scale = 0.5,
-    mesh = "kitchen_wooden_cabinet.obj",
-    tiles = {"wood_material.png"},
-    --inventory_image = "simple_wooden_table_inv.png",
+    mesh = "kitchen_tap_off.b3d",
+    inventory_image = "kitchen_tap_inv.png",
+    tiles = {"kitchen_tap.png"},
     paramtype = "light",
     paramtype2 = "facedir",
-    groups = {choppy = 3.5},
+    groups = {snappy=1.5},
     drawtype = "mesh",
     collision_box = {
         type = "fixed",
         fixed = {
-            {-0.5, -0.5, -0.5, -0.4, 0.5, 0.5}, -- Left nodebox
-            {0.4, -0.5, -0.5, 0.5, 0.5, 0.5}, -- Right nodebox
-            {-0.4, 0.4, -0.5, 0.5, 0.5, 0.5}, -- Upper nodebox
-            {-0.4, -0.5, -0.6, 0.4, -0.4, 0.5}, -- Downer nodebox
-            {-0.4, -0.4, 0.5, 0.4, -0.4, 0.4}, -- Back nodebox
-            {-0.4, -0.05, -0.5, 0.4, 0.05, 0.4}, -- Shelf Nodebox
-            
-            
+            {-0.05, -0.5, 0.37, 0.05, -0.25, 0.47}
         }
     },
     selection_box = {
         type = "fixed",
         fixed = {
-            {-0.415, -0.415, -0.45, -0.5, 0.42, 0.45}, -- Left nodebox
-            {0.415, -0.415, -0.45, 0.5, 0.42, 0.45}, -- Right nodebox
-            {-0.5, 0.42, -0.45, 0.5, 0.5, 0.45}, -- Upper nodebox
-            {-0.5, -0.42, -0.45, 0.5, -0.5, 0.45}, -- Downer nodebox
-            {-0.45, -0.42, 0.37, 0.45, 0.42, 0.45}, -- Back nodebox
-            {-0.41, -0.037, -0.45, 0.41, 0.037, 0.45}, -- Shelf Nodebox
-            
+            {-0.05, -0.5, 0.37, 0.05, -0.25, 0.47}
         }
     },
-    sounds = default.node_sound_wood_defaults(),
-    on_construct = function (pos)
-        local name = minetest.get_node(pos).name
-        local cabinet_data = {
-            {minetest.get_node(pos).name, pos},
-            --{"box1", "box2"},
-            {
-                ["box1"] = {   
-                    {
-                        name="luxury_decor:kitchen_wooden_cabinet_box",
-                        param1 = minetest.get_node(pos).param1,
-                        param2 = minetest.get_node(pos).param2
-                    },
-                    {x=pos.x, y=pos.y+0.25, z=pos.z},
-                    "closed",
-                    "box_inventory[{"..pos.x..","..pos.y..","..pos.z.."}]", "size[8, 4][nodemeta:"..pos.x..",".. pos.y+0.25 ..","..pos.z..";main;0, 1;8, 3]list[current_player;main;0, 5;8, 3]"
-                    
-                },
-                ["box2"] = {   
-                    {
-                        name="luxury_decor:kitchen_wooden_cabinet_box",
-                        param1 = minetest.get_node(pos).param1,
-                        param2 = minetest.get_node(pos).param2
-                    },
-                    {x=pos.x, y=pos.y-0.25, z=pos.z},
-                    "closed",
-                    "box_inventory[{"..pos.x..","..pos.y..","..pos.z.."}]", "size[8, 4][nodemeta:"..pos.x..",".. pos.y-0.25 ..","..pos.z..";main;0, 1;8, 3]list[current_player;main;0, 5;8, 3]"
-                }
-            }
+    sounds = default.node_sound_metal_defaults(),
+    on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
+        minetest.set_node(pos, {name="luxury_decor:kitchen_tap_on", param1 = node.param1, param2=node.param2})
+    end
+})
+
+local elapsed_num = 0
+local particles_list = {}
+minetest.register_node("luxury_decor:kitchen_tap_on", {
+    description = "Kitchen Tap (on)",
+    visual_scale = 0.5,
+    mesh = "kitchen_tap_on.b3d",
+    inventory_image = "kitchen_tap_inv.png",
+    tiles = {"kitchen_tap.png"},
+    paramtype = "light",
+    paramtype2 = "facedir",
+    groups = {snappy=1.5, not_in_creative_inventory=1},
+    drawtype = "mesh",
+    collision_box = {
+        type = "fixed",
+        fixed = {
+            {-0.05, -0.5, 0.37, 0.05, -0.25, 0.47},
         }
-        cabinets_funcs.put_data_into_cabinet(cabinet_data[1], cabinet_data[2])
-        local name = minetest.get_node(pos).name
-        if not cabinets[name] then
-            cabinets[name] = {}
+    },
+    selection_box = {
+        type = "fixed",
+        fixed = {
+            {-0.05, -0.5, 0.37, 0.05, -0.25, 0.47}
+        }
+    },
+    sounds = default.node_sound_metal_defaults(),
+    on_construct = function (pos)
+        local param2 = minetest.get_node(pos).param2
+        local min_pos = {x=pos.x, y=pos.y-0.34, z=pos.z}
+        local max_pos = {x=pos.x, y=pos.y-0.34, z=pos.z}
+        local vector = minetest.facedir_to_dir(param2)
+        for axle, val in pairs(vector) do
+            if val ~= 0 then
+                if vector[axle] < 0 then
+                    min_pos[axle] = min_pos[axle] - 0.07
+                    max_pos[axle] = max_pos[axle] - 0.08
+                elseif vector[axle] > 0 then
+                    min_pos[axle] = min_pos[axle] + 0.07
+                    max_pos[axle] = max_pos[axle] + 0.08
+                end
+            elseif val == 0 and axle ~= y then
+                min_pos[axle] = min_pos[axle] - 0.02
+                max_pos[axle] = max_pos[axle] + 0.03
+            end
         end
         
-        cabinets[name][pos] = {}
-        cabinets[name][pos][ = {{x=pos.x, y=pos.y+0.25, z=pos.z}, "closed"}
-        kitchen_wooden_cabinets[pos]["box2"] = {{x=pos.x, y=pos.y-0.25, z=pos.z}, "closed"}
-        
-        minetest.add_node({x=pos.x, y=pos.y+0.25, z=pos.z}, "luxury_decor:kitchen_wooden_cabinet_box")
-        minetest.add_node({x=pos.x, y=pos.y-0.25, z=pos.z}, "luxury_decor:kitchen_wooden_cabinet_box")
-    end
-        
-}) 
-
-minetest.register_node("luxury_decor:kitchen_wooden_cabinet_box", {
-    description = "Kitchen Wooden Cabinet Box",
-    visual_scale = 0.5,
-    mesh = "kitchen_wooden_cabinet_box.obj",
-    tiles = {"wood_material.png"},
-    --inventory_image = "simple_wooden_table_inv.png",
-    paramtype = "light",
-    paramtype2 = "facedir",
-    groups = {choppy = 3.5, not_in_creative_inventory=1},
-    drawtype = "mesh",
-    collision_box = {
-        type = "fixed",
-        fixed = {
-            {-0.45, 0.05, -0.475, 0.45, 0.43, 0.48},
-        }
-    },
-    selection_box = {
-        type = "fixed",
-        fixed = {
-            {-0.45, 0.05, -0.475, 0.45, 0.43, 0.48},
-        }
-    },
-    sounds = default.node_sound_wood_defaults(),
-    on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
-        local meta = minetest.get_meta(pos)
-        --minetest.debug(meta[1])
-        --minetest.debug(meta[2])
-        local cabinet_name, cabinet_pos = meta:get_string(meta[1]), meta:get_string(meta[2])
-        
-        if cabinet_name ~= nil or cabinet_name ~= "" then
-           local cabinet_data = cabinets[cabinet_name][cabinet_pos]
-           for box_name, box in ipairs(cabinet_data) do
-              if cabinet_data[box_name][1].name == node.name then
-                 local cabinet = {meta[1], meta[2]}
-                 local cabinet_box = {box_name, cabinet_data[box_name][1].name, cabinet_data[box_name][2], cabinet_data[box_name][3], cabinet_data[box_name][4]}
-                 local offset = {x=0, y=0, z=-0.7}
-                 cabinets_funcs.open(clicker:get_player_name(), cabinet, cabinets, cabinet_box, offset, {"main", {}, "box_formspec", cabinets_data[box_name][4][4]})
-                 
-                 break
-              end
-           end
+        local timer = minetest.get_node_timer(pos)
+        local timeout = math.random(20, 35)
+        local elapsed = timeout / 2
+        timer:set(timeout, elapsed)
+        timer:start(timeout)
+        for i = 1, 5 do
+            local particle_id = minetest.add_particlespawner({
+                amount=45,
+                time=0,
+                minpos=min_pos,
+                maxpos=max_pos,
+                minvel={x=0, y=-0.6, z=0},
+                maxvel={x=0, y=-0.9, z=0},
+                minacc={x=0, y=-0.7,z=0},
+                maxacc={x=0, y=-0.10, z=0},
+                minexptime=3,
+                maxexptime=6,
+                minsize=0.1,
+                maxsize=0.4,
+                collisiondetection=true,
+                collision_removal=true,
+                object_collision=true,
+                vertical=true,
+                texture="default_water.png"
+            })
+            particles_list[i] = particle_id
+        end
+        handle = minetest.sound_play("tap_on", {
+            pos = pos,
+            max_hear_distance = 15,
+            loop = true,
+        })
+    end,
+    on_timer = function (pos, elapsed)
+        local nodes = minetest.find_nodes_in_area({x=pos.x, y=pos.y-0.5, z=pos.z}, {x=pos.x, y=pos.y-20.5, z=pos.z}, {"air"})
+        for _, node_pos in ipairs(nodes) do
+            if minetest.get_node(node_pos).name == "air" then
+                if minetest.get_node({x=node_pos.x, y=node_pos.y-1, z=node_pos.z}).name ~= "air" then
+                    minetest.set_node(node_pos, {name="default:water_flowing"})
+                end
+            elseif minetest.get_node(node_pos).name == "default:water_flowing" then
+                minetest.set_node(node_pos, {name="default:water_source"})
+            end
         end
     end,
-    
-    on_receive_fields = function (pos, formname, fields, sender)
-        if fields.quit then
-           local meta = minetest.get_meta(pos)
-           local cabinet_name, cabinet_pos, cabinet_data = meta:get_string(meta[1]), meta:get_string(meta[2]), cabinets[cabinet_name][cabinet_pos]
-           for box_name, box in ipairs(cabinet_data) do
-              if cabinet_data[box_name][1].name == node.name then
-                  local cabinet_box = {box_name, cabinet_data[box_name][1].name, cabinet_data[box_name][2], cabinet_data[box_name][3], cabinet_data[box_name][4]}
-                  
-                  cabinets_funcs.close(sender:get_player_name(), {meta[1], meta[2]}, cabinets, cabinet_box, offset)
-                    
-                  break
-              end
-           end
+    on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
+        local timer = minetest.get_node_timer(pos)
+        timer:stop()
+        minetest.sound_stop(handle)
+        for _, particle_id in ipairs(particles_list) do
+            minetest.delete_particlespawner(particle_id)
         end
-    end        
-})]]
+        minetest.set_node(pos, {name="luxury_decor:kitchen_tap_off", param1 = node.param1, param2=node.param2})
+    end,
+    after_destruct = function (pos, oldnode)
+        minetest.sound_stop(handle)
+        for _, particle_id in ipairs(particles_list) do
+            minetest.delete_particlespawner(particle_id)
+        end
+    end
+})
 
+for cab, cab_boxes in pairs(cabs_table["fridge"]) do
+  if cab ~= "inv_list" then
+    minetest.register_node("luxury_decor:"..cab, {
+        description = "Fridge",
+        visual_scale = 0.5,
+        inventory_image = "fridge_inv.png",
+        mesh = cab..".b3d",
+        tiles = {"fridge.png"},
+        paramtype = "light",
+        paramtype2 = "facedir",
+        groups = {snappy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
+        drawtype = "mesh",
+        collision_box = {
+            type = "fixed",
+            fixed = {
+                {-0.5, -0.5, -0.5, 0.5, 0.6, 0.5},
+                {-0.5, 0.6, -0.435, 0.5, 1.99, 0.5}
+            }
+        },
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-0.5, -0.5, -0.5, 0.5, 0.6, 0.5},
+                {-0.5, 0.6, -0.435, 0.5, 1.99, 0.5}
+            }
+        },
+        sounds = default.node_sound_wood_defaults(),
+        on_construct = function (pos)
+            local name = minetest.get_node(pos).name
+            local img_button = "image_button[0.5, 0.5;3, 6;" .. cab_boxes[1].img_button ..";" .. cab_boxes[1].button .. ";]"
+            
+            local form = "size[10,11.5]" .. img_button 
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" and drawer.mode == "opened" then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    if not cabs_table["fridge"].inv_list[num][str_pos] then
+                       cabs_table["fridge"].inv_list[num][str_pos] = {}
+                   end
+                   local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";3.5, 0.5;6, 6]"
+                   form = form .. list
+                end
+            end
+            
+            form = form .. "list[current_player;main;1,7;8,4;]"
+            local meta = minetest.get_meta(pos)
+            meta:set_string("formspec", form)
+            
+            local inv = meta:get_inventory()
+            for num2, drawer2 in pairs(cab_boxes) do
+                if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
+                    local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+                    inv:set_list(cab_boxes[num2].listname, cabs_table["fridge"].inv_list[num2][str_pos])
+                    inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
+                end
+                
+                
+            end
+            --[[local cabs_items_list = {}
+            local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
+            local cab_num = 
+            for num, list in pairs(kit_wood_cabs.inv_list[cab_num]) do
+                cabs_items_list[num] = list[str_pos]
+                for num2, list2 in pairs(list) do
+                    for num3, itemstack in pairs(list2) do
+                         if itemstack ~= nil then
+                             minetest.debug(dump(cabs_items_list[num]))
+                             cabs_items_list[num][num2][num3] = itemstack:get_name()
+                         end
+                         
+                    end
+                end
+            end
+            local inv_lists = {}
+            for num, list in pairs(inv:get_lists()) do
+                inv_lists[num] = list
+                for num2, itemstack in pairs(list) do
+                    if itemstack ~= nil then
+                        inv_lists[num][num2] = itemstack:get_name()
+                    end
+                end
+            end]]
+            --minetest.debug(dump(cabs_items_list))
+            --minetest.debug(dump(inv_lists))
+            inv:set_size("main", 8*4)
+        end,
+        on_receive_fields = function (pos, formname, fields, sender)
+            local name = minetest.get_node(pos).name
+            local generalized_name 
+            if string.find(name, "fridge") then
+                generalized_name = string.sub(name, 14, -8)
+            else
+                generalized_name = string.sub(name, 14, -3)
+            end
+            local meta = minetest.get_meta(pos)
+            local defined_mode = cabinets.define_mode(fields, name)
+            local button_name
+            for num, drawer in pairs(cab_boxes) do
+                if type(drawer) == "table" then
+                    local name = drawer.button
+                    if fields[name] then
+                        button_name = name
+                        break
+                    end
+                end
+            end
+            
+            if defined_mode == "closed" then
+               cabinets.open(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"doors_steel_door_open"})
+            elseif defined_mode == "opened" then
+               cabinets.close(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"doors_steel_door_close"})
+            end
+            
+                   
+        end,
+        after_dig_node = function (pos, oldnode, oldmetadata, digger)
+            local name = string.sub(oldnode.name, 14)
+            local generalized_name 
+            if string.find(name, "fridge") then
+                generalized_name = string.sub(name, 1, -8)
+            else
+                generalized_name = string.sub(name, 1, -3)
+            end
+            
+            if cabs_table[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+                    for cab_pos, drawer_list in pairs(drawer_lists) do
+                        local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
+                        if cab_pos == str_pos then
+                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                        end
+                    end
+                end
+            end
+            
+        end
+    })
+  end
+end
 minetest.register_node("luxury_decor:cooker", {
     description = "Cooker",
     visual_scale = 0.5,
     mesh = "cooker.obj",
+    inventory_image = "cooker_inv.png",
     tiles = {"cooker.png"},
     paramtype = "light",
     paramtype2 = "facedir",
@@ -548,5 +1694,7 @@ minetest.register_node("luxury_decor:cooker", {
             {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
         }
     },
-    sounds = default.node_sound_stone_defaults()
+    sounds = default.node_sound_stone_defaults()--[[,
+    on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)]]
+        
 })

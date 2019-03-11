@@ -125,11 +125,12 @@ minetest.register_node("luxury_decor:simple_wooden_table", {
     sounds = default.node_sound_wood_defaults()
 })
 
-minetest.register_node("luxury_decor:luxury_wooden_table", {
+minetest.register_node("luxury_decor:luxury_metallic_table", {
     description = "Luxury Wooden Table",
     visual_scale = 0.5,
-    mesh = "luxury_wooden_table.obj",
-    tiles = {"luxury_wooden_table.png"},
+    mesh = "luxury_metallic_table.obj",
+    tiles = {"luxury_metallic_table.png"},
+    inventory_image = "luxury_metallic_table_inv.png",
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {choppy = 2.5},
@@ -149,4 +150,58 @@ minetest.register_node("luxury_decor:luxury_wooden_table", {
         }
     },
     sounds = default.node_sound_wood_defaults()
+})
+
+minetest.register_node("luxury_decor:kitchen_wooden_table", {
+    description = "Kitchen Wooden Table",
+    visual_scale = 0.5,
+    mesh = "kitchen_wooden_table.obj",
+    tiles = {"bright_wood_material.png"},
+    inventory_image = "kitchen_wooden_table_inv.png",
+    paramtype = "light",
+    paramtype2 = "facedir",
+    groups = {choppy = 2},
+    drawtype = "mesh",
+    collision_box = {
+        type = "fixed",
+        fixed = {
+            {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
+            --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
+            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
+        }
+    },
+    selection_box = {
+        type = "fixed",
+        fixed = {
+            {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        }
+    },
+    sounds = default.node_sound_wood_defaults()
+})
+
+minetest.register_craft({
+    output = "luxury_decor:kitchen_wooden_table",
+    recipe = {
+        {"luxury_decor:wooden_plank", "luxury_decor:wooden_plank", "luxury_decor:wooden_plank"},
+        {"luxury_decor:wooden_plank", "default:stick", "luxury_decor:wooden_plank"},
+        {"default:stick", "", "default:stick"}
+    }
+})
+
+minetest.register_craft({
+    output = "luxury_decor:luxury_metallic_table",
+    recipe = {
+        {"luxury_decor:jungle_wooden_plank", "luxury_decor:jungle_wooden_plank", "luxury_decor:jungle_wooden_plank"}, 
+        {"default:copper_ingot", "", "default:copper_ingot"},
+        {"", "", ""}
+    }
+})
+
+minetest.register_craft({
+    output = "luxury_decor:simple_wooden_table",
+    recipe = {
+        {"luxury_decor:jungle_wooden_plank", "luxury_decor:jungle_wooden_plank", "luxury_decor:jungle_wooden_plank"}, 
+        {"default:stick", "luxury_decor:jungle_wooden_plank", "default:stick"},
+        {"", "", ""}
+    }
 })

@@ -1,28 +1,31 @@
-minetest.register_node("luxury_decor:laminate", {
-    description = "Floor tile (laminate)",
-    tiles = {"laminate.png"},
-    paramtype = "light",
-    groups = {snappy=2},
-    drawtype = "nodebox",
-    node_box = {
-        type = "fixed",
-        fixed = {
-            {-0.5, -0.5, -0.5, 0.5, -0.45, 0.5}
-        }
-    },
-    selection_box = {
-        type = "fixed",
-        fixed = {
-            {-0.5, -0.5, -0.5, 0.5, -0.45, 0.5}
-        }
-    },
-    sounds = default.node_sound_leaves_defaults()
-})
-    
+for _, material in ipairs({"", "jungle_", "pine_"}) do
+    minetest.register_node("luxury_decor:" .. material .. "laminate", {
+        description = "Floor tile (" .. material .. "laminate)",
+        tiles = {material .. "laminate.png"},
+        paramtype = "light",
+        groups = {snappy=2},
+        drawtype = "nodebox",
+        node_box = {
+            type = "fixed",
+            fixed = {
+                {-0.5, -0.5, -0.5, 0.5, -0.45, 0.5}
+            }
+        },
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-0.5, -0.5, -0.5, 0.5, -0.45, 0.5}
+            }
+        },
+        sounds = default.node_sound_leaves_defaults()
+    })
+end
+
 minetest.register_node("luxury_decor:simple_flowerpot", {
     description = "Simple Flowerpot",
     visual_scale = 0.5,
-    mesh = "simple_flowerpot.obj",
+    mesh = "simple_flowerpot.b3d",
+    inventory_image = "simple_flowerpot_inv.png",
     tiles = {"simple_flowerpot.png"},
     paramtype = "light",
     paramtype2 = "facedir",
@@ -48,7 +51,7 @@ minetest.register_node("luxury_decor:simple_flowerpot", {
 minetest.register_node("luxury_decor:luxury_flowerpot", {
     description = "Luxury Flowerpot",
     visual_scale = 0.5,
-    mesh = "luxury_flowerpot.obj",
+    mesh = "luxury_flowerpot.b3d",
     inventory_image = "luxury_flowerpot_inv.png",
     tiles = {"luxury_flowerpot.png"},
     paramtype = "light",

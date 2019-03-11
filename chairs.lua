@@ -5,7 +5,7 @@ function chairs.attach_player_to_node (attacher, node, node_pos, pos)
     attacher:set_pos(pos)
     local phys_over = attacher:get_physics_override()
     attacher:set_physics_override({speed=0, jump=0})
-    attacher:get_meta():set_string("is_attached", minetest.serialize({node, node_pos=node_pos, pos, old_phys_over = phys_over}))
+    attacher:get_meta():set_string("is_attached", minetest.serialize({node=node, node_pos=node_pos, pos, old_phys_over = phys_over}))
 end
 
 function chairs.disattach_player_from_node(disattacher)
@@ -49,17 +49,19 @@ end
 
 
 function chairs.set_look_dir(player)
-    local is_attached = player:get_meta():get_string("is_attached")
+    local is_attached = minetest.deserialize(player:get_meta():get_string("is_attached"))
     if is_attached ~= nil or is_attached ~= "" then
+        minetest.debug(dump(is_attached))
         local node_dir = is_attached.node.param2
         local player_dir = player:get_look_dir()
         local degrees = 0
         local radians = 0
         while node_dir ~= player_dir do
-            degrees = degrees + 57.2958
-            radians = degrees * math.pi / 180
+            degrees = degrees + 90
+            radians = math.floor(math.rad(degrees))
             player:set_look_horizontal(radians)
             player_dir = player:get_look_dir()
+            minetest.debug(dump(player_dir))
         end
     else
         return
@@ -129,8 +131,8 @@ minetest.register_node("luxury_decor:kitchen_wooden_chair", {
     collision_box = {
         type = "fixed",
         fixed = {
-            {-0.3, -0.5, -0.25, 0.45, 0.22, 0.38},
-            {-0.3, -0.5, 0.38, 0.45, 1, 0.48}
+            {-0.43, -0.45, -0.4, 0.43, 0.39, 0.35},
+            {-0.43, -0.45, 0.35, 0.43, 1.3, 0.46}
             --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
             {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
         }
@@ -138,8 +140,8 @@ minetest.register_node("luxury_decor:kitchen_wooden_chair", {
     selection_box = {
         type = "fixed",
         fixed = {
-            {-0.3, -0.5, -0.25, 0.45, 0.22, 0.38},
-            {-0.3, -0.5, 0.38, 0.45, 1, 0.48}
+            {-0.43, -0.45, -0.4, 0.43, 0.39, 0.35},
+            {-0.43, -0.45, 0.35, 0.43, 1.3, 0.46}
         }
     },
     sounds = default.node_sound_wood_defaults(),
@@ -164,7 +166,6 @@ minetest.register_node("luxury_decor:kitchen_wooden_chair", {
         local is_attached = minetest.deserialize(meta:get_string("is_attached"))
         if is_attached == nil or is_attached == "" then
             chairs.sit_player(clicker, node, pos, {{{x=81, y=81}, frame_speed=15, frame_blend=0}})
-            chairs.set_look_dir(clicker)
             
         elseif is_attached ~= nil or is_attached ~= "" then
             chairs.standup_player(clicker, pos)
@@ -223,7 +224,6 @@ minetest.register_node("luxury_decor:luxury_wooden_chair_with_cushion", {
         local is_attached = minetest.deserialize(meta:get_string("is_attached"))
         if is_attached == nil or is_attached == "" then
             chairs.sit_player(clicker, node, pos, {{{x=81, y=81}, frame_speed=15, frame_blend=0}})
-            chairs.set_look_dir(clicker)
             
         elseif is_attached ~= nil or is_attached ~= "" then
             chairs.standup_player(clicker, pos)
@@ -282,7 +282,6 @@ minetest.register_node("luxury_decor:decorative_wooden_chair", {
         local is_attached = minetest.deserialize(meta:get_string("is_attached"))
         if is_attached == nil or is_attached == "" then
             chairs.sit_player(clicker, node, pos, {{{x=81, y=81}, frame_speed=15, frame_blend=0}})
-            chairs.set_look_dir(clicker)
             
         elseif is_attached ~= nil or is_attached ~= "" then
             chairs.standup_player(clicker, pos)
@@ -319,7 +318,7 @@ minetest.register_node("luxury_decor:round_wooden_chair", {
     sounds = default.node_sound_wood_defaults(),
     on_construct = function (pos)
         local meta = minetest.get_meta(pos)
-        meta:set_string("seats_range", minetest.serialize({[1] = {is_busy={bool=false, player=nil}, pos = {x = pos.x, y = pos.y+0.2, z = pos.z}}}))
+        meta:set_string("seats_range", minetest.serialize({[1] = {is_busy={bool=false, player=nil}, pos = {x = pos.x, y = pos.y+0.4, z = pos.z}}}))
     end,
     after_dig_node = function (pos, oldnode, oldmetadata, digger)
         local seats = minetest.deserialize(oldmetadata.fields.seats_range)
@@ -337,7 +336,6 @@ minetest.register_node("luxury_decor:round_wooden_chair", {
         local is_attached = minetest.deserialize(meta:get_string("is_attached"))
         if is_attached == nil or is_attached == "" then
             chairs.sit_player(clicker, node, pos, {{{x=81, y=81}, frame_speed=15, frame_blend=0}})
-            chairs.set_look_dir(clicker)
             
         elseif is_attached ~= nil or is_attached ~= "" then
             chairs.standup_player(clicker, pos)
@@ -346,7 +344,51 @@ minetest.register_node("luxury_decor:round_wooden_chair", {
     end
 })
 
+for _, material in ipairs({"", "jungle", "pine_"}) do
+    for i = 1, 9 do
+        minetest.register_craft({
+            type = "shapeless",
+            output = "luxury_decor:" .. material .. " wooden_plank",
+            recipe = {"default:" .. material .. "wood"}
+        })
+    end
+end
 
+minetest.register_craft({
+    output = "luxury_decor:kitchen_wooden_chair",
+    recipe = {
+        {"luxury_decor:wooden_plank", "default:stick", "default:stick"},
+        {"luxury_decor:wooden_plank", "default:stick", ""},
+        {"luxury_decor:wooden_plank", "default:stick", ""}
+    }
+})
+
+minetest.register_craft({
+    output = "luxury_decor:luxury_wooden_chair_with_cushion",
+    recipe = {
+        {"luxury_decor:jungle_wooden_plank", "default:stick", "default:stick"},
+        {"luxury_decor:jungle_wooden_plank", "default:stick", "wool:white"},
+        {"luxury_decor:jungle_wooden_plank", "default:stick", ""}
+    }
+})
+
+minetest.register_craft({
+    output = "luxury_decor:round_wooden_chair",
+    recipe = {
+        {"luxury_decor:pine_wooden_plank", "default:stick", "default:stick"},
+        {"luxury_decor:pine_wooden_plank", "default:stick", ""},
+        {"luxury_decor:pine_wooden_plank", "default:stick", ""}
+    }
+})
+
+minetest.register_craft({
+    output = "luxury_decor:decorative_wooden_chair",
+    recipe = {
+        {"luxury_decor:jungle_wooden_plank", "default:stick", "default:stick"},
+        {"luxury_decor:jungle_wooden_plank", "default:stick", ""},
+        {"luxury_decor:jungle_wooden_plank", "default:stick", ""}
+    }
+})
 --[[minetest.register_on_joinplayer(function (player)
     local is_attached = minetest.deserialize(player:get_meta():get_string("is_attached"))
     --minetest.debug(dump(is_attached))

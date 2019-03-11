@@ -1,3 +1,4 @@
+cabs_table = {}
 local modpath = minetest.get_modpath("luxury_decor")
 
 dofile(modpath.."/bedroom.lua")
@@ -9,3 +10,4 @@ dofile(modpath.."/music.lua")
 dofile(modpath.."/redecorating.lua")
 dofile(modpath.."/shelves.lua")
 dofile(modpath.."/living_room.lua")
+dofile(modpath.."/materials.lua")
