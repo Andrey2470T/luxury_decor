@@ -150,9 +150,9 @@ local sofas_collision_boxes = {
 
 
 local footstools_collision_boxes = {
-    ["small"] = {{-0.3, -0.5, -0.3, 0.3, 0, 0.3}},
-    ["middle"] = {{-0.3, -0.5, 0.3, 0.3, 0, -1.1}},
-    ["long"] = {{-0.3, -0.5, 0.3, 0.3, 0, 1.8}}
+    ["small"] = {{-0.35, -0.5, -0.35, 0.35, 0.05, 0.35}},
+    ["middle"] = {{-0.35, -0.5, 0.23, 0.35, 0.05, -1.23}},
+    ["long"] = {{-0.35, -0.5, 0.1, 0.35, 0.05, -2.1}}
 }
 
 
@@ -701,7 +701,7 @@ for ind, footstool_type in pairs({"small", "middle", "long"}) do
         minetest.register_node("luxury_decor:simple_" .. color .. "_" .. footstool_type .. "_footstool", {
             description = minetest.colorize(sofas_rgb_colors[color], "Simple " .. string.upper(color) .. " " .. string.upper(footstool_type) .. " Footstool"),
             visual_scale = 0.5,
-            mesh = "simple_"..footstool_type.."_footstool.obj",
+            mesh = "simple_"..footstool_type.."_footstool.b3d",
             tiles = {"simple_sofa.png^(simple_sofa_2.png^[colorize:" .. rgb_code .. ")"},
             paramtype = "light",
             paramtype2 = "facedir",
@@ -725,34 +725,47 @@ for ind, footstool_type in pairs({"small", "middle", "long"}) do
                         if "dye:" .. color2 == itemstack:get_name() then
                             itemstack:take_item()
                             minetest.remove_node(pos)
-                            minetest.set_node(pos, {name="luxury_decor:simple_" .. color2 .. "_" .. footstool_type .. "_footstool"})
+                            minetest.set_node(pos, {name="luxury_decor:simple_" .. color2 .. "_" .. footstool_type .. "_footstool", param1=node.param1, param2=node.param2})
                         end
                     end
                     
                         
                 elseif string.find(itemstack:get_name(), "luxury_decor:simple_" .. color .. "_small_footstool") then
-                    local dir = clicker:get_look_dir()
+                    local node_dir = minetest.facedir_to_dir(node.param2)
                     local footstools_types_list = {"small", "middle", "long"}
-                    if pointed_thing.under.x < pointed_thing.above.x and dir.x < 0 and string.find(node.name, "_long_") == nil then
-                        itemstack:take_item()
-                        minetest.remove_node(pos)
-                        minetest.set_node({x=pos.x+1, y=pos.y, z=pos.z}, {name="luxury_decor:simple_" .. color .. "_" .. footstools_types_list[ind+1] .. "_footstool"})
-                    elseif pointed_thing.under.x > pointed_thing.above.x and dir.x > 0 and string.find(node.name, "_long_") == nil then
-                        itemstack:take_item()
-                        minetest.remove_node(pos)
-                        minetest.set_node({x=pos.x-1, y=pos.y, z=pos.z}, {name="luxury_decor:simple_" .. color .. "_" .. footstools_types_list[ind+1] .. "_footstool"})
-                    
-                    elseif pointed_thing.under.y > pointed_thing.above.y and dir.y > 0 and string.find(node.name, "_long_") == nil then
-                        itemstack:take_item()
-                        minetest.remove_node(pos)
-                        minetest.set_node({x=pos.x, y=pos.y, z=pos.z-1}, {name="luxury_decor:simple_" .. color .. "_" .. footstools_types_list[ind+1] .. "_footstool"})
-                    elseif pointed_thing.under.y < pointed_thing.above.y and dir.y > 0 and string.find(node.name, "_long_") == nil then
-                        itemstack:take_item()
-                        minetest.remove_node(pos)
-                        minetest.set_node({x=pos.x, y=pos.y, z=pos.z+1}, {name="luxury_decor:simple_" .. color .. "_" .. footstools_types_list[ind+1] .. "_footstool"})
-                    
+                    local new_pos = pos
+                    local new_vector = node_dir
+                    if string.find(node.name, footstools_types_list[1]) then
+                        for axle, val in pairs(pointed_thing.above) do
+                            if new_vector[axle] ~= 0 then new_vector[axle] = 0 end
+                            if val ~= pointed_thing.under[axle] and axle ~= y then
+                                if val > pos[axle] then
+                                    new_vector[axle] = -1
+                                elseif val < pos[axle] then
+                                    new_vector[axle] = 1
+                                end
+                                itemstack:take_item()
+                                minetest.set_node(pos, {name="luxury_decor:simple_" .. color .. "_middle_footstool", param1=node.param1, param2=minetest.dir_to_facedir(new_vector)})
+                            end
+                        end
+                    elseif string.find(node.name, footstools_types_list[2]) then
+                        for axle, val in pairs(pointed_thing.above) do
+                            if val ~= pointed_thing.under[axle] and axle ~= y then
+                                if node_dir[axle] > 0 then
+                                    new_pos[axle] = new_pos[axle] - 1
+                                    itemstack:take_item()
+                                    minetest.remove_node(pos)
+                                    minetest.set_node(new_pos, {name="luxury_decor:simple_" .. color .. "_long_footstool", param1=node.param1, param2=node.param2})
+                                elseif node_dir[axle] < 0 then
+                                    itemstack:take_item()
+                                    --minetest.remove_node(pos)
+                                    minetest.set_node(pos, {name="luxury_decor:simple_" .. color .. "_long_footstool", param1=node.param1, param2=node.param2})
+                                end
+                            end
+                        end
                     end
                 end
+                                    
             end
         })
     end

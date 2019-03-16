@@ -19,6 +19,12 @@ for _, material in ipairs({"", "jungle_", "pine_"}) do
         },
         sounds = default.node_sound_leaves_defaults()
     })
+    
+    minetest.register_craft({
+        type = "shapeless",
+        output = "luxury_decor:" .. material .. "laminate",
+        recipe = {"luxury_decor:" .. material .. "wooden_plank", "luxury_decor:" .. material .. "wooden_plank"}
+    })
 end
 
 minetest.register_node("luxury_decor:simple_flowerpot", {

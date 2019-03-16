@@ -67,6 +67,7 @@ for bedside_t, bedside_ts in pairs(cabs_table["simple_wooden_bedside_table"]) do
         tiles = {"simple_bedside_table.png"},
         paramtype = "light",
         paramtype2 = "facedir",
+        drop = "luxury_decor:simple_wooden_bedside_table_1",
         groups = {choppy=3, not_in_creative_inventory = bedside_ts["not_in_creative_inventory"]},
         drawtype = "mesh",
         collision_box = {
@@ -181,8 +182,37 @@ for bedside_t, bedside_ts in pairs(cabs_table["simple_wooden_bedside_table"]) do
                     
         end
     })
+    
+    if not bedside_ts.not_in_creative_inventory then
+        minetest.register_craft({
+            output = "luxury_decor:" .. bedside_t,
+            recipe = {
+                {"luxury_decor:pine_wooden_board", "luxury_decor:bedside_drawer", ""},
+                {"luxury_decor:pine_wooden_board", "luxury_decor:bedside_drawer", ""},
+                {"luxury_decor:pine_wooden_board", "luxury_decor:bedside_drawer", ""}
+            }
+        })
+                
+    end
   end
 end
+
+minetest.register_craftitem("luxury_decor:bedside_drawer", {
+    description = "Bedside Drawer",
+    inventory_image = "bedside_drawer.png",
+    stack_max = 99
+})
+
+minetest.register_craft({
+    output = "luxury_decor:bedside_drawer",
+    recipe = {
+        {"luxury_decor:pine_wooden_board", "luxury_decor:pine_wooden_board", ""},
+        {"luxury_decor:pine_wooden_board", "", ""},
+        {"default:stick", "", ""}
+    }
+})
+
+
 local rgb_colors = {
     ["black"] = "#000000",
     ["red"] = "#FF0000",
@@ -225,16 +255,25 @@ for color, rgb_code in pairs(rgb_colors) do
             fixed = {
                 {-0.5, -0.5, -1.44, 0.5, 0.3, 0.46},
                 {-0.5, -0.5, 0.46, 0.5, 1.5, 0.65},
-                {-0.5, -0.5, -1.44, 0.5, 1.5, -1.65}
+                {-0.5, -0.5, -1.44, 0.5, 0.3, -1.65}
             }
         },
         sounds = default.node_sound_wood_defaults(),
         on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
-            if string.find(itemstack:get_name(), "royal_single_bed") then
+            --[[if string.find(itemstack:get_name(), "royal_single_bed") then
                 local color1 = string.sub(node.name, 32, -1)
                 local color2 = string.sub(itemstack:get_name(), 32, -1)
+                local node_dir = minetest.facedir_to_dir(node.param2)
+                local axles_list = {""}
+                local exact_pos = minetest.pointed_thing_to_face_pos(clicker, pointed_thing)
                 if color1 == color2 then
                     local axle
+                    for axle, val in pairs(pointed_thing.above) do
+                        if val ~= pointed_thing.under[axle] and axle ~= y then
+                            if exact_pos[axle] > pos[axle] then
+                                minetest.set_node(pos, )
+                                
+                            
                     for axis, vector in pairs(minetest.facedir_to_dir(node.param2)) do
                         if vector ~= 0 then
                            axle = axis
@@ -245,7 +284,7 @@ for color, rgb_code in pairs(rgb_colors) do
                     local new_pos = pos
                     for axis, val in pairs(pointed_thing.above) do
                         if val ~= pointed_thing.under and axis ~= axle then
-                           if exact_pos[axis] < pos[axis] then
+                           if exact_pos[axis]  pos[axis] then
                                new_pos[axis] = new_pos[axis] -1
                            end
                            
@@ -253,8 +292,8 @@ for color, rgb_code in pairs(rgb_colors) do
                            minetest.set_node(new_pos, {name="luxury_decor:royal_double_bed_" .. color, param1=node.param1, param2=node.param2})
                         end
                     end
-                end
-            elseif string.find(itemstack:get_name(), "dye:") then
+                end]]
+            if string.find(itemstack:get_name(), "dye:") then
                 local color_dye = string.sub(itemstack:get_name(), 5)
                 minetest.remove_node(pos)
                 minetest.set_node(pos, {name="luxury_decor:royal_single_bed_" .. color_dye, param1=node.param1, param2=node.param2})
@@ -263,6 +302,15 @@ for color, rgb_code in pairs(rgb_colors) do
             end
             
         end
+    })
+    
+    minetest.register_craft({
+        output = "luxury_decor:royal_single_bed_" .. color,
+        recipe = {
+            {"luxury_decor:brass_stick", "luxury_decor:brass_stick", "luxury_decor:brass_stick"},
+            {"luxury_decor:brass_stick", "luxury_decor:brass_stick", "default:gold_ingot"},
+            {"wool:white", "default:diamond", "dye:" .. color}
+        }
     })
     
     minetest.register_node("luxury_decor:royal_double_bed_" .. color, {
@@ -302,4 +350,11 @@ for color, rgb_code in pairs(rgb_colors) do
             end
         end
     })
+    
+    minetest.register_craft({
+        type = "shapeless",
+        output = "luxury_decor:royal_double_bed_" .. color,
+        recipe = {"luxury_decor:royal_single_bed_" .. color, "luxury_decor:royal_single_bed_" .. color}
+    })
 end
+

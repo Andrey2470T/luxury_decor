@@ -369,6 +369,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet"]) do
         tiles = {"simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
+        drop = "luxury_decor:kitchen_wooden_cabinet_1",
         groups = {choppy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
         drawtype = "mesh",
         collision_box = {
@@ -496,6 +497,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_door"]) do
         tiles = {"simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
+        drop = "luxury_decor:kitchen_wooden_cabinet_with_door_1",
         groups = {choppy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
         drawtype = "mesh",
         collision_box = {
@@ -619,6 +621,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_door_and_dra
         tiles = {"simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
+        drop = "luxury_decor:kitchen_wooden_cabinet_with_door_and_drawer_1",
         groups = {choppy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
         drawtype = "mesh",
         collision_box = {
@@ -747,6 +750,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_two_doors"])
         tiles = {"simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
+        drop = "luxury_decor:kitchen_wooden_cabinet_with_two_doors_1",
         groups = {choppy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
         drawtype = "mesh",
         collision_box = {
@@ -870,6 +874,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_two_doors_an
         tiles = {"simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
+        drop = "luxury_decor:kitchen_wooden_cabinet_with_two_doors_and_drawer_1",
         groups = {choppy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
         drawtype = "mesh",
         collision_box = {
@@ -998,6 +1003,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_half_cabinet"]) do
         tiles = {"simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
+        drop = "luxury_decor:kitchen_wooden_half_cabinet_1",
         groups = {choppy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
         drawtype = "mesh",
         collision_box = {
@@ -1121,6 +1127,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_threedrawer_cabinet"]) do
         tiles = {"simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
+        drop = "luxury_decor:kitchen_wooden_threedrawer_cabinet_1",
         groups = {choppy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
         drawtype = "mesh",
         collision_box = {
@@ -1248,6 +1255,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_sink"]) do
         tiles = {"simple_kitchen_cabinet_with_sink.png"},
         paramtype = "light",
         paramtype2 = "facedir",
+        drop = "luxury_decor:kitchen_wooden_cabinet_with_sink_1",
         groups = {choppy=3, snappy=2, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
         drawtype = "mesh",
         collision_box = {
@@ -1437,6 +1445,7 @@ minetest.register_node("luxury_decor:kitchen_tap_on", {
     tiles = {"kitchen_tap.png"},
     paramtype = "light",
     paramtype2 = "facedir",
+    drop = "luxury_decor:kitchen_tap_off",
     groups = {snappy=1.5, not_in_creative_inventory=1},
     drawtype = "mesh",
     collision_box = {
@@ -1544,6 +1553,7 @@ for cab, cab_boxes in pairs(cabs_table["fridge"]) do
         tiles = {"fridge.png"},
         paramtype = "light",
         paramtype2 = "facedir",
+        drop = "luxury_decor:fridge_closed",
         groups = {snappy=3, not_in_creative_inventory = cab_boxes["not_in_creative_inventory"]},
         drawtype = "mesh",
         collision_box = {
