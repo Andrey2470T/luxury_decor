@@ -124,7 +124,7 @@ minetest.register_node("luxury_decor:wall_glass_lamp_off", {
     sounds = default.node_sound_wood_defaults(),
     on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
         minetest.remove_node(pos)
-        minetest.set_node(pos, {name="luxury_decor:wall_glass_lamp_on", param2 = minetest.get_node(pos).param2})
+        minetest.set_node(pos, {name="luxury_decor:wall_glass_lamp_on", param2 = node.param2})
     end
 }) 
 
@@ -157,6 +157,6 @@ minetest.register_node("luxury_decor:wall_glass_lamp_on", {
     sounds = default.node_sound_wood_defaults(),
     on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
         minetest.remove_node(pos)
-        minetest.set_node(pos, {name="luxury_decor:wall_glass_lamp_off", param2 = minetest.get_node(pos).param2})
+        minetest.set_node(pos, {name="luxury_decor:wall_glass_lamp_off", param2 = node.param2})
     end
 }) 
