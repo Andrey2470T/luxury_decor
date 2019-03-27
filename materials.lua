@@ -103,11 +103,11 @@ minetest.register_ore({
     ore_type = "scatter",
     ore = "luxury_decor:zinc_ore",
     wherein = "default:stone",
-    clust_scarcity = 200,
+    clust_scarcity = 100,
     clust_num_ores = 5,
     clust_size = 3,
     height_min = -31000,
-    height_max = -40
+    height_max = -125
 })
 
 minetest.register_craft({

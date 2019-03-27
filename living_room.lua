@@ -122,28 +122,28 @@ local sofas_rgb_colors = {
 
 local sofas_collision_boxes = {
     ["1"] = {
-        {-0.34, -0.45, -0.4, 0.34, 0.05, 0.35}, -- Lower box
-        {-0.34, -0.45, 0.35, 0.34, 0.55, 0.49}, -- Back box
-        {-0.34, -0.45, -0.4, -0.51, 0.3, 0.49}, -- Right box
-        {0.34, -0.45, -0.4, 0.51, 0.3, 0.49} -- Left box
+        {-0.34, -0.5, -0.4, 0.34, 0.05, 0.35}, -- Lower box
+        {-0.34, -0.5, 0.35, 0.34, 0.55, 0.49}, -- Back box
+        {-0.34, -0.5, -0.5, -0.51, 0.2, 0.49}, -- Right box
+        {0.34, -0.5, -0.5, 0.51, 0.2, 0.49} -- Left box
         
     },
     ["2"] = {
-        {-0.34, -0.45, -0.4, 0.51, 0.05, 0.35},
-        {-0.34, -0.45, 0.35, 0.51, 0.55, 0.49},
-        {-0.34, -0.45, -0.4, -0.51, 0.3, 0.49}
+        {-0.34, -0.5, -0.5, 0.51, 0.05, 0.35},
+        {-0.34, -0.5, 0.35, 0.51, 0.55, 0.49},
+        {-0.34, -0.5, -0.5, -0.51, 0.2, 0.49}
     },
     ["3"] = {
-        {-0.34, -0.45, -0.4, 0.51, 0.05, 0.35},
-        {-0.34, -0.45, 0.35, 0.51, 0.55, 0.49},
-        {0.34, -0.45, -0.4, 0.51, 0.3, 0.49}
+        {-0.51, -0.5, -0.5, 0.34, 0.05, 0.35},
+        {-0.51, -0.5, 0.35, 0.34, 0.55, 0.49},
+        {0.34, -0.5, -0.5, 0.51, 0.2, 0.49}
     },
     ["4"] = {
         {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
     },
     ["5"] = {
-        {-0.34, -0.45, -0.4, 0.51, 0.05, 0.35},
-        {-0.34, -0.45, 0.35, 0.51, 0.55, 0.49},
+        {-0.48, -0.5, -0.5, 0.51, 0.05, 0.35},
+        {-0.48, -0.5, 0.35, 0.51, 0.55, 0.49},
     }
 }
 
@@ -157,7 +157,7 @@ local footstools_collision_boxes = {
 
 
 function is_same_nums_sign(num1, num2)
-    if num1 < 0 and num2 < 0 or num1 > 0 and num2 >0 then
+    if num1 < 0 and num2 < 0 or num1 > 0 and num2 > 0 then
         return true
     else
         return false
@@ -172,17 +172,14 @@ sofas.define_needed_sofa_part = function (player, sofa, sofa2, replace_sofa1, re
     pointed_axis = nil
     node_vector = nil
     local surface_pos = minetest.pointed_thing_to_face_pos(player, pointed_thing)
-        
+   
     for axis, val in pairs(pointed_thing.above) do
         if pointed_thing.under[axis] ~= val then
-            if surface_pos[axis] < 0 and surface_pos[axis] < pos[axis] then
+            if surface_pos[axis] < pos[axis] then
                 pointed_axis = "-" .. tostring(axis)
-            elseif surface_pos[axis] < 0 and surface_pos[axis] > pos[axis] then
+            elseif surface_pos[axis] > pos[axis] then
                 pointed_axis = tostring(axis)
-            elseif surface_pos[axis] > 0 and surface_pos[axis] < pos[axis] then
-                pointed_axis = "-" .. tostring(axis)
-            elseif surface_pos[axis] > 0 and surface_pos[axis] > pos[axis] then
-                pointed_axis = tostring(axis)
+            
             end
         end
     end
@@ -199,24 +196,35 @@ sofas.define_needed_sofa_part = function (player, sofa, sofa2, replace_sofa1, re
     
     
     for num, axis in pairs(ordered_axises_table) do
-        if axis == pointed_axis then
-            pointed_axis_ind = num  
-        end
         if axis == node_vector then
             node_vector_ind = num
         end
     end
     
+    for num, axis in pairs(ordered_axises_table) do
+        if axis == pointed_axis then
+            pointed_axis_ind = num
+        end
+    end
+                
     if pointed_axis_ind > node_vector_ind then
-        return {replace_sofa1, replace_sofa2}
-    elseif pointed_axis_ind < node_vector_ind then
+        if pointed_axis == "z" and node_vector == "-x" then
+            return {replace_sofa1, replace_sofa2}
+        end
+        
         return {replace_sofa2, replace_sofa1}
+    elseif pointed_axis_ind < node_vector_ind then
+        if pointed_axis == "-x" and node_vector == "z" then
+            return {replace_sofa2, replace_sofa1}
+        end
+        
+        return {replace_sofa1, replace_sofa2}
     end
 end
             
-sofas.define_needed_sofa_pos = function (player, sofa, pointed_thing)
+sofas.define_needed_sofa_pos = function (player, sofa, pointed_thing, pos)
     local surface_pos = minetest.pointed_thing_to_face_pos(player, pointed_thing)
-    local new_pos = sofa.pos
+    local new_pos = {x=sofa.pos.x, y=sofa.pos.y, z=sofa.pos.z}
     for axis, val in pairs(pointed_thing.above) do
         if val ~= pointed_thing.under[axis] then
             if surface_pos[axis] < sofa.pos[axis] then
@@ -229,15 +237,65 @@ sofas.define_needed_sofa_pos = function (player, sofa, pointed_thing)
         end
     end
 end
+
+sofas.define_sidelong_axises = function (axis)
+    local ordered_axles = {"-x", "-z", "x", "z"}
+    local axis1
+    local axis2
+    for num, axle in pairs(ordered_axles) do
+        if axle == axis then
+            if num == 1 then
+                axis1 = ordered_axles[#ordered_axles]
+                axis2 = ordered_axles[num+1]
+            elseif num == #ordered_axles then
+                axis1 = ordered_axles[num-1]
+                axis2 = ordered_axles[1]
+            else
+                axis1 = ordered_axles[num-1]
+                axis2 = ordered_axles[num+1]
+            end
+        end
+    end
+    
+    return {[1]=axis1, [2]=axis2}
+end
+
+sofas.translate_str_vector_to_table = function (str_axis)
+    local vector_table = {x=0, y=0, z=0}
+    local axis2 = string.sub(str_axis, -1, -1)
+    if string.sub(str_axis, 1, 1) == "-" then
+        vector_table[axis2] = -1
+    else
+        vector_table[axis2] = 1
+    end
+    
+    return vector_table
+end
+
+sofas.translate_vector_table_to_str = function (vector_table)
+    local str_axis
+    for axis, val in pairs(vector_table) do
+        if val ~= 0 then
+            if val < 0 then
+                str_axis = "-" .. axis
+            else
+                str_axis = tostring(axis)
+            end
+        end
+    end
+    
+    return str_axis
+end
     
 sofas.connect_sofas = function (player, node1, node2, pos, pointed_thing)
     local node_color1 = string.sub(node1.name, 22, -6)
     local node_color2 = string.sub(node2, 22, -6)
     local surface_pos = minetest.pointed_thing_to_face_pos(player, pointed_thing)
-    
+    local used_pt_axis
+    local node_vector
     -- Определяет ось, по которой грань была кликнута
     for axis, val in pairs(pointed_thing.above) do
-        if val ~= pointed_thing.under[axis] then
+        if val ~= pointed_thing.under[axis] and axis ~= y then
             used_pt_axis = {axis=axis, val=surface_pos[axis]}
         end
     end
@@ -256,147 +314,144 @@ sofas.connect_sofas = function (player, node1, node2, pos, pointed_thing)
                 if used_pt_axis.axis ~= node_vector.axis then
                     local node1_table = {name=node1.name, param1=node1.param1, param2=node1.param2}
                     local needed_sofa_parts = sofas.define_needed_sofa_part(player, node1_table, node2, string.gsub(node1.name, "1", "2"), string.gsub(node2, "1", "3"),  pos, pointed_thing)
-                    local needed_pos = sofas.define_needed_sofa_pos(player, {name=node1.name, param1=node1.param1, param2=node1.param2, pos=pos}, pointed_thing)
-                    minetest.remove_node(pos)
-                    minetest.set_node(needed_pos, {name = needed_sofa_parts[2], param1=node1.param1, param2=node1.param2})
+                    local needed_pos = sofas.define_needed_sofa_pos(player, {name=node1.name, param1=node1.param1, param2=node1.param2, pos=pos}, pointed_thing, pos)
                     minetest.set_node(pos, {name = needed_sofa_parts[1], param1=node1.param1, param2=node1.param2})
+                    minetest.set_node(needed_pos, {name = needed_sofa_parts[2], param1=node1.param1, param2=node1.param2})
+                   
                 else
                     return
                 end
             elseif string.find(node1.name, "_2_") or string.find(node1.name, "_3_") then
                 if used_pt_axis.axis ~= node_vector.axis then
                     local ordered_axles = {"-x", "-z", "x", "z"}
-                    
+                    local num1
+                    local num2
                     for num, axle in pairs(ordered_axles) do
                         local axis = string.sub(axle, -1, -1)
                         local executed1 = false
                         local executed2 = false
-                        if used_pt_axis.val < pos[axis] and executed1 ~= true and tonumber(axis) == used_pt_axis.axis then
-                            local used_pt_axle =  "-" .. tostring(used_pt_axis.axis)
+                        local used_pt_axle
+                        local node_vect
+                        if used_pt_axis.val < pos[axis] and executed1 ~= true and axis == used_pt_axis.axis then -- REWRITE!!!
+                            used_pt_axle =  "-" .. tostring(used_pt_axis.axis)
                             executed1 = true
-                        else
-                            local used_pt_axle = tostring(used_pt_axis.axis)
+                        elseif used_pt_axis.val > pos[axis] and executed1 ~= true and axis == used_pt_axis.axis then
+                            used_pt_axle = tostring(used_pt_axis.axis)
                             executed1 = true
                         end
                         
                         if node_vector.vector < 0 and executed2 ~= true then
-                            minetest.debug("CCCC")
-                            local node_vect = "-" .. tostring(node_vector.axis)
+                            node_vect = "-" .. tostring(node_vector.axis)
                             executed2 = true
-                        else
-                            minetest.debug("DDDD")
-                            local node_vect = tostring(node_vector.axis)
+                        elseif node_vector.vector > 0 and executed2 ~= true then
+                            node_vect = tostring(node_vector.axis)
                             executed2 = true
                         end
                         
-                        --minetest.debug(used_pt_axle)
-                        --minetest.debug(node_vect)
                         if axle == used_pt_axle then
-                            minetest.debug("AAA")
-                            local num1 = num
+                            num1 = num
                         end
                         
                         if axle == node_vect then
-                            minetest.debug("BBB")
-                            local num2 = num
+                            num2 = num
+                        end
+                        
+                        if num1 ~= nil and num2 ~= nil then
                             
-                            if num1 < num2 and string.find(node1.name, "_3_") then
+                            if (num1 < num2 and string.find(node1.name, "_3_")) or (num1 == 4 and num2 == 1) then
                                 local needed_sofa_pos = sofas.define_needed_sofa_pos(player, {name=node1.name, param1=node1.param1, param2=node1.param2, pos=pos}, pointed_thing)
                                 local rep = string.gsub(node2, "1", "5")
                                 local rep2 = string.gsub(node2, "1", "3")
-                                minetest.set_node(pos, {name=rep[1], param1=node1.param1, param2=node1.param2})
-                                minetest.set_node(needed_sofa_pos, {name=rep2[1], param1=node1.param1, param2=node1.param2})
+                                minetest.set_node(pos, {name=rep, param1=node1.param1, param2=node1.param2})
+                                minetest.set_node(needed_sofa_pos, {name=rep2, param1=node1.param1, param2=node1.param2})
                                 return true
-                            elseif num1 > num2 and string.find(node1.name, "_2_") then
+                            elseif (num1 > num2 and string.find(node1.name, "_2_")) or (num1 == 1 and num2 == 4) then
                                 local needed_sofa_pos = sofas.define_needed_sofa_pos(player, {name=node1.name, param1=node1.param1, param2=node1.param2, pos=pos}, pointed_thing)
                                 local rep = string.gsub(node2, "1", "5")
                                 local rep2 = string.gsub(node2, "1", "2")
-                                minetest.set_node(pos, {name=rep[1], param1=node1.param1, param2=node1.param2})
-                                minetest.set_node(needed_sofa_pos, {name=rep2[1], param1=node1.param1, param2=node1.param2})
+                                minetest.set_node(pos, {name=rep, param1=node1.param1, param2=node1.param2})
+                                minetest.set_node(needed_sofa_pos, {name=rep2, param1=node1.param1, param2=node1.param2})
                                 return true
                             end
                         end
                     end
                 elseif used_pt_axis.axis == node_vector.axis then
-                    if is_same_nums_sign(used_pt_axis.val, node_vector.vector) then
                         if string.find(node1.name, "_2_") then
                             local ordered_axles = {"-x", "-z", "x", "z"}
-                            
-                            for num, axle in pairs(ordered_axles) do
-                                if used_pt_axis.val < 0 then
-                                    local used_pt_axle = "-" .. tostring(used_pt_axis.axis)
-                                else
-                                    local used_pt_axle = tostring(used_pt_axis.axis)
-                                end
+                            local used_pt_axle
+                            local v = used_pt_axis.axis
+                            if used_pt_axis.val < pos[v] then
+                                used_pt_axle = "-" .. tostring(used_pt_axis.axis)
+                            else
+                                used_pt_axle = tostring(used_pt_axis.axis)
+                            end
+                           
+                            local needed_axis
+                            for num, axis in pairs(ordered_axles) do
                                 
-                                if used_pt_axle == axle then
-                                    if #ordered_axles == num then
-                                        local needed_axis = ordered_axles[1]
-                                        local needed_axis2 = ordered_axles[2]
+                                if used_pt_axle == axis then
+                                    if num == #ordered_axles then
+                                        needed_axis = ordered_axles[1]
+                                   
                                     else
-                                        local needed_axis = ordered_axles[num+1]
-                                        if needed_axis == axle then
-                                            needed_axis2 = ordered_axles[1]
-                                        else
-                                            needed_axis2 = ordered_axles[num+2]
-                                        end
+                                        needed_axis = ordered_axles[num+1]
+                                        
                                     end
-                                    
-                                    
-                                    local new_vector = node_vector
+                                      
+                                    local new_vector = {x=0, y=0, z=0}
                                     if string.find(needed_axis, "-") then
-                                        new_vector[tonumber(string.sub(needed_axis, -1))] = -1
+                                        new_vector[string.sub(needed_axis, 2)] = 1
                                     else
-                                        new_vector[tostring(needed_axis)] = 1
+                                        new_vector[needed_axis] = -1
                                     end
                                     
-                                    if string.find(needed_axis2, "-") then
-                                        new_vector[tonumber(string.sub(needed_axis2, -1))] = -1
-                                    else
-                                        new_vector[tostring(needed_axis)] = 1
-                                    end
                                     
                                     local rep = string.gsub(node2, "1", "4")
                                     local rep2 = string.gsub(node2, "1", "2")
-                                    minetest.set_node(pos, {name=rep[1], param1=node1.param1, param2=minetest.dir_to_facedir(new_vector)})
+                                    minetest.set_node(pos, {name=rep, param1=node1.param1, param2=node1.param2})
                                     local needed_sofa_pos = sofas.define_needed_sofa_pos(player, {name=node1.name, param1=node1.param1, param2=node1.param2, pos=pos}, pointed_thing)
-                                    minetest.set_node(needed_sofa_pos, {name=rep2[1], param1=node1.param1, param2=minetest.dir_to_facedir(needed_axis2)})
+                                    minetest.set_node(needed_sofa_pos, {name=rep2, param1=node1.param1, param2=minetest.dir_to_facedir(new_vector)})
                                 end
                             end
                         elseif string.find(node1.name, "_3_") then
-                            local ordered_axles = {"-x", "-z", "x", "z"}
                             
-                            for num, axle in pairs(ordered_axles) do
-                                if used_pt_axis.val < 0 then
-                                    local used_pt_axle = "-" .. tostring(used_pt_axis.axis)
-                                else
-                                    local used_pt_axle = tostring(used_pt_axis.axis)
-                                end
+                            local ordered_axles = {"-x", "-z", "x", "z"}
+                            local needed_axis
+                            local v = used_pt_axis.axis
+                            local used_pt_axle
+                            if used_pt_axis.val < pos[v] then
+                                used_pt_axle = "-" .. tostring(used_pt_axis.axis)
+                            else
+                                used_pt_axle = tostring(used_pt_axis.axis)
+                            end
                                 
-                                if used_pt_axle == axle then
+                            for num, axis in pairs(ordered_axles) do
+                                if used_pt_axle == axis then
                                     if num == 1 then
-                                        local needed_axis = ordered_axles[#ordered_axles]
+                                        needed_axis = ordered_axles[#ordered_axles]
                                     else
-                                        local needed_axis = ordered_axles[num-1]
+                                        needed_axis = ordered_axles[num-1]
                                     end
                                     
-                                    local new_vector = node_vector
+                                    local new_vector = {x=0, y=0, z=0}
                                     if string.find(needed_axis, "-") then
-                                        new_vector[tonumber(string.sub(needed_axis, -1))] = -1
+                                        new_vector[string.sub(needed_axis, -1, -1)] = 1
                                     else
-                                        new_vector[tostring(needed_axis)] = 1
+                                        new_vector[needed_axis] = -1
                                     end
                                     
                                     local rep = string.gsub(node2, "1", "4")
                                     local rep2 = string.gsub(node2, "1", "3")
-                                    minetest.set_node(pos, {name=rep[1], param1=node1.param1, param2=node1.param2})
+                                    minetest.set_node(pos, {name=rep, param1=node1.param1, param2=minetest.dir_to_facedir(new_vector)})
                                     local needed_sofa_pos = sofas.define_needed_sofa_pos(player, {name=node1.name, param1=node1.param1, param2=node1.param2, pos=pos}, pointed_thing)
-                                    minetest.set_node(needed_sofa_pos, {name=rep2[1], param1=node1.param1, param2=minetest.dir_to_facedir(needed_axis)})
+                                    minetest.set_node(needed_sofa_pos, {name=rep2, param1=node1.param1, param2=minetest.dir_to_facedir(new_vector)})
+                                    return true
                                 end
                             end
+                            
                         end
-                    end
-                end
+            
+               end
             else
                 return
             end
@@ -410,127 +465,7 @@ end
                                         
                                     
                                 
-                    
-                    --[[local surface_pos = minetest.pointed_thing_to_face_pos(player, pointed_thing)
-                    local nearby_sofas = minetest.find_nodes_in_area({x=pos.x-1, y=pos.y, z=pos.z-1}, {x=pos.x+1, y=pos.y, z=pos.z+1}, {"luxury_decor:simple_sofa_5"})
-                    if nearby_sofas then
-                        for _, sofa_pos in ipairs(nearby_sofas) do
-                            local node = minetest.get_node(sofa_pos)
-                            for axis, vector in pairs(minetest.facedir_to_dir(node.param2)) do
-                                if vector ~= 0 then
-                                    local node2_vector = {axis=axis, vector=vector}
-                                end
-                            end
-                            if node.name == "luxury_decor:simple_sofa_5" and node2_vector.axis == node_vector.axis then
-                                for axis, val in pairs(sofa_pos) do
-                                    if val ~= used_pt_axis.val then
-                                        
-                    
-                    
-                    
-                    
-                    
-            local p = node1.pos
-            local sofas = minetest.find_nodes_in_area({x=p.x-1, y=p.y, z=p.z-1}, {x=p.x+1, y=p.y, z=p.z+1}, 
-                {"luxury_decor:simple_sofa_2", "luxury_decor:simple_sofa_3", "luxury_decor:simple_sofa_4", "luxury_decor:simple_sofa_5"})
-                
-            for _, sofa_pos in ipairs(sofas) do
-                local sofa_itemstr = minetest.get_node(sofa_pos).name
-                if sofa_itemstr == "luxury_decor:simple_sofa_5" then
-                    for axis, val in pairs(sofa_pos) do
-                        if 
-                    if minetest.get_node(sofa_pos).param2 == node1.param2 and node1.pos[axis] == 
-                    
-                    
-                    
-            if not string.find(node1.name, "_4_") then
-               for axis, val in pairs(node1.pointed_thing.above) do
-                   if val ~= node1.pointed_thing.under[axis] and axis ~= y then
-                       local new_pos = node1.pos
-                       local player_dir = player:get_look_dir()
-                       if player_dir[axis] < 0 then
-                           new_pos[axis] = new_pos[axis] + 1
-                           minetest.set_node(new_pos, {name=node2, param1=node1.param1, param2=node2.param2})
-                       elseif player_dir[axis] > 0 then
-                           new_pos[axis] = new_pos[axis] - 1
-                           minetest.set_node(new_pos, {name=node2, param1=node1.param1, param2=node2.param2})
-                       end
-                       return true
-                   end
-               end
-            else
-                local node_dir = node1.param2
-                local directed_axis
-                for axis, val in pairs(node_dir) do
-                    if val ~= 0 and axis ~= y then
-                        directed_axis = {axis, val}
-                    elseif axis == y then
-                        return
-                    end
-                end
-                
-                for axis, val in pairs(node1.pointed_thing.above) do
-                   if val ~= node1.pointed_thing.under[axis] and axis ~= y then
-                       local new_pos = node1.pos
-                       local player_dir = player:get_look_dir()
-                       if player_dir[axis] < 0 then
-                           new_pos[axis] = new_pos[axis] + 1
-                           if axis == directed_axis.axis and directed_axis.val ~= player_dir[axis] then
-                              minetest.set_node(new_pos, {name=node2, param1=node1.param1, param2=node2.param2})
-                           elseif axis ~= directed_axis.axis and directed_axis.val ~= player_dir[axis] then
-                              local new_dir = minetest.facedir_to_dir(node1.param2)
-                              new_dir[axis] = 1
-                              minetest.set_node(new_pos, {name=node2, param1=node1.param1, param2= minetest.dir_to_facedir(new_dir)})
-                           end
-                       elseif player_dir[axis] > 0 then
-                           new_pos[axis] = new_pos[axis] - 1
-                           if axis == directed_axis.axis and directed_axis.val ~= player_dir[axis] then
-                              minetest.set_node(new_pos, {name=node2, param1=node1.param1, param2=node2.param2})
-                           elseif axis ~= directed_axis.axis and directed_axis.val ~= player_dir[axis] then
-                              local new_dir = minetest.facedir_to_dir(node1.param2)
-                              new_dir[axis] = -1
-                              minetest.set_node(new_pos, {name=node2, param1=node1.param1, param2= minetest.dir_to_facedir(new_dir)})
-                           end
-                       end
-                       return true
-                   end
-               end
-            end
-        else
-            return
-        end
-    else
-        return
-    end
-end
-
-                        
-                
-                    
-                    
-        local dir = player:get_look_dir()
-        local new_pos = node1.pos
-        for axis, num in pairs(dir) do
-            if num < 0 then
-                new_pos[axis] = node1.pos[axis] - 1
-                minetest.set_node(new_pos, {name=node2, param1 = node1.param1, param2 = node2.param2})
-                return true
-            elseif num > 0 then
-                new_pos[axis] = node1.pos[axis] + 1
-                minetest.set_node(new_pos, {name=node2, param1 = node1.param1, param2 = node2.param2})
-                return true
-            end
-        end
-    else
-        return
-    end
-end
-                
-                
-        if string.find(name1, "_4") then
-            local dir = node1.param2
-            if dir.x ~= 0 then
-                minetest.set_node(node2, {x=node1.pos.x, y=pos})]]
+             
         
 for color, rgb_color in pairs(sofas_rgb_colors) do
     for _, pillow_color in ipairs({"red", "green" , "blue", "yellow", "violet"}) do
@@ -618,7 +553,6 @@ end
 for ind, sofa_count in pairs({"1", "2", "3", "4", "5"}) do
     local not_in_cinv = 0
     for color, rgb_color in pairs(sofas_rgb_colors) do
-        --for _, pillow_color in ipairs({"red", "green" , "blue", "yellow", "violet"}) do
         if sofa_count ~= "1" then
             not_in_cinv = 1
         end
@@ -626,7 +560,7 @@ for ind, sofa_count in pairs({"1", "2", "3", "4", "5"}) do
             description = minetest.colorize(sofas_rgb_colors[color], "Simple " .. string.upper(color) .. " Sofa"),
             visual_scale = 0.5,
             mesh = "simple_sofa_" .. sofa_count .. ".obj",
-            tiles = {"simple_sofa.png^(simple_sofa_2.png^[colorize:" .. rgb_color.. ")"},
+            tiles = {"simple_sofa.png^(simple_sofa_2_1.png^[colorize:" .. rgb_color.. "^simple_sofa_2.png)"},
             paramtype = "light",
             paramtype2 = "facedir",
             groups = {choppy = 2.5, not_in_creative_inventory = not_in_cinv},
@@ -657,16 +591,6 @@ for ind, sofa_count in pairs({"1", "2", "3", "4", "5"}) do
             end,
             on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
                 if string.find(itemstack:get_name(), "dye:") then
-                    local get_player_contr = clicker:get_player_control()
-                        
-                    --[[if get_player_contr.sneak then
-                        for _, p_color in ipairs({"red", "green", "blue", "yellow", "violet"}) do
-                            if itemstack:get_name() == "dye:" .. p_color then
-                                itemstack:take_item()
-                                minetest.remove_node(pos)
-                                minetest.set_node(pos, {name="luxury_decor:simple_" .. sofa_count .. "_" .. color .. "_sofa_with_" .. p_color .. "_pillow"})
-                               end
-                        end]]
                     for color2, rgb_code in pairs(sofas_rgb_colors) do
                         if "dye:" .. color2 == itemstack:get_name() then
                             itemstack:take_item()
@@ -688,6 +612,193 @@ for ind, sofa_count in pairs({"1", "2", "3", "4", "5"}) do
              
                     end
                 end
+            end,
+            on_dig = function (pos, node, player)
+                if node.name == "luxury_decor:simple_2_" .. color .. "_sofa"  or
+                   node.name == "luxury_decor:simple_3_" .. color .. "_sofa" or
+                   node.name == "luxury_decor:simple_5_" .. color .. "_sofa" then
+                    
+                    local vector = minetest.facedir_to_dir(node.param2)
+                    local axle1
+                    local axle2
+                    local ordered_axles = {"-x", "-z", "x", "z"}
+                    for axis, val in pairs(vector) do
+                        if val ~= 0 and axis ~= y then
+                            if val < 0 then
+                                axle1 = "-" .. tostring(axis)
+                            else
+                                axle1 = tostring(axis)
+                            end       
+                        elseif val == 0 and axis ~= y then
+                            axle2 = axis
+                        end
+                    end
+                    
+                    local pos1 = {x=pos.x, y=pos.y, z=pos.z}
+                    local pos2 = {x=pos.x, y=pos.y, z=pos.z}
+                    pos1[axle2] = pos1[axle2] - 1
+                    pos2[axle2] = pos2[axle2] + 1
+                    local nearby_nodes = minetest.find_nodes_in_area(pos1, pos2, {"luxury_decor:simple_2_"..color.."_sofa", "luxury_decor:simple_3_"..color.."_sofa", "luxury_decor:simple_5_"..color.."_sofa", 
+                    "luxury_decor:simple_4_"..color.."_sofa"})
+                    for num, node_pos in pairs(nearby_nodes) do
+                        if num == 1 or num == #nearby_nodes then
+                            local nearby_node = minetest.get_node(node_pos)
+                            if nearby_node.name == "luxury_decor:simple_5_"..color.."_sofa" and nearby_node.param2 == node.param2 then
+                                local ordered_axises = sofas.define_sidelong_axises(axle1)
+                                local new_positions = {
+                                      {
+                                      {x=pos.x, y=pos.y, z=pos.z},
+                                      "luxury_decor:simple_3_"..color.."_sofa"
+                                      },
+                                      {
+                                      {x=pos.x, y=pos.y, z=pos.z},
+                                      "luxury_decor:simple_2_"..color.."_sofa"
+                                      }
+                                    }
+                                      
+                                for num, axis in pairs(ordered_axises) do
+                                    local axle = string.sub(axis, -1, -1)
+                                    if string.sub(axis, 1, 1) == "-" then
+                                        if pos[axle] + 1 == node_pos[axle] then
+                                            new_positions[num][1][axle] = new_positions[num][1][axle] + 1
+                                            minetest.remove_node(pos)
+                                            minetest.set_node(new_positions[num][1], {name=new_positions[num][2], param1=node.param1, param2=node.param2})
+                                        end
+                                    else
+                                        if pos[axle] - 1 == node_pos[axle] then
+                                            new_positions[num][1][axle] = new_positions[num][1][axle] - 1
+                                            minetest.remove_node(pos)
+                                            minetest.set_node(new_positions[num][1], {name=new_positions[num][2], param1=node.param1, param2=node.param2})
+                                        end
+                                    end
+                                end
+                            elseif (nearby_node.name == "luxury_decor:simple_2_"..color.."_sofa" or 
+                                    nearby_node.name == "luxury_decor:simple_3_"..color.."_sofa") and nearby_node.param2 == node.param2 then
+                                     minetest.remove_node(pos)
+                                     minetest.set_node(node_pos, {name="luxury_decor:simple_1_"..color.."_sofa", param1=node.param1, param2=node.param2})
+                            elseif nearby_node.name == "luxury_decor:simple_4_"..color.."_sofa" then
+                                    local side_node_vector = minetest.facedir_to_dir(nearby_node.param2)
+                                    local side_node_vector2
+                                    for axis, val in pairs(side_node_vector) do
+                                        if val ~= 0 then
+                                            if val < 0 then
+                                                side_node_vector2 = "-" .. axis
+                                            else
+                                                side_node_vector2 = tostring(axis)
+                                            end
+                                        end
+                                    end
+                                                                                            
+                                    local side_axles = sofas.define_sidelong_axises(axle1)
+                                    for n, axis in pairs(side_axles) do
+                                        
+                                        if side_node_vector2 == axle1 and n == 1 then
+                                            local needed_axis3
+                                            for num, axis in pairs(ordered_axles) do
+                                                if side_node_vector2 == axis then
+                                                    if num == #ordered_axles then
+                                                        needed_axis3 = ordered_axles[1]
+                                                    else
+                                                        needed_axis3 = ordered_axles[num+1]
+                                                    end
+                                                    local new_vector2 = sofas.translate_str_vector_to_table(needed_axis3)
+                                                    minetest.remove_node(pos)
+                                                    minetest.set_node(node_pos, {name="luxury_decor:simple_3_"..color.."_sofa", param1=node.param1, param2=minetest.dir_to_facedir(new_vector2)})
+                                                end
+                                            end
+                                        elseif n == 2 then
+                                            for num, axis in pairs(ordered_axles) do
+                                                if axis == axle1 then
+                                                    local new_vector2 = sofas.translate_str_vector_to_table(side_node_vector2)
+                                                    if num == 1 then
+                                                        if side_node_vector2 == ordered_axles[#ordered_axles] then
+                                                            minetest.remove_node(pos)
+                                                            minetest.set_node(node_pos, {name="luxury_decor:simple_2_"..color.."_sofa", param1=node.param1, param2=minetest.dir_to_facedir(new_vector2)})
+                                                        end
+                                                    else
+                                                        if ordered_axles[num-1] == side_node_vector2 then
+                                                            minetest.remove_node(pos)
+                                                            minetest.set_node(node_pos, {name="luxury_decor:simple_2_"..color.."_sofa", param1=node.param1, param2=minetest.dir_to_facedir(new_vector2)})
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
+                            end
+                        end
+                    end
+                elseif node.name == "luxury_decor:simple_4_"..color.."_sofa" then
+                        local str_axis = sofas.translate_vector_table_to_str(minetest.facedir_to_dir(node.param2))
+                        local ordered_axles = {"-x", "-z", "x", "z"}
+                                                
+                        local pos1 = {x=pos.x, y=pos.y, z=pos.z}
+                        local pos2 = {x=pos.x, y=pos.y, z=pos.z}
+                        if string.sub(str_axis, 1, 1) == "-" then
+                            pos1[string.sub(str_axis, -1, -1)] = pos1[string.sub(str_axis, -1, -1)] + 1
+                        else
+                            pos1[string.sub(str_axis, -1, -1)] = pos1[string.sub(str_axis, -1, -1)] - 1
+                        end
+                        local side_node_axis
+                        for num, axis in pairs(ordered_axles) do
+                            if axis == str_axis then
+                                if num == 1 then
+                                    side_node_axis = ordered_axles[#ordered_axles]
+                                else
+                                    side_node_axis = ordered_axles[num-1]
+                                end
+                            end
+                        end
+                                                                    
+                        if string.sub(side_node_axis, 1, 1) == "-" then
+                            pos2[string.sub(side_node_axis, -1, -1)] = pos2[string.sub(side_node_axis, -1, -1)] - 1
+                        else
+                            pos2[string.sub(side_node_axis, -1, -1)] = pos2[string.sub(side_node_axis, -1, -1)] + 1
+                        end
+                        
+                        local side_node_axis_opposite
+                        if string.sub(side_node_axis, 1, 1) == "-" then
+                            side_node_axis_opposite = string.sub(side_node_axis, -1, -1)
+                        else
+                            side_node_axis_opposite = "-" .. side_node_axis
+                        end
+                       if minetest.get_node(pos1).name == "luxury_decor:simple_2_"..color.."_sofa" or minetest.get_node(pos1).name == "luxury_decor:simple_5_"..color.."_sofa" then
+                            minetest.debug("1")
+                            for num, axis in pairs(ordered_axles) do
+                                if axis == str_axis then
+                                    if (num == 1 and ordered_axles[#ordered_axles] == side_node_axis) or ordered_axles[num-1] == side_node_axis then
+                                        minetest.debug("TRUE")
+                                        local vector_table = sofas.translate_str_vector_to_table(side_node_axis_opposite)
+                                        minetest.remove_node(pos)
+                                        if minetest.get_node(pos1).name == "luxury_decor:simple_2_"..color.."_sofa" then
+                                            minetest.set_node(pos1, {name="luxury_decor:simple_1_"..color.."_sofa", param1=node.param1, param2=minetest.dir_to_facedir(vector_table)})
+                                        elseif minetest.get_node(pos1).name == "luxury_decor:simple_5_"..color.."_sofa" then
+                                            minetest.set_node(pos1, {name="luxury_decor:simple_3_"..color.."_sofa", param1=node.param1, param2=minetest.dir_to_facedir(vector_table)})
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        if minetest.get_node(pos2).name == "luxury_decor:simple_3_"..color.."_sofa" or minetest.get_node(pos2).name == "luxury_decor:simple_5_"..color.."_sofa" then
+                            minetest.debug("2")
+                            local node2 = minetest.get_node(pos2)
+                            local node2_str_vector = sofas.translate_vector_table_to_str(minetest.facedir_to_dir(node2.param2))
+                            if str_axis == node2_str_vector then
+                                minetest.remove_node(pos)
+                                if node2.name == "luxury_decor:simple_3_"..color.."_sofa" then
+                                    minetest.set_node(pos2, {name="luxury_decor:simple_1_"..color.."_sofa", param1=node.param1, param2=node.param2})
+                                elseif node2.name == "luxury_decor:simple_5_"..color.."_sofa" then
+                                    minetest.set_node(pos2, {name="luxury_decor:simple_2_"..color.."_sofa", param1=node.param1, param2=node.param2})
+                                end
+                            end
+                        end
+                        if (minetest.get_node(pos1).name and minetest.get_node(pos2).name) ~= "luxury_decor:simple_5_"..color.."_sofa" and 
+                            minetest.get_node(pos1).name ~= "luxury_decor:simple_2_"..color.."_sofa" and minetest.get_node(pos2).name ~= "luxury_decor:simple_3_"..color.."_sofa" then
+                            minetest.remove_node(pos)
+                        end
+                elseif node.name == "luxury_decor:simple_1_"..color.."_sofa" then
+                        minetest.remove_node(pos)
+                end
             end
         })
         
@@ -702,7 +813,7 @@ for ind, footstool_type in pairs({"small", "middle", "long"}) do
             description = minetest.colorize(sofas_rgb_colors[color], "Simple " .. string.upper(color) .. " " .. string.upper(footstool_type) .. " Footstool"),
             visual_scale = 0.5,
             mesh = "simple_"..footstool_type.."_footstool.b3d",
-            tiles = {"simple_sofa.png^(simple_sofa_2.png^[colorize:" .. rgb_code .. ")"},
+            tiles = {"simple_sofa.png^(simple_sofa_2_1.png^[colorize:" .. rgb_code.. "^simple_sofa_2.png)"},
             paramtype = "light",
             paramtype2 = "facedir",
             groups = {choppy = 2},

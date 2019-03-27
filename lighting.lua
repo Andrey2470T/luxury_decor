@@ -100,7 +100,7 @@ minetest.register_node("luxury_decor:iron_chandelier", {
 minetest.register_node("luxury_decor:wall_glass_lamp_off", {
     description = "Wall Glass Lamp",
     visual_scale = 0.5,
-    mesh = "wall_glass_lamp.obj",
+    mesh = "wall_glass_lamp.b3d",
     inventory_image = "wall_glass_lamp_inv.png",
     tiles = {"wall_glass_lamp.png"},
     paramtype = "light",
@@ -131,7 +131,7 @@ minetest.register_node("luxury_decor:wall_glass_lamp_off", {
 minetest.register_node("luxury_decor:wall_glass_lamp_on", {
     description = "Wall Glass Lamp",
     visual_scale = 0.5,
-    mesh = "wall_glass_lamp.obj",
+    mesh = "wall_glass_lamp.b3d",
     inventory_image = "wall_glass_lamp_inv.png",
     tiles = {"wall_glass_lamp.png"},
     paramtype = "light",

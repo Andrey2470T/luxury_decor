@@ -134,13 +134,10 @@ cabinets.define_mode = function (fields, nodename)
     local substring = string.sub(nodename, 14)
     local general_name
     if string.find(substring, "fridge") then
-        minetest.debug("YYYYY")
         general_name = string.sub(substring, 1, -8)
     else
         general_name = string.sub(substring, 1, -3)
     end
-    minetest.debug(general_name)
-    minetest.debug(substring)
     for num, depart in pairs(cabs_table[general_name][substring]) do
         if type(depart) == "table" then
             local name = depart.button
@@ -389,13 +386,15 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet"]) do
             local y = 0
             local form = "size[9,10.5]" .. img_button1 .. img_button2 
             for num, drawer in pairs(cab_boxes) do
-                if type(drawer) == "table" and drawer.mode == "opened" then
+                if type(drawer) == "table" then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
                     if not cabs_table["kitchen_wooden_cabinet"].inv_list[num][str_pos] then
                        cabs_table["kitchen_wooden_cabinet"].inv_list[num][str_pos] = {}
-                   end
-                   local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";1.5,".. y .. ";6, 2]"
-                   form = form .. list
+                    end
+                   if drawer.mode == "opened" then
+                       local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";1.5,".. y .. ";6, 2]"
+                       form = form .. list
+                end
                 end
                 y= y+3
             end
