@@ -547,6 +547,15 @@ for color, rgb_color in pairs(sofas_rgb_colors) do
                     return itemstack
                 end
         })
+            
+        minetest.register_craft({
+            output = "luxury_decor:simple_"..color.."_armchair_with_"..pillow_color.."_pillow",
+            recipe = {
+                {"luxury_decor:wooden_board", "wool:white", "dye:"..color},
+                {"luxury_decor:wooden_board", "wool:white", "dye:"..pillow_color},
+                {"default:stick", "", ""}
+            }
+        })
     end
 end
 
@@ -801,6 +810,17 @@ for ind, sofa_count in pairs({"1", "2", "3", "4", "5"}) do
                 end
             end
         })
+            
+        if sofa_count == "1" then
+            minetest.register_craft({
+                output = "luxury_decor:simple_"..sofa_count.."_"..color.."_sofa",
+                recipe = {
+                     {"luxury_decor:wooden_board", "luxury_decor:wooden_board", "wool:white"},
+                     {"luxury_decor:wooden_board", "dye:"..color, "dye:grey"},
+                     {"default:stick", "luxury_decor:brass_stick", ""}
+                }
+            })
+        end
         
     end
 end
@@ -879,6 +899,36 @@ for ind, footstool_type in pairs({"small", "middle", "long"}) do
                                     
             end
         })
+        
+        if footstool_type == "small" then
+            minetest.register_craft({
+                 output = "luxury_decor:simple_"..color.."_"..footstool_type.."_footstool",
+                 recipe = {
+                       {"luxury_decor:wooden_board", "wool:white", "dye:"..color},
+                       {"", "", ""},
+                       {"", "", ""}
+                 }
+            })
+        elseif footstool_type == "middle" then
+            minetest.register_craft({
+                 output = "luxury_decor:simple_"..color.."_"..footstool_type.."_footstool",
+                 recipe = {
+                       {"luxury_decor:wooden_board", "wool:white", "dye:"..color},
+                       {"luxury_decor:wooden_plank", "farming:string", "farming:string"},
+                       {"", "", ""}
+                 }
+            })
+            
+        elseif footstool_type == "long" then
+            minetest.register_craft({
+                 output = "luxury_decor:simple_"..color.."_"..footstool_type.."_footstool",
+                 recipe = {
+                       {"luxury_decor:wooden_board", "wool:white", "dye:"..color},
+                       {"luxury_decor:wooden_board", "wool:white", "dye:"..color},
+                       {"luxury_decor:wooden_plank", "", ""}
+                 }
+            })
+        end
     end
 end
 
@@ -914,8 +964,15 @@ minetest.register_node("luxury_decor:simple_wooden_wall_clock", {
     },
     sounds = default.node_sound_wood_defaults()
 })
-                            
-                        
+
+minetest.register_craft({
+    output = "luxury_decor:simple_wooden_wall_clock",
+    recipe = {
+        {"luxury_decor:jungle_wooden_board", "luxury_decor:jungle_wooden_board", ""},
+        {"luxury_decor:jungle_wooden_plank", "luxury_decor:brass_stick", "luxury_decor:dial"},
+        {"default:copper_ingot", "default:steel_ingot", ""}
+    }
+})
                                 
                         
                 

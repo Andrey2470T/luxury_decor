@@ -34,6 +34,115 @@ minetest.register_craft({
     }
 })
 
+minetest.register_craftitem("luxury_decor:bucket_oil", {
+    description = "Bucket Oil",
+    inventory_image = "bucket_oil.png",
+    stack_max = 99
+})
+
+minetest.register_node("luxury_decor:oil_source", {
+	description = "Oil Source",
+	drawtype = "liquid",
+	tiles = {"oil_source.png"},
+	alpha = 160,
+	paramtype = "light",
+	walkable = false,
+	pointable = false,
+	diggable = false,
+	buildable_to = true,
+	is_ground_content = false,
+	drop = "",
+	drowning = 1,
+	liquidtype = "source",
+	liquid_alternative_flowing = "luxury_decor:oil_flowing",
+	liquid_alternative_source = "luxury_decor:oil_source",
+	liquid_viscosity = 5,
+    liquid_range = 5,
+    damage_per_second = 1,
+	post_effect_color = {a = 103, r = 30, g = 60, b = 90},
+	groups = {water = 3, liquid = 3, cools_lava = 1},
+    on_rightclick = function (pos, node, player, itemstack, pointed_thing)
+        if itemstack:get_name() == "bucket:bucket_empty" then
+            minetest.remove_node(pos)
+            itemstack:take_item()
+            local stack = ItemStack("luxury_decor:bucket_oil")
+            local inv = player:get_inventory()
+            inv:set_stack("main", 1, stack)
+            stack:add_item("luxury_decor:bucket_oil")
+            return itemstack
+        end
+    end
+})
+
+minetest.register_node("luxury_decor:oil_flowing", {
+	description = "Flowing Oil",
+	drawtype = "flowingliquid",
+	tiles = {"oil_source.png"},
+	special_tiles = {
+		{
+			name = "oil_source_animated.png",
+			backface_culling = false,
+			animation = {
+				type = "vertical_frames",
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 5,
+			},
+		},
+		{
+			name = "oil_source_animated.png",
+			backface_culling = true,
+			animation = {
+				type = "vertical_frames",
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 5,
+			},
+		},
+	},
+	alpha = 160,
+	paramtype = "light",
+	paramtype2 = "flowingliquid",
+	walkable = false,
+	pointable = false,
+	diggable = false,
+	buildable_to = true,
+	is_ground_content = false,
+	drop = "",
+	drowning = 1,
+	liquidtype = "flowing",
+	liquid_alternative_flowing = "luxury_decor:oil_flowing",
+	liquid_alternative_source = "luxury_decor:oil_source",
+	liquid_viscosity = 5,
+	post_effect_color = {a = 103, r = 30, g = 60, b = 90},
+	groups = {water = 3, liquid = 3, not_in_creative_inventory = 1,
+		cools_lava = 1},
+    on_rightclick = function (pos, node, player, itemstack, pointed_thing)
+        if itemstack:get_name() == "bucket:bucket_empty" then
+            minetest.remove_node(pos)
+            itemstack:take_item()
+            local stack = ItemStack("luxury_decor:bucket_oil")
+            local inv = player:get_inventory()
+            inv:set_stack("main", 1, stack)
+            stack:add_item("luxury_decor:bucket_oil")
+            return itemstack
+        end
+    end
+})
+
+
+minetest.register_craftitem("luxury_decor:paraffin_cake", {
+    description = "Paraffin Cake",
+    inventory_image = "paraffin.png",
+    stack_max = 99
+})
+
+minetest.register_craftitem("luxury_decor:wax_lump", {
+    description = "Wax Lump",
+    inventory_image = "wax_lump.png",
+    stack_max = 99
+})
+
 minetest.register_craftitem("luxury_decor:brass_ingot", {
     description = "Brass Ingot",
     inventory_image = "brass_ingot.png",
@@ -81,6 +190,49 @@ minetest.register_craftitem("luxury_decor:pine_wooden_board", {
     inventory_image = "pine_board.png",
     stack_max = 99
 })
+
+minetest.register_craftitem("luxury_decor:plastic_sheet", {
+    description = "Plastic Sheet",
+    inventory_image = "plastic_sheet.png",
+    stack_max = 99
+})
+
+minetest.register_craftitem("luxury_decor:incandescent_bulb", {
+    description = "Incandescent Bulb",
+    inventory_image = "incandescent_bulb.png",
+    stack_max = 99
+})
+
+minetest.register_craftitem("luxury_decor:wolfram_lump", {
+    description = "Wolfram Lump",
+    inventory_image = "wolfram_lump.png",
+    stack_max = 99
+})
+
+minetest.register_craftitem("luxury_decor:wolfram_ingot", {
+    description = "Wolfram Ingot",
+    inventory_image = "wolfram_ingot.png",
+    stack_max = 99
+})
+
+minetest.register_craftitem("luxury_decor:wolfram_wire_reel", {
+    description = "Wolfram Wire Reel",
+    inventory_image = "wolfram_wire_reel.png",
+    stack_max = 99
+})
+
+minetest.register_craftitem("luxury_decor:dial", {
+    description = "Dial",
+    inventory_image = "dial.png",
+    stack_max = 99
+})
+
+minetest.register_craftitem("luxury_decor:siphon", {
+    description = "Siphon",
+    inventory_image = "siphon.png",
+    stack_max = 99
+})
+
 minetest.register_node("luxury_decor:zinc_ore", {
     description = "Zinc Ore",
     tiles = {"default_stone.png^mineral_zinc.png"},
@@ -99,6 +251,24 @@ minetest.register_node("luxury_decor:zinc_ore", {
     end
 })
 
+minetest.register_node("luxury_decor:wolfram_ore", {
+    description = "Wolfram Ore",
+    tiles = {"default_stone.png^mineral_wolfram.png"},
+    is_ground_content = true,
+    paramtype = "light",
+    light_source = 2,
+    groups = {cracky=3.5, oddly_breakable_by_hand=1},
+    sounds = default.node_sound_defaults(),
+    after_dig_node = function(pos, node, player)
+        local random_items_amount_to_give = math.random(4)
+        
+        local stack = ItemStack("luxury_decor:wolfram_lump")
+        for give_item = 1, random_items_amount_to_give do
+            stack:add_item("luxury_decor:wolfram_lump")
+        end
+    end
+})
+
 minetest.register_ore({
     ore_type = "scatter",
     ore = "luxury_decor:zinc_ore",
@@ -108,6 +278,71 @@ minetest.register_ore({
     clust_size = 3,
     height_min = -31000,
     height_max = -125
+})
+
+minetest.register_ore({
+    ore_type = "scatter",
+    ore = "luxury_decor:wolfram_ore",
+    wherein = "default:stone",
+    clust_scarcity = 200,
+    clust_num_ores = 4,
+    clust_size = 2,
+    height_min = -31000,
+    height_max = -150
+})
+
+minetest.register_ore({
+    ore_type = "scatter",
+    ore = "luxury_decor:oil_source",
+    wherein = "default:stone",
+    clust_scarcity = 400,
+    clust_num_ores = 3,
+    clust_size = 1,
+    height_min = -31000,
+    height_max = -25
+})
+
+minetest.register_craft({
+    type = "cooking",
+    output = "luxury_decor:paraffin_cake 2",
+    recipe = "bucket:bucket_oil",
+    cooktime = 15--[[,
+    replacements = {"bucket:bucket_empty"}]]
+})
+
+minetest.register_craft({
+    type = "cooking",
+    output = "luxury_decor:wax_lump",
+    recipe = "bucket:paraffin_cake",
+    cooktime = 8
+})
+
+minetest.register_craft({
+    type = "cooking",
+    output = "luxury_decor:plastic_sheet",
+    recipe = "default:leaves"
+})
+
+minetest.register_craft({
+    output = "luxury_decor:incandescent_bulb 3",
+    recipe = {
+        {"luxury_decor:plastic_sheet", "luxury_decor:wolfram_wire_reel", ""},
+        {"luxury_decor:plastic_sheet", "default:steel_ingot", ""},
+        {"", "", ""}
+    }
+})
+
+minetest.register_craft({
+    type = "cooking",
+    output = "luxury_decor:wolfram_ingot",
+    recipe = "luxury_decor:wolfram_lump",
+    cooktime = 18
+})
+
+minetest.register_craft({
+    type = "shapeless",
+    output = "luxury_decor:wolfram_wire_reel",
+    recipe = {"luxury_decor:wolfram_ingot"}
 })
 
 minetest.register_craft({
@@ -175,5 +410,23 @@ minetest.register_craft({
     recipe = {"stairs:slab_glass", "luxury_decor:saw"},
     replacements = {
         {"", "luxury_decor:saw"}
+    }
+})
+
+minetest.register_craft({
+    output = "luxury_decor:siphon",
+    recipe = {
+        {"luxury_decor:plastic_sheet", "luxury_decor:plastic_sheet", ""},
+        {"default:copper_ingot", "", ""},
+        {"", "", ""}
+    }
+})
+
+minetest.register_craft({
+    output = "luxury_decor:dial 2",
+    recipe = {
+        {"luxury_decor:plastic_sheet", "dye:black", ""},
+        {"luxury_decor:brass_stick", "", ""},
+        {"dye:yellow", "", ""}
     }
 })

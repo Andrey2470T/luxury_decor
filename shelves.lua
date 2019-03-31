@@ -1,4 +1,4 @@
-local wood_sorts = {"wooden", "jungle"}
+local wood_sorts = {"", "jungle_"}
 for num, shelf_sort in ipairs({"bright", "dark"}) do
     minetest.register_node("luxury_decor:closed_"..shelf_sort.."_wooden_shelf", {
 	description = "Closed ".. string.upper(string.sub(shelf_sort, 1, 1)) .. string.sub(shelf_sort, 2) .. " Wooden Shelf",
@@ -77,8 +77,8 @@ for num, shelf_sort in ipairs({"bright", "dark"}) do
     minetest.register_craft({
         output = "luxury_decor:closed_" .. shelf_sort .. "_wooden_shelf",
         recipe = {
-            {"luxury_decor:" .. wood_sorts[num] .. "_wooden_board", "luxury_decor:" .. wood_sorts[num] .. "_wooden_board", ""},
-            {"luxury_decor:" .. wood_sorts[num] .. "_wooden_board", "luxury_decor:" .. wood_sorts[num] .. "_wooden_board", ""},
+            {"luxury_decor:" .. wood_sorts[num] .. "wooden_board", "luxury_decor:" .. wood_sorts[num] .. "wooden_board", ""},
+            {"luxury_decor:" .. wood_sorts[num] .. "wooden_board", "luxury_decor:" .. wood_sorts[num] .. "wooden_board", ""},
             {"", "", ""}
         }
     })
@@ -86,17 +86,17 @@ for num, shelf_sort in ipairs({"bright", "dark"}) do
     minetest.register_craft({
         output = "luxury_decor:closed_" .. shelf_sort .. "_wooden_shelf_with_back",
         recipe = {
-            {"luxury_decor:" .. wood_sorts[num] .. "_wooden_board", "luxury_decor:" .. wood_sorts[num] .. "_wooden_board", ""},
-            {"luxury_decor:" .. wood_sorts[num] .. "_wooden_board", "luxury_decor:" .. wood_sorts[num] .. "_wooden_board", ""},
-            {"luxury_decor:" .. wood_sorts[num] .. "_wooden_board", "", ""}
+            {"luxury_decor:" .. wood_sorts[num] .. "wooden_board", "luxury_decor:" .. wood_sorts[num] .. "wooden_board", ""},
+            {"luxury_decor:" .. wood_sorts[num] .. "wooden_board", "luxury_decor:" .. wood_sorts[num] .. "wooden_board", ""},
+            {"luxury_decor:" .. wood_sorts[num] .. "wooden_board", "", ""}
         }
     })
     
     minetest.register_craft({
         output = "luxury_decor:" .. shelf_sort .. "_wall_wooden_shelf",
         recipe = {
-            {"luxury_decor:" .. wood_sorts[num] .. "_wooden_plank", "luxury_decor:saw", ""},
-            {"luxury_decor:" .. wood_sorts[num] .. "_wooden_plank", "", ""},
+            {"luxury_decor:" .. wood_sorts[num] .. "wooden_plank", "luxury_decor:saw", ""},
+            {"luxury_decor:" .. wood_sorts[num] .. "wooden_plank", "", ""},
             {"", "", ""}
         },
         replacements = {
@@ -109,8 +109,8 @@ for num, shelf_sort in ipairs({"bright", "dark"}) do
     minetest.register_craft({
         output = "luxury_decor:" .. shelf_sort .. "_wall_wooden_shelf 2",
         recipe = {
-            {"luxury_decor:" .. wood_sorts[num] .. "_wooden_board", "luxury_decor:saw", ""},
-            {"luxury_decor:" .. wood_sorts[num] .. "_wooden_board", "", ""},
+            {"luxury_decor:" .. wood_sorts[num] .. "wooden_board", "luxury_decor:saw", ""},
+            {"luxury_decor:" .. wood_sorts[num] .. "wooden_board", "", ""},
             {"", "", ""}
         },
         replacements = {

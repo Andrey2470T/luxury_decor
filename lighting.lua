@@ -160,3 +160,30 @@ minetest.register_node("luxury_decor:wall_glass_lamp_on", {
         minetest.set_node(pos, {name="luxury_decor:wall_glass_lamp_off", param2 = node.param2})
     end
 }) 
+
+minetest.register_craft({
+    output = "luxury_decor:iron_chandelier",
+    recipe = {
+        {"luxury_decor:brass_ingot", "luxury_decor:brass_ingot", "luxury_decor:brass_ingot"},
+        {"luxury_decor:brass_ingot", "luxury_decor:brass_ingot", "dye:grey"},
+        {"luxury_decor:wax_lump", "luxury_decor:wax_lump", ""}
+    }
+})
+
+minetest.register_craft({
+    output = "luxury_decor:luxury_desk_lamp_off",
+    recipe = {
+        {"luxury_decor:jungle_wooden_plank", "wool:white", ""},
+        {"luxury_decor:jungle_wooden_plank", "luxury_decor:incandescent_bulb", ""},
+        {"luxury_decor:jungle_wooden_plank", "luxury_decor:brass_ingot", ""}
+    }
+})
+
+minetest.register_craft({
+    output = "luxury_decor:wall_glass_lamp_off",
+    recipe = {
+        {"default:glass", "default:glass", ""},
+        {"luxury_decor:brass_ingot", "dye:orange", ""},
+        {"luxury_decor:incandescent_bulb", "", ""}
+    }
+})

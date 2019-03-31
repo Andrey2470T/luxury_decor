@@ -39,6 +39,7 @@ minetest.register_node("luxury_decor:grand_piano_opened", {
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {choppy = 3, not_in_creative_inventory=1},
+    drop = "luxury_decor:grand_piano",
     drawtype = "mesh",
     collision_box = {
         type = "fixed",
@@ -60,3 +61,12 @@ minetest.register_node("luxury_decor:grand_piano_opened", {
         minetest.set_node(pos, {name="luxury_decor:grand_piano", param1=node.param1, param2=node.param2})
     end
 }) 
+
+minetest.register_craft({
+    output = "luxury_decor:grand_piano",
+    recipe = {
+        {"luxury_decor:plastic_sheet", "luxury_decor:brass_stick", "dye:black"},
+        {"luxury_decor:plastic_sheet", "luxury_decor:plastic_sheet", "dye:black"},
+        {"luxury_decor:plastic_sheet", "luxury_decor:wolfram_ingot", "default:steel_ingot"}
+    }
+})

@@ -81,3 +81,20 @@ minetest.register_node("luxury_decor:luxury_flowerpot", {
     sounds = default.node_sound_wood_defaults()
 })
     
+minetest.register_craft({
+    output = "luxury_decor:simple_flowerpot",
+    recipe = {
+        {"default:clay_lump", "default:clay_lump", "dye:brown"},
+        {"default:clay_lump", "default:dirt", ""},
+        {"default:clay_lump", "", ""}
+    }
+})
+
+minetest.register_craft({
+    output = "luxury_decor:luxury_flowerpot",
+    recipe = {
+        {"default:clay_lump", "default:clay_lump", "dye:red"},
+        {"default:clay_lump", "default:dirt", "default:copper_ingot"},
+        {"default:clay_lump", "", ""}
+    }
+})
