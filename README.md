@@ -5,6 +5,7 @@
 This mod adds big amount of new furniture stuff of various sorts, decorations and exterior. Currently it adds one kitchen style (simple), a few types of chairs/tables, luxury lamp, simple sofas/footstools/armchairs/, iron chandelier, shelves, glass vase, pots, royal beds, simple wooden wall clock and simple bedside table. Lots of furniture items are ensured with crafting recipes. 
 
 ## Crafting Recipes
+Crafting:
 -- Simple Wooden Bedside Table --
 "luxury_decor:pine_wooden_board", "luxury_decor:bedside_drawer", ""
 "luxury_decor:pine_wooden_board", "luxury_decor:bedside_drawer", ""
@@ -88,6 +89,150 @@ This mod adds big amount of new furniture stuff of various sorts, decorations an
 
 -- Simple Wooden Table --
 "luxury_decor:jungle_wooden_plank", "luxury_decor:jungle_wooden_plank", "luxury_decor:jungle_wooden_plank", "default:stick", "luxury_decor:jungle_wooden_plank", "default:stick"
+
+-- Wooden Drawer --
+"luxury_decor:wooden_board", "luxury_decor:wooden_board", "",
+"luxury_decor:wooden_board", "", "",
+"default:stick", "", ""
+
+-- Kitchen Wooden Cabinet With Two Drawers --
+"luxury_decor:wooden_board", "luxury_decor:wooden_board", "",
+"luxury_decor:wooden_board", "luxury_decor:wooden_board", "",
+"luxury_decor:wooden_board", "", ""
+
+-- Kitchen Wooden Cabinet With Only Door --
+"luxury_decor:wooden_board", "luxury_decor:wooden_board", "",
+"luxury_decor:wooden_board", "", "",
+"luxury_decor:wooden_board", "", ""
+
+-- Kitchen Wooden Cabinet With Door And Drawer --
+"luxury_decor:wooden_board", "luxury_decor:wooden_drawer", ""
+"luxury_decor:wooden_board", "luxury_decor:wooden_board", "",
+"luxury_decor:wooden_board", "", ""
+
+-- Kitchen Wooden Cabinet With Two Doors --
+"luxury_decor:wooden_board", "luxury_decor:wooden_board", "",
+"luxury_decor:wooden_board", "luxury_decor:wooden_board", "",
+"luxury_decor:wooden_board", "", ""
+
+-- Kitchen Wooden Cabinet With Two Doors And Drawer --
+"luxury_decor:wooden_board", "luxury_decor:wooden_board", "",
+"luxury_decor:wooden_board", "luxury_decor:wooden_board", "",
+"luxury_decor:wooden_board", "luxury_decor:wooden_drawer", ""
+
+-- Kitchen Wooden Half-Cabinet --
+"luxury_decor:wooden_board", "luxury_decor:wooden_drawer--", "",
+"luxury_decor:wooden_board", "", "",
+
+-- Kitchen Wooden Cabinet With Three Drawers --
+"luxury_decor:wooden_board", "luxury_decor:wooden_drawer", "",
+"luxury_decor:wooden_board", "luxury_decor:wooden_drawer", "",
+"luxury_decor:wooden_board", "luxury_decor:wooden_drawer", ""
+
+-- Kitchen Wooden Cabinet With Sink --
+"luxury_decor:wooden_board", "luxury_decor:siphon", "dye:grey",
+"luxury_decor:wooden_board", "luxury_decor:plastic_sheet", "",
+"luxury_decor:wooden_board", "default:steel_ingot", ""
+
+-- Fridge --
+"default:steelblock", "luxury_decor:plastic_sheet", "luxury_decor:plastic_sheet",
+"luxury_decor:brass_ingot", "luxury_decor:plastic_sheet", "",
+"dye:dark_grey", "", ""
+
+-- Kitchen Tap --
+"luxury_decor:plastic_sheet", "luxury_decor:plastic_sheet", "",
+"default:steel_ingot", "", ""
+
+-- Cooker --
+"default:steel_ingot", "luxury_decor:plastic_sheet", "xpanes:pane_flat",
+"default:steel_ingot", "luxury_decor:plastic_sheet", "",
+"default:steel_ingot", "luxury_decor:brass_stick", ""
+
+-- Siphon --
+"luxury_decor:plastic_sheet", "luxury_decor:plastic_sheet", "",
+"default:copper_ingot", "", ""
+
+-- Dial --
+"luxury_decor:plastic_sheet", "dye:black", "",
+"luxury_decor:brass_stick", "", "",
+"dye:yellow", "", ""
+
+-- Plastic Sheet --
+"default:leaves"
+
+-- Incandescent Bulb --
+"luxury_decor:plastic_sheet", "luxury_decor:wolfram_wire_reel", "",
+"luxury_decor:plastic_sheet", "default:steel_ingot", ""
+
+-- Wolfram Wire Reel --
+"luxury_decor:wolfram_ingot"
+
+-- Iron Chandelier --
+"default:steel_ingot", "default:steel_ingot", "default:steel_ingot",
+"default:steel_ingot", "default:steel_ingot", "dye:grey",
+"luxury_decor:wax_lump", "luxury_decor:wax_lump"
+
+-- Luxury Desk Lamp --
+"luxury_decor:jungle_wooden_plank", "wool:white", "",
+"luxury_decor:jungle_wooden_plank", "luxury_decor:incandescent_bulb", "",
+"luxury_decor:jungle_wooden_plank", "luxury_decor:brass_ingot", ""
+
+-- Wall Glass Lamp --
+"default:glass", "default:glass", "",
+"luxury_decor:brass_ingot", "dye:orange", "",
+"luxury_decor:incandescent_bulb", "", ""
+
+-- Simple Armchair With Pillow --
+"luxury_decor:wooden_board", "wool:white", "dye:<color>",
+"luxury_decor:wooden_board", "wool:white", "dye:<color>",
+"default:stick", "", ""
+
+-- Simple Sofa --
+"luxury_decor:wooden_board", "luxury_decor:wooden_board", "wool:white",
+"luxury_decor:wooden_board", "dye:<color>", "dye:grey",
+"default:stick", "luxury_decor:brass_stick", ""
+
+-- Simple Footstool --
+"luxury_decor:wooden_board", "wool:white", "dye:<color>",
+"luxury_decor:wooden_board", "wool:white", "dye:<color>",
+"luxury_decor:wooden_plank", "", ""
+
+-- Simple Wooden Wall Clock --
+"luxury_decor:jungle_wooden_board", "luxury_decor:jungle_wooden_board", "",
+"luxury_decor:jungle_wooden_plank", "luxury_decor:brass_stick", "luxury_decor:dial",
+"default:copper_ingot", "default:steel_ingot", ""
+
+-- Grand Piano --
+"luxury_decor:plastic_sheet", "luxury_decor:brass_stick", "dye:black",
+"luxury_decor:plastic_sheet", "luxury_decor:plastic_sheet", "dye:black",
+"luxury_decor:plastic_sheet", "luxury_decor:wolfram_ingot", "default:steel_ingot"
+
+-- Simple Flowerpot --
+"default:clay_lump", "default:clay_lump", "dye:brown",
+"default:clay_lump", "default:dirt", "",
+"default:clay_lump", "", ""
+
+-- Luxury Flowepor --
+"default:clay_lump", "default:clay_lump", "dye:red",
+"default:clay_lump","default:dirt", "default:copper_ingot",
+"default:clay_lump", "", ""
+
+
+Cooking:
+-- Wax Lump --
+"luxury_decor:paraffin_cake"
+
+-- Paraffin Cake --
+"bucket:bucket_oil"
+
+-- Wolfram Ingot --
+"luxury_decor:wolfram_lump"
+
+-- Brass Ingot --
+"luxury_decor:copper_and_zinc"
+-- Simple Wooden Bedside Table --
+"luxury_decor:pine_wooden_board", "luxury_decor:bedside_drawer", ""
+"luxury_decor:pine_wooden_board", "luxury_decor:bedside_drawer", ""
 
 ## Code/Textures/Sounds License
 MIT
