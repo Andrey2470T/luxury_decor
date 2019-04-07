@@ -4,7 +4,7 @@
 ## Description
 This mod adds big amount of new furniture stuff of various sorts, decorations and exterior. Currently it adds one kitchen style (simple), a few types of chairs/tables, luxury lamp, simple sofas/footstools/armchairs/, iron chandelier, shelves, glass vase, pots, royal beds, simple wooden wall clock and simple bedside table. Lots of furniture items are ensured with crafting recipes. 
 
-## Crafting Recipes
+## Crafting & Cooking Recipes
 Crafting:
 -- Simple Wooden Bedside Table --
 "luxury_decor:pine_wooden_board", "luxury_decor:bedside_drawer", ""
