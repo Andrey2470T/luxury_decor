@@ -1,4 +1,4 @@
-# Luxury Decor Mod v.1.0.2 For Minetest!
+# Luxury Decor Mod v.1.1.0 For Minetest!
 ![Luxury Decor](screenshot.png?raw=true)
 
 ## Description
@@ -217,7 +217,59 @@ Crafting:
 "default:clay_lump","default:dirt", "default:copper_ingot",
 "default:clay_lump", "", ""
 
+--  Lampshade  --
+"wool:white", "luxury_decor:brass_ingot", "",
+"luxury_decor:steel_scissors", "", ""
 
+--  Lampshades  --
+"luxury_decor:lampshade", "luxury_decor:lampshade", "luxury_decor:lampshade"
+
+--  Incandescent Bulbs  --
+"luxury_decor:incandescent_bulb", "luxury_decor:incandescent_bulb", "luxury_decor:incandescent_bulb"
+
+--  Scissors  --
+"default:steel_ingot", "default:stick", "",
+"default:stick", "", ""
+
+--  Royal Brass Chandelier  --
+"luxury_decor:brass_ingot", "luxury_decor:brass_ingot", "luxury_decor:brass_ingot",
+"luxury_decor:brass_ingot", "luxury_decor:lampshades", "default:glass",
+"dye:yellow", "luxury_decor:incandescent_bulbs", "default:gold_ingot"
+
+--  Luxury Steel Chandelier  --
+"default:steel_ingot", "default:glass", "luxury_decor:brass_ingot",
+"default:steel_ingot", "default:steel_ingot", "default:glass",
+"luxury_decor:incandescent_bulbs", "", ""
+
+--  Brass Candlestick With One Candle --
+"luxury_decor:brass_stick", "luxury_decor:brass_stick", "luxury_decor:wax_lump",
+"luxury_decor:brass_stick", "", ""
+
+--  Brass Candlestick With Three Candles  --
+"luxury_decor:brass_stick", "luxury_decor:brass_stick", "luxury_decor:wax_lump",
+"luxury_decor:brass_stick", "luxury_decor:wax_lump", "luxury_decor:brass_stick",
+"luxury_decor:brass_stick", "luxury_decor:brass_stick", "luxury_decor:wax_lump"
+
+--  Simple Plastic Chandelier  --
+"luxury_decor:plastic_sheet", "luxury_decor:plastic_sheet", "luxury_decor:wooden_plank",
+"luxury_decor:plastic_sheet", "dye:<color>", "luxury_decor:lampshades",
+"luxury_decor:incandescent_bulbs", "", ""
+  
+ --  Plastic Desk Lamp  --
+"luxury_decor:plastic_sheet", "luxury_decor:brass_stick", "luxury_decor:brass_stick",
+"luxury_decor:plastic_sheet", "dye:"..color, "luxury_decor:lampshade",
+"luxury_decor:plastic_sheet", "luxury_decor:incandescent_bulb", ""
+
+--  Ceiling Lantern  --
+"luxury_decor:plastic_sheet", "luxury_decor:plastic_sheet", "luxury_decor:brass_stick",
+"xpanes:pane_flat", "xpanes:pane_flat", "luxury_decor:incandescent_bulb",
+"default:diamond", "luxury_decor:zinc_ingot", "dye:black"
+
+--  Wall Lantern  --
+"luxury_decor:plastic_sheet", "luxury_decor:plastic_sheet", "xpanes:pane_flat",
+"luxury_decor:plastic_sheet", "xpanes:pane_flat", "luxury_decor:incandescent_bulb",
+"default:diamond", "dye:black", ""
+        
 Cooking:
 -- Wax Lump --
 "luxury_decor:paraffin_cake"
