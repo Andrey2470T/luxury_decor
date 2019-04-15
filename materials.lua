@@ -130,6 +130,23 @@ minetest.register_node("luxury_decor:oil_flowing", {
     end
 })
 
+minetest.register_craftitem("luxury_decor:steel_scissors", {
+    description = "Steel Scissors",
+    inventory_image = "steel_scissors.png",
+    stack_max = 99
+})
+
+minetest.register_craftitem("luxury_decor:lampshade", {
+    description = "Lampshade",
+    inventory_image = "lampshade.png",
+    stack_max = 99
+})
+
+minetest.register_craftitem("luxury_decor:lampshades", {
+    description = "Lampshades",
+    inventory_image = "lampshades.png",
+    stack_max = 99
+})
 
 minetest.register_craftitem("luxury_decor:paraffin_cake", {
     description = "Paraffin Cake",
@@ -200,6 +217,12 @@ minetest.register_craftitem("luxury_decor:plastic_sheet", {
 minetest.register_craftitem("luxury_decor:incandescent_bulb", {
     description = "Incandescent Bulb",
     inventory_image = "incandescent_bulb.png",
+    stack_max = 99
+})
+
+minetest.register_craftitem("luxury_decor:incandescent_bulbs", {
+    description = "Incandescent Bulbs",
+    inventory_image = "incandescent_bulbs.png",
     stack_max = 99
 })
 
@@ -313,7 +336,7 @@ minetest.register_craft({
 minetest.register_craft({
     type = "cooking",
     output = "luxury_decor:wax_lump",
-    recipe = "bucket:paraffin_cake",
+    recipe = "luxury_decor:paraffin_cake",
     cooktime = 8
 })
 
@@ -337,6 +360,41 @@ minetest.register_craft({
     output = "luxury_decor:wolfram_ingot",
     recipe = "luxury_decor:wolfram_lump",
     cooktime = 18
+})
+
+minetest.register_craft({
+    output = "luxury_decor:steel_scissors",
+    recipe = {
+        {"default:steel_ingot", "default:stick", ""},
+        {"default:stick", "", ""},
+        {"", "", ""}
+    }
+})
+
+minetest.register_craft({
+    output = "luxury_decor:lampshade 3",
+    recipe = {
+        {"wool:white", "luxury_decor:brass_ingot", ""},
+        {"luxury_decor:steel_scissors", "", ""},
+        {"", "", ""}
+    },
+    replacements = {
+        {"", "", ""},
+        {"luxury_decor:steel_scissors", "", ""},
+        {"", "", ""}
+    }
+})
+
+minetest.register_craft({
+    type = "shapeless",
+    output = "luxury_decor:lampshades",
+    recipe = {"luxury_decor:lampshade", "luxury_decor:lampshade", "luxury_decor:lampshade"}
+})
+
+minetest.register_craft({
+    type = "shapeless",
+    output = "luxury_decor:incandescent_bulbs",
+    recipe = {"luxury_decor:incandescent_bulb", "luxury_decor:incandescent_bulb", "luxury_decor:incandescent_bulb"}
 })
 
 minetest.register_craft({
