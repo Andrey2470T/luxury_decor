@@ -1,3 +1,11 @@
+function random_dropped_items_amount(player, itemstack, max_items_amount)
+	local random_items_amount_to_give = math.random(max_items_amount)
+        
+        local stack = ItemStack(itemstack.. tostring(random_items_amount_to_give))
+	local inv = minetest.get_inventory({type="player", name=player:get_player_name()})
+	inv:add_item("main", stack)
+end
+
 for _, material in ipairs({"", "jungle_", "pine_"}) do
     minetest.register_craftitem("luxury_decor:" .. material .. "wooden_plank", {
         description = string.upper(string.sub(material, 1, 1)) .. string.sub(material, 2, -2) .. " Wooden Plank",
@@ -262,15 +270,11 @@ minetest.register_node("luxury_decor:zinc_ore", {
     is_ground_content = true,
     paramtype = "light",
     light_source = 6,
+    drop="",
     groups = {cracky=3, oddly_breakable_by_hand=1},
     sounds = default.node_sound_defaults(),
-    after_dig_node = function(pos, node, player)
-        local random_items_amount_to_give = math.random(4)
-        
-        local stack = ItemStack("luxury_decor:zinc_fragments")
-        for give_item = 1, random_items_amount_to_give do
-            stack:add_item("luxury_decor:zinc_fragments")
-        end
+    after_dig_node = function(pos, oldnode, oldmetadata, digger)
+       random_dropped_items_amount(digger, "luxury_decor:zinc_fragments ", 5)
     end
 })
 
@@ -280,15 +284,11 @@ minetest.register_node("luxury_decor:wolfram_ore", {
     is_ground_content = true,
     paramtype = "light",
     light_source = 2,
+    drop="",
     groups = {cracky=3.5, oddly_breakable_by_hand=1},
     sounds = default.node_sound_defaults(),
-    after_dig_node = function(pos, node, player)
-        local random_items_amount_to_give = math.random(4)
-        
-        local stack = ItemStack("luxury_decor:wolfram_lump")
-        for give_item = 1, random_items_amount_to_give do
-            stack:add_item("luxury_decor:wolfram_lump")
-        end
+    after_dig_node = function(pos, oldnode, oldmetadata, digger)
+        random_dropped_items_amount(digger, "luxury_decor:wolfram_lump ", 4)
     end
 })
 
