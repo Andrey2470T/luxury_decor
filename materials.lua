@@ -1,4 +1,4 @@
-function random_dropped_items_amount(player, itemstack, max_items_amount)
+local function random_dropped_items_amount(player, itemstack, max_items_amount)
 	local random_items_amount_to_give = math.random(max_items_amount)
         
         local stack = ItemStack(itemstack.. tostring(random_items_amount_to_give))
