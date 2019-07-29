@@ -68,16 +68,14 @@ minetest.register_node("luxury_decor:oil_source", {
     liquid_range = 5,
     damage_per_second = 1,
 	post_effect_color = {a = 103, r = 30, g = 60, b = 90},
-	groups = {water = 3, liquid = 3, cools_lava = 1},
+	groups = {water = 3, liquid = 3, cools_lava = 1, not_in_creative_inventory=1},
     on_rightclick = function (pos, node, player, itemstack, pointed_thing)
         if itemstack:get_name() == "bucket:bucket_empty" then
             minetest.remove_node(pos)
             itemstack:take_item()
             local stack = ItemStack("luxury_decor:bucket_oil")
-            local inv = player:get_inventory()
-            inv:set_stack("main", 1, stack)
-            stack:add_item("luxury_decor:bucket_oil")
-            return itemstack
+	    local inv = minetest.get_inventory({type="player", name=player:get_player_name()})
+	    inv:add_item("main", stack)
         end
     end
 })
@@ -124,18 +122,30 @@ minetest.register_node("luxury_decor:oil_flowing", {
 	liquid_viscosity = 5,
 	post_effect_color = {a = 103, r = 30, g = 60, b = 90},
 	groups = {water = 3, liquid = 3, not_in_creative_inventory = 1,
-		cools_lava = 1},
+		cools_lava = 1, not_in_creative_inventory=1},
     on_rightclick = function (pos, node, player, itemstack, pointed_thing)
         if itemstack:get_name() == "bucket:bucket_empty" then
             minetest.remove_node(pos)
             itemstack:take_item()
             local stack = ItemStack("luxury_decor:bucket_oil")
-            local inv = player:get_inventory()
-            inv:set_stack("main", 1, stack)
-            stack:add_item("luxury_decor:bucket_oil")
-            return itemstack
-        end
+            local inv = minetest.get_inventory({type="player", name=player:get_player_name()})
+            inv:add_item("main", stack)
+            
+	end
     end
+})
+
+minetest.register_craftitem("luxury_decor:bucket_oil", {
+	description = "Oil Bucket",
+	inventory_image = "bucket_oil.png",
+	on_place = function(itemstack, placer, pointed_thing)
+		itemstack:take_item()
+		local stack = ItemStack("bucket:bucket_empty")
+		local inv = minetest.get_inventory({type="player", name=placer:get_player_name()})
+		inv:add_item("main", stack)
+		minetest.set_node(pointed_thing.above, {name="luxury_decor:oil_source"})
+		return itemstack
+	end
 })
 
 minetest.register_craftitem("luxury_decor:steel_scissors", {
@@ -271,7 +281,7 @@ minetest.register_node("luxury_decor:zinc_ore", {
     paramtype = "light",
     light_source = 6,
     drop="",
-    groups = {cracky=3, oddly_breakable_by_hand=1},
+    groups = {cracky=3},
     sounds = default.node_sound_defaults(),
     after_dig_node = function(pos, oldnode, oldmetadata, digger)
        random_dropped_items_amount(digger, "luxury_decor:zinc_fragments ", 5)
@@ -285,7 +295,7 @@ minetest.register_node("luxury_decor:wolfram_ore", {
     paramtype = "light",
     light_source = 2,
     drop="",
-    groups = {cracky=3.5, oddly_breakable_by_hand=1},
+    groups = {cracky=3.5},
     sounds = default.node_sound_defaults(),
     after_dig_node = function(pos, oldnode, oldmetadata, digger)
         random_dropped_items_amount(digger, "luxury_decor:wolfram_lump ", 4)
