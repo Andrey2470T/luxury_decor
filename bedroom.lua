@@ -83,7 +83,7 @@ for bedside_t, bedside_ts in pairs(cabs_table["simple_wooden_bedside_table"]) do
             local name = minetest.get_node(pos).name
             local img_button1 = "image_button[0.5, 0;1, 2;" .. bedside_ts[1].img_button ..";" .. bedside_ts[1].button .. ";]"
             local img_button2 = "image_button[0.5, 2.5;1, 2;" .. bedside_ts[2].img_button .. ";" .. bedside_ts[2].button .. ";]"
-            local img_button3 = "image_button[0.5, 5;1, 2;" .. bedside_ts[2].img_button .. ";" .. bedside_ts[3].button .. ";]"
+            local img_button3 = "image_button[0.5, 5;1, 2;" .. bedside_ts[3].img_button .. ";" .. bedside_ts[3].button .. ";]"
             
             local y = 0
             local form = "size[9,11.5]" .. img_button1 .. img_button2 .. img_button3
@@ -113,37 +113,10 @@ for bedside_t, bedside_ts in pairs(cabs_table["simple_wooden_bedside_table"]) do
                 
                 
             end
-            --[[local cabs_items_list = {}
-            local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-            local cab_num = 
-            for num, list in pairs(kit_wood_cabs.inv_list[cab_num]) do
-                cabs_items_list[num] = list[str_pos]
-                for num2, list2 in pairs(list) do
-                    for num3, itemstack in pairs(list2) do
-                         if itemstack ~= nil then
-                             minetest.debug(dump(cabs_items_list[num]))
-                             cabs_items_list[num][num2][num3] = itemstack:get_name()
-                         end
-                         
-                    end
-                end
-            end
-            local inv_lists = {}
-            for num, list in pairs(inv:get_lists()) do
-                inv_lists[num] = list
-                for num2, itemstack in pairs(list) do
-                    if itemstack ~= nil then
-                        inv_lists[num][num2] = itemstack:get_name()
-                    end
-                end
-            end]]
-            --minetest.debug(dump(cabs_items_list))
-            --minetest.debug(dump(inv_lists))
             inv:set_size("main", 8*4)
         end,
         on_receive_fields = function (pos, formname, fields, sender)
             local name = minetest.get_node(pos).name
-            local generalized_name = string.sub(name, 14, -3)
             local meta = minetest.get_meta(pos)
             local defined_mode = cabinets.define_mode(fields, name)
             local button_name
@@ -158,9 +131,9 @@ for bedside_t, bedside_ts in pairs(cabs_table["simple_wooden_bedside_table"]) do
             end
             
             if defined_mode == "closed" then
-               cabinets.open(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"open_Drawer", "open_Drawer", "open_Drawer"})
+               cabinets.open(pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), button_name, meta:get_string("formspec"), {"open_Drawer", "open_Drawer", "open_Drawer"})
             elseif defined_mode == "opened" then
-               cabinets.close(sender, pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), generalized_name, button_name, meta:get_string("formspec"), {"close_Drawer", "close_Drawer", "close_Drawer"})
+               cabinets.close(pos, "luxury_decor:" .. cabinets.define_needed_cabinet(fields, name), button_name, meta:get_string("formspec"), {"close_Drawer", "close_Drawer", "close_Drawer"})
             end
             
                    

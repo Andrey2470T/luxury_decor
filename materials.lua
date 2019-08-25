@@ -338,7 +338,7 @@ minetest.register_ore({
 minetest.register_craft({
     type = "cooking",
     output = "luxury_decor:paraffin_cake 2",
-    recipe = "bucket:bucket_oil",
+    recipe = "luxury_decor:bucket_oil",
     cooktime = 15--[[,
     replacements = {"bucket:bucket_empty"}]]
 })
