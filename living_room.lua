@@ -499,18 +499,14 @@ for color, rgb_color in pairs(sofas_rgb_colors) do
             sounds = default.node_sound_wood_defaults(),
             on_construct = function (pos)
                 local meta = minetest.get_meta(pos)
-                meta:set_string("seats_range", minetest.serialize({[1] = {is_busy={bool=false, player=nil}, pos = {x = pos.x, y = pos.y+0.2, z = pos.z}}}))
+		meta:set_string("seat", minetest.serialize({busy_by=nil, pos = {x = pos.x, y = pos.y+0.2, z = pos.z}, anim={mesh="character_sitting.b3d", range={x=1, y=80}, speed=15, blend=0, loop=true}}))
             end,
             after_dig_node = function (pos, oldnode, oldmetadata, digger)
-                local seats = minetest.deserialize(oldmetadata.fields.seats_range)
-                if seats ~= nil then
-                    for seat_num, seat_data in pairs(seats) do
-                        if seat_data.is_busy.player ~= nil then
-                            local player = minetest.get_player_by_name(seat_data.is_busy.player)
-                            chairs.standup_player(player, pos, seats)
-                        end
-                    end
-                end
+		local seat = minetest.deserialize(oldmetadata.fields.seat)
+		if seat then
+			local player = minetest.get_player_by_name(seat.busy_by)
+			chairs.standup_player(player, pos, seat)
+		end
             end,
             on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
                     if string.find(itemstack:get_name(), "dye:") then
@@ -534,15 +530,10 @@ for color, rgb_color in pairs(sofas_rgb_colors) do
                             end
                         end
                     else
-			            local meta = clicker:get_meta()
-                        local is_attached = minetest.deserialize(meta:get_string("is_attached"))
-                        if is_attached == nil or is_attached == "" then
-                            chairs.sit_player(clicker, node, pos, {{{x=81, y=81}, frame_speed=15, frame_blend=0}})
-                        
-                        elseif is_attached ~= nil or is_attached ~= "" then
-                            chairs.standup_player(clicker, pos)
-             
-                        end
+			local bool = chairs.sit_player(clicker, node, pos) 
+			if bool == nil then
+				chairs.standup_player(clicker, pos)
+			end
                     end
                     return itemstack
                 end
@@ -585,18 +576,14 @@ for ind, sofa_count in pairs({"1", "2", "3", "4", "5"}) do
             sounds = default.node_sound_wood_defaults(),
             on_construct = function (pos)
                 local meta = minetest.get_meta(pos)
-                meta:set_string("seats_range", minetest.serialize({[1] = {is_busy={bool=false, player=nil}, pos = {x = pos.x, y = pos.y+0.2, z = pos.z}}}))
+		meta:set_string("seat", minetest.serialize({busy_by=nil, pos = {x = pos.x, y = pos.y+0.2, z = pos.z}, anim={mesh="character_sitting.b3d", range={x=1, y=80}, speed=15, blend=0, loop=true}}))
             end,
             after_dig_node = function (pos, oldnode, oldmetadata, digger)
-                local seats = minetest.deserialize(oldmetadata.fields.seats_range)
-                if seats ~= nil then
-                    for seat_num, seat_data in pairs(seats) do
-                        if seat_data.is_busy.player ~= nil then
-                            local player = minetest.get_player_by_name(seat_data.is_busy.player)
-                            chairs.standup_player(player, pos, seats)
-                        end
-                    end
-                end
+		local seat = minetest.deserialize(oldmetadata.fields.seat)
+		if seat then
+			local player = minetest.get_player_by_name(seat.busy_by)
+			chairs.standup_player(player, pos, seat)
+		end
             end,
             on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
                 if string.find(itemstack:get_name(), "dye:") then
@@ -611,15 +598,10 @@ for ind, sofa_count in pairs({"1", "2", "3", "4", "5"}) do
                 elseif string.find(itemstack:get_name(), "luxury_decor:simple_") and string.find(itemstack:get_name(), "_sofa") then
                        sofas.connect_sofas(clicker, {name=node.name, param1=node.param1, param2=node.param2}, itemstack:get_name(), pos, pointed_thing)
                 else
-                    local meta = clicker:get_meta()
-                    local is_attached = minetest.deserialize(meta:get_string("is_attached"))
-                    if is_attached == nil or is_attached == "" then
-                        chairs.sit_player(clicker, node, pos, {{{x=81, y=81}, frame_speed=15, frame_blend=0}})
-                        
-                    elseif is_attached ~= nil or is_attached ~= "" then
-                        chairs.standup_player(clicker, pos)
-             
-                    end
+			local bool = chairs.sit_player(clicker, node, pos) 
+			if bool == nil then
+				chairs.standup_player(clicker, pos)
+			end
                 end
             end,
             on_dig = function (pos, node, player)
@@ -847,6 +829,17 @@ for ind, footstool_type in pairs({"small", "middle", "long"}) do
                 fixed = footstools_collision_boxes[footstool_type]
             },
             sounds = default.node_sound_wood_defaults(),
+	    on_construct = function (pos)
+		   local meta = minetest.get_meta(pos)
+		   meta:set_string("seat", minetest.serialize({busy_by=nil, pos = {x = pos.x, y = pos.y+0.2, z = pos.z}, anim={mesh="character_sitting.b3d", range={x=1, y=80}, speed=15, blend=0, loop=true}}))
+	    end,	
+		after_dig_node = function (pos, oldnode, oldmetadata, digger)
+			local seat = minetest.deserialize(oldmetadata.fields.seat)
+			if seat then
+				local player = minetest.get_player_by_name(seat.busy_by)
+				chairs.standup_player(player, pos, seat)
+			end
+		end,                                                                                   
             on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
                 if string.find(itemstack:get_name(), "dye:") then
                     local get_player_contr = clicker:get_player_control()
@@ -895,7 +888,12 @@ for ind, footstool_type in pairs({"small", "middle", "long"}) do
                             end
                         end
                     end
-                end
+                else
+			local bool = chairs.sit_player(clicker, node, pos) 
+			if bool == nil then
+				chairs.standup_player(clicker, pos)
+			end                                                                          
+		end
                                     
             end
         })

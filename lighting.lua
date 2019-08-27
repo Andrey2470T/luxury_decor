@@ -1,7 +1,7 @@
 minetest.register_node("luxury_decor:luxury_desk_lamp_off", {
     description = "Luxury Desk Lamp",
     visual_scale = 0.5,
-    mesh = "luxury_desk_lamp.obj",
+    mesh = "luxury_desk_lamp.b3d",
     inventory_image = "luxury_desk_lamp_inv.png",
     tiles = {"luxury_desk_lamp.png"},
     paramtype = "light",
@@ -32,7 +32,7 @@ minetest.register_node("luxury_decor:luxury_desk_lamp_off", {
 minetest.register_node("luxury_decor:luxury_desk_lamp_on", {
     description = "Luxury Desk Lamp",
     visual_scale = 0.5,
-    mesh = "luxury_desk_lamp.obj",
+    mesh = "luxury_desk_lamp.b3d",
     inventory_image = "luxury_desk_lamp_inv.png",
     tiles = {"luxury_desk_lamp.png"},
     paramtype = "light",
