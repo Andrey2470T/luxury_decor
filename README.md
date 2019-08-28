@@ -1,4 +1,4 @@
-# Luxury Decor Mod v.1.1.0 For Minetest!
+# Luxury Decor Mod v.1.1.3 For Minetest!
 ![Luxury Decor](screenshot.png?raw=true)
 
 ## Description
