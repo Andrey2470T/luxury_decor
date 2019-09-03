@@ -88,12 +88,7 @@ end
 local modes = {}
 cabinets.define_needed_cabinet = function (fields, nodename)
     local substring = string.sub(nodename, 14)
-    local generalized_name
-    if string.find(substring, "fridge") then
-        generalized_name = string.sub(substring, 1, -8)
-    else
-        generalized_name = string.sub(substring, 1, -3)
-    end
+    local generalized_name = string.sub(substring, 1, -3)
     for _, depart in ipairs(cabs_table[generalized_name][substring]) do
         modes[#modes+1] = depart.mode
     end
@@ -132,12 +127,7 @@ end
 local number = 0
 cabinets.define_mode = function (fields, nodename)
     local substring = string.sub(nodename, 14)
-    local general_name
-    if string.find(substring, "fridge") then
-        general_name = string.sub(substring, 1, -8)
-    else
-        general_name = string.sub(substring, 1, -3)
-    end
+    local general_name = string.sub(substring, 1, -3)
     for num, depart in pairs(cabs_table[general_name][substring]) do
         if type(depart) == "table" then
             local name = depart.button
@@ -345,11 +335,11 @@ cabs_table["kitchen_wooden_cabinet_with_sink"] = {
 
 cabs_table["fridge"] = {
     ["fridge_1"] = {
-        {mode="closed", button = "fridge_closed", img_button = "open_button.png"}
+        {mode="closed", button = "fridge1", img_button = "open_button.png"}
         
     },
     ["fridge_2"] = {
-        {mode="opened", button = "fridge_opened", img_button = "close_button.png", listname = "fridge_opened", inv_size=6*6},
+        {mode="opened", button = "fridge2", img_button = "close_button.png", listname = "fridge2", inv_size=6*6},
         not_in_creative_inventory=1
         
     },
@@ -1408,12 +1398,7 @@ for cab, cab_boxes in pairs(cabs_table["fridge"]) do
         end,
         after_dig_node = function (pos, oldnode, oldmetadata, digger)
             local name = string.sub(oldnode.name, 14)
-            local generalized_name 
-            if string.find(name, "fridge") then
-                generalized_name = string.sub(name, 1, -8)
-            else
-                generalized_name = string.sub(name, 1, -3)
-            end
+            local generalized_name = string.sub(name, 1, -3)
             
             if cabs_table[generalized_name][name] then
                 for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
