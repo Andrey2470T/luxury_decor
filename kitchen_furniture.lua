@@ -44,7 +44,6 @@ cabinets.open = function (pos, node_replace, clicked_button_name, formspec, soun
 		cabs_table[general_name].inv_list[depart_num][str_pos] = list
 	end
 	if type(depart_data) == "table" and depart_data.button == clicked_button_name then
-		minetest.debug("TRUE")
 		minetest.sound_play(sounds_play[depart_num], {
 		pos = pos,
 		max_hear_distance = 15
@@ -71,14 +70,13 @@ cabinets.close = function (pos, node_replace, clicked_button_name, formspec, sou
             local list = inv:get_list(depart_data.listname)
             local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
             cabs_table[general_name].inv_list[depart_num][str_pos] = list
-	    if depart_data.button == clicked_button_name then
-		    minetest.sound_play(sounds_play[depart_num], {
-				pos = pos,
-				max_hear_distance = 15
-			})
-	    end
 	end
-	
+	if type(depart_data) == "table" and depart_data.button == clicked_button_name then
+		minetest.sound_play(sounds_play[depart_num], {
+		pos = pos,
+		max_hear_distance = 15
+	        })
+	end
     end      
         minetest.remove_node(pos)
 	minetest.set_node(pos, {name=node_replace, param1=node.param1, param2=node.param2})
@@ -335,11 +333,11 @@ cabs_table["kitchen_wooden_cabinet_with_sink"] = {
 
 cabs_table["fridge"] = {
     ["fridge_1"] = {
-        {mode="closed", button = "fridge1", img_button = "open_button.png"}
+        {mode="closed", button = "fridge_closed", img_button = "open_button.png"}
         
     },
     ["fridge_2"] = {
-        {mode="opened", button = "fridge2", img_button = "close_button.png", listname = "fridge2", inv_size=6*6},
+        {mode="opened", button = "fridge_opened", img_button = "close_button.png", listname = "fridge_opened", inv_size=6*6},
         not_in_creative_inventory=1
         
     },

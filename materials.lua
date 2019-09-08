@@ -13,34 +13,25 @@ for _, material in ipairs({"", "jungle_", "pine_"}) do
         stack_max = 99
     })
     
+    minetest.register_craftitem("luxury_decor:" .. material .. "wooden_board", {
+	description = string.upper(string.sub(material, 1, 1)) .. string.sub(material, 2, -2) .. " Wooden Board",
+	inventory_image = material .. "wooden_board.png"
+	})
+    minetest.register_craft({
+	type = "shapeless",
+	output = "luxury_decor:" .. material .. "wooden_plank 2",
+	recipe = {"luxury_decor:" .. material .. "wooden_board", "luxury_decor:saw"},
+	replacements = {
+		{"", "luxury_decor:saw"}
+	}
+	})
+    minetest.register_craft({
+	type = "shapeless",
+	output = "default:stick 2",
+	recipe = {"luxury_decor:" .. material .. "wooden_plank", "luxury_decor:saw"},
+	replacements = {{"", "luxury_decor:saw"}}
+	})
 end
-
-minetest.register_craft({
-    type = "shapeless",
-    output = "luxury_decor:wooden_plank 2",
-    recipe = {"luxury_decor:wooden_board", "luxury_decor:saw"},
-    replacements = {
-        {"", "luxury_decor:saw"}
-    }
-})
-
-minetest.register_craft({
-    type = "shapeless",
-    output = "luxury_decor:jungle_wooden_plank 2",
-    recipe = {"luxury_decor:jungle_wooden_board", "luxury_decor:saw"},
-    replacements = {
-        {"", "luxury_decor:saw"}
-    }
-})
-
-minetest.register_craft({
-    type = "shapeless",
-    output = "luxury_decor:pine_wooden_plank 2",
-    recipe = {"luxury_decor:pine_wooden_board", "luxury_decor:saw"},
-    replacements = {
-        {"", "luxury_decor:saw"}
-    }
-})
 
 minetest.register_craftitem("luxury_decor:bucket_oil", {
     description = "Bucket Oil",
@@ -205,24 +196,6 @@ minetest.register_craftitem("luxury_decor:zinc_fragments", {
 minetest.register_craftitem("luxury_decor:copper_and_zinc", {
     description = "Copper and Zinc",
     inventory_image = "copper_and_zinc.png",
-    stack_max = 99
-})
-
-minetest.register_craftitem("luxury_decor:wooden_board", {
-    description = "Wooden Board",
-    inventory_image = "wooden_board.png",
-    stack_max = 99
-})
-
-minetest.register_craftitem("luxury_decor:jungle_wooden_board", {
-    description = "Jungle Board",
-    inventory_image = "jungle_board.png",
-    stack_max = 99
-})
-
-minetest.register_craftitem("luxury_decor:pine_wooden_board", {
-    description = "Pine Board",
-    inventory_image = "pine_board.png",
     stack_max = 99
 })
 
@@ -448,20 +421,37 @@ minetest.register_craftitem("luxury_decor:saw", {
 minetest.register_craft({
     type = "shapeless",
     output = "luxury_decor:wooden_board 3",
-    recipe = {"stairs:slab_wood", "luxury_decor:saw"}
+    recipe = {"stairs:slab_wood", "luxury_decor:saw"},
+	replacements = {{"", "luxury_decor:saw"}}
 })
 
 minetest.register_craft({
     type = "shapeless",
     output = "luxury_decor:jungle_wooden_board 3",
-    recipe = {"stairs:slab_junglewood", "luxury_decor:saw"}
+    recipe = {"stairs:slab_junglewood", "luxury_decor:saw"},
+	replacements = {{"", "luxury_decor:saw"}}
 })
 
 minetest.register_craft({
     type = "shapeless",
     output = "luxury_decor:pine_wooden_board 3",
-    recipe = {"stairs:slab_pine_wood", "luxury_decor:saw"}
+    recipe = {"stairs:slab_pine_wood", "luxury_decor:saw"},
+	replacements = {{"", "luxury_decor:saw"}}
 })
+
+minetest.register_on_craft(function (itemstack, player, old_craft_grid, craft_inv)
+	minetest.debug(dump(old_craft_grid))
+	for i = 1, #old_craft_grid do
+		local ud = old_craft_grid[i]
+		local name = ud:get_name()
+		if name == "luxury_decor:saw" then
+                          minetest.sound_play("wood_sawing", {
+				to_player = player:get_player_name()
+				})
+                          return 
+		end
+	end
+end)
 
 minetest.register_craft({
     type = "shapeless",

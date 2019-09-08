@@ -295,26 +295,8 @@ minetest.register_node("luxury_decor:luxury_steel_chandelier_on", {
     end
     
 }) 
-    
-local plastic_chands_colors = {
-    ["black"] = "#000000",
-    ["red"] = "#FF0000",
-    ["green"] = "#00FF00",
-    ["white"] = "#FFFFFF",
-    ["blue"] = "#0000FF",
-    ["yellow"] = "#FFFF00",
-    ["magenta"] = "#FF00FF",
-    ["cyan"] = "#00FFFF",
-    ["dark_green"] = "#008000",
-    ["dark_grey"] = "#808080",
-    ["grey"] = "#C0C0C0",
-    ["brown"] = "#A52A2A",
-    ["orange"] = "#FF4500",
-    ["pink"] = "#F08080",
-    ["violet"] = "#4B0082"
-}
 
-for color, rgb_code in pairs(plastic_chands_colors) do
+for color, rgb_code in pairs(rgb_colors) do
    minetest.register_node("luxury_decor:simple_plastic_"..color.."_chandelier_off", {
     description = "Simple Plastic Chandelier (with ".. color .. " plastic shades)",
     visual_scale = 0.5,

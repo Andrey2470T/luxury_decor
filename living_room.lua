@@ -503,7 +503,7 @@ for color, rgb_color in pairs(sofas_rgb_colors) do
             end,
             after_dig_node = function (pos, oldnode, oldmetadata, digger)
 		local seat = minetest.deserialize(oldmetadata.fields.seat)
-		if seat then
+		if seat.busy_by then
 			local player = minetest.get_player_by_name(seat.busy_by)
 			chairs.standup_player(player, pos, seat)
 		end
@@ -580,7 +580,7 @@ for ind, sofa_count in pairs({"1", "2", "3", "4", "5"}) do
             end,
             after_dig_node = function (pos, oldnode, oldmetadata, digger)
 		local seat = minetest.deserialize(oldmetadata.fields.seat)
-		if seat then
+		if seat.busy_by then
 			local player = minetest.get_player_by_name(seat.busy_by)
 			chairs.standup_player(player, pos, seat)
 		end
@@ -835,7 +835,7 @@ for ind, footstool_type in pairs({"small", "middle", "long"}) do
 	    end,	
 		after_dig_node = function (pos, oldnode, oldmetadata, digger)
 			local seat = minetest.deserialize(oldmetadata.fields.seat)
-			if seat then
+			if seat.busy_by then
 				local player = minetest.get_player_by_name(seat.busy_by)
 				chairs.standup_player(player, pos, seat)
 			end
