@@ -1,8 +1,50 @@
-# Luxury Decor Mod v.1.1.3 For Minetest!
+# Luxury Decor Mod For Minetest! Current version is 1.1.4!
 ![Luxury Decor](screenshot.png?raw=true)
 
 ## Description
 This mod adds big amount of new furniture stuff of various sorts, decorations and exterior. Currently it adds one kitchen style (simple), a few types of chairs/tables, luxury lamp, simple sofas/footstools/armchairs/, iron chandelier, shelves, glass vase, pots, royal beds, simple wooden wall clock and simple bedside table. Lots of furniture items are ensured with crafting recipes. 
+
+## Changelog List
+### [26.09.19] 1.1.4: 
+####          1.Added wood sawing sound while crafting with saw usage. 
+####          2.Fixed an error causing due to '[[...]]' inside the comment.
+####          3.Fridges dont cause any errors anymore.
+
+### [27.08.19] 1.1.3: 
+####          1.Moved sitting API into new folder named "api" into "sitting.lua".
+####          2.Scaled down some chairs and lamps.
+
+### [25.08.19] 1.1.2:
+####          1.Fixed a serious bug is bound with disappearance of lying items as a result of switching other cabinet departmenrs.
+
+### [??.??.??] 1.1.1:
+####          1.Fixed overlaying of textures of some items (plastic chands).
+####          2.Scaled down candlesticks and plastic desk lamps.
+
+### [03.05.19] 1.1.0:
+####          1.Added a whole set of chandeliers (plastic, luxury, glass and others), brass candlesticks and street lanterns.
+
+### [31.03.19] 1.0.2:
+####          1.Added crafting recipes for all items.
+####          2.Added more craft ingredients.
+
+### [27.03.19] 1.0.1:
+####          1.The simple sofas connect between themselves correctly.
+####          2.The sofas can be disconnectable by destroying them.
+####          3.Fixed overlaying of sofas textures.
+
+### [16.03.19] 1.0.0:
+####          1.Added simple wooden kitchen furniture.
+####          2.Added piano.
+####          3.Added iron chandelier and wall glass lamp.
+####          4.Added simple & luxury pots.
+####          5.Added laminate floor.
+####          6.Added simple colorful sofas and armchairs.
+####          7.Added wall clock.
+####          8.Added bedside table.
+####          9.Added tables & chairs.
+####         10.Added royal beds (single, double).
+
 
 ## Crafting & Cooking Recipes
 Crafting:
