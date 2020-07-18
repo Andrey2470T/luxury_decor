@@ -1,10 +1,15 @@
-# Luxury Decor Mod For Minetest! Current version is 1.1.4!
+# Luxury Decor Mod For Minetest! Current version is 1.1.5!
 ![Luxury Decor](screenshot.png?raw=true)
 
 ## Description
 This mod adds big amount of new furniture stuff of various sorts, decorations and exterior. Currently it adds one kitchen style (simple), a few types of chairs/tables, luxury lamp, simple sofas/footstools/armchairs/, iron chandelier, shelves, glass vase, pots, royal beds, simple wooden wall clock and simple bedside table. Lots of furniture items are ensured with crafting recipes. 
 
 ## Changelog List
+### [18.07.20] 1.1.5:
+####          1.Added solid oil.
+####          2.Decreased alpha of oil source.
+####          3.Optimized generation of ores.
+
 ### [26.09.19] 1.1.4: 
 ####          1.Added wood sawing sound while crafting with saw usage. 
 ####          2.Fixed an error causing due to '[[...]]' inside the comment.
