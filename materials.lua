@@ -13,25 +13,34 @@ for _, material in ipairs({"", "jungle_", "pine_"}) do
         stack_max = 99
     })
     
-    minetest.register_craftitem("luxury_decor:" .. material .. "wooden_board", {
-	description = string.upper(string.sub(material, 1, 1)) .. string.sub(material, 2, -2) .. " Wooden Board",
-	inventory_image = material .. "wooden_board.png"
-	})
-    minetest.register_craft({
-	type = "shapeless",
-	output = "luxury_decor:" .. material .. "wooden_plank 2",
-	recipe = {"luxury_decor:" .. material .. "wooden_board", "luxury_decor:saw"},
-	replacements = {
-		{"", "luxury_decor:saw"}
-	}
-	})
-    minetest.register_craft({
-	type = "shapeless",
-	output = "default:stick 2",
-	recipe = {"luxury_decor:" .. material .. "wooden_plank", "luxury_decor:saw"},
-	replacements = {{"", "luxury_decor:saw"}}
-	})
 end
+
+minetest.register_craft({
+    type = "shapeless",
+    output = "luxury_decor:wooden_plank 2",
+    recipe = {"luxury_decor:wooden_board", "luxury_decor:saw"},
+    replacements = {
+        {"", "luxury_decor:saw"}
+    }
+})
+
+minetest.register_craft({
+    type = "shapeless",
+    output = "luxury_decor:jungle_wooden_plank 2",
+    recipe = {"luxury_decor:jungle_wooden_board", "luxury_decor:saw"},
+    replacements = {
+        {"", "luxury_decor:saw"}
+    }
+})
+
+minetest.register_craft({
+    type = "shapeless",
+    output = "luxury_decor:pine_wooden_plank 2",
+    recipe = {"luxury_decor:pine_wooden_board", "luxury_decor:saw"},
+    replacements = {
+        {"", "luxury_decor:saw"}
+    }
+})
 
 minetest.register_craftitem("luxury_decor:bucket_oil", {
     description = "Bucket Oil",
@@ -43,7 +52,7 @@ minetest.register_node("luxury_decor:oil_source", {
 	description = "Oil Source",
 	drawtype = "liquid",
 	tiles = {"oil_source.png"},
-	alpha = 160,
+	alpha = 250,
 	paramtype = "light",
 	walkable = false,
 	pointable = false,
@@ -55,11 +64,10 @@ minetest.register_node("luxury_decor:oil_source", {
 	liquidtype = "source",
 	liquid_alternative_flowing = "luxury_decor:oil_flowing",
 	liquid_alternative_source = "luxury_decor:oil_source",
-	liquid_viscosity = 5,
+	liquid_viscosity = 7,
     liquid_range = 5,
-    damage_per_second = 1,
 	post_effect_color = {a = 103, r = 30, g = 60, b = 90},
-	groups = {water = 3, liquid = 3, cools_lava = 1, not_in_creative_inventory=1},
+	groups = {water = 3, liquid = 3, not_in_creative_inventory=1},
     on_rightclick = function (pos, node, player, itemstack, pointed_thing)
         if itemstack:get_name() == "bucket:bucket_empty" then
             minetest.remove_node(pos)
@@ -71,11 +79,20 @@ minetest.register_node("luxury_decor:oil_source", {
     end
 })
 
+minetest.register_node("luxury_decor:solid_oil", {
+    description = "Solid Oil (use furnace to melt)",
+    tiles = {"solid_oil.png"},
+    paramtype = "light",
+    paramtype2 = "facedir",
+    groups = {cracky = 2},
+    sounds = default.node_sound_stone_defaults()
+})
+
 minetest.register_node("luxury_decor:oil_flowing", {
 	description = "Flowing Oil",
 	drawtype = "flowingliquid",
 	tiles = {"oil_source.png"},
-	special_tiles = {
+    special_tiles = {
 		{
 			name = "oil_source_animated.png",
 			backface_culling = false,
@@ -83,7 +100,7 @@ minetest.register_node("luxury_decor:oil_flowing", {
 				type = "vertical_frames",
 				aspect_w = 16,
 				aspect_h = 16,
-				length = 5,
+				length = 10,
 			},
 		},
 		{
@@ -93,11 +110,11 @@ minetest.register_node("luxury_decor:oil_flowing", {
 				type = "vertical_frames",
 				aspect_w = 16,
 				aspect_h = 16,
-				length = 5,
+				length = 10,
 			},
-		},
+		}
 	},
-	alpha = 160,
+	alpha = 250,
 	paramtype = "light",
 	paramtype2 = "flowingliquid",
 	walkable = false,
@@ -108,12 +125,12 @@ minetest.register_node("luxury_decor:oil_flowing", {
 	drop = "",
 	drowning = 1,
 	liquidtype = "flowing",
+    liquid_range = 4,
 	liquid_alternative_flowing = "luxury_decor:oil_flowing",
 	liquid_alternative_source = "luxury_decor:oil_source",
-	liquid_viscosity = 5,
+	liquid_viscosity = 7,
 	post_effect_color = {a = 103, r = 30, g = 60, b = 90},
-	groups = {water = 3, liquid = 3, not_in_creative_inventory = 1,
-		cools_lava = 1, not_in_creative_inventory=1},
+	groups = {water = 3, liquid = 3, not_in_creative_inventory = 1},
     on_rightclick = function (pos, node, player, itemstack, pointed_thing)
         if itemstack:get_name() == "bucket:bucket_empty" then
             minetest.remove_node(pos)
@@ -199,6 +216,24 @@ minetest.register_craftitem("luxury_decor:copper_and_zinc", {
     stack_max = 99
 })
 
+minetest.register_craftitem("luxury_decor:wooden_board", {
+    description = "Wooden Board",
+    inventory_image = "wooden_board.png",
+    stack_max = 99
+})
+
+minetest.register_craftitem("luxury_decor:jungle_wooden_board", {
+    description = "Jungle Board",
+    inventory_image = "jungle_board.png",
+    stack_max = 99
+})
+
+minetest.register_craftitem("luxury_decor:pine_wooden_board", {
+    description = "Pine Board",
+    inventory_image = "pine_board.png",
+    stack_max = 99
+})
+
 minetest.register_craftitem("luxury_decor:plastic_sheet", {
     description = "Plastic Sheet",
     inventory_image = "plastic_sheet.png",
@@ -279,7 +314,7 @@ minetest.register_ore({
     ore_type = "scatter",
     ore = "luxury_decor:zinc_ore",
     wherein = "default:stone",
-    clust_scarcity = 100,
+    clust_scarcity = 400,
     clust_num_ores = 5,
     clust_size = 3,
     height_min = -31000,
@@ -290,7 +325,7 @@ minetest.register_ore({
     ore_type = "scatter",
     ore = "luxury_decor:wolfram_ore",
     wherein = "default:stone",
-    clust_scarcity = 200,
+    clust_scarcity = 800,
     clust_num_ores = 4,
     clust_size = 2,
     height_min = -31000,
@@ -299,13 +334,26 @@ minetest.register_ore({
 
 minetest.register_ore({
     ore_type = "scatter",
-    ore = "luxury_decor:oil_source",
+    ore = "luxury_decor:solid_oil",
     wherein = "default:stone",
-    clust_scarcity = 400,
+    clust_scarcity = 700,
     clust_num_ores = 3,
-    clust_size = 1,
+    clust_size = 3,
     height_min = -31000,
     height_max = -25
+})
+
+minetest.register_craft({
+    type = "shapeless",
+    output = "luxury_decor:bucket_oil",
+    recipe = {"bucket:bucket_empty", "luxury_decor:oil_source"}
+})
+
+minetest.register_craft({
+    type = "cooking",
+    output = "luxury_decor:oil_source",
+    recipe = "luxury_decor:solid_oil",
+    cooktime = 4
 })
 
 minetest.register_craft({
@@ -421,37 +469,20 @@ minetest.register_craftitem("luxury_decor:saw", {
 minetest.register_craft({
     type = "shapeless",
     output = "luxury_decor:wooden_board 3",
-    recipe = {"stairs:slab_wood", "luxury_decor:saw"},
-	replacements = {{"", "luxury_decor:saw"}}
+    recipe = {"stairs:slab_wood", "luxury_decor:saw"}
 })
 
 minetest.register_craft({
     type = "shapeless",
     output = "luxury_decor:jungle_wooden_board 3",
-    recipe = {"stairs:slab_junglewood", "luxury_decor:saw"},
-	replacements = {{"", "luxury_decor:saw"}}
+    recipe = {"stairs:slab_junglewood", "luxury_decor:saw"}
 })
 
 minetest.register_craft({
     type = "shapeless",
     output = "luxury_decor:pine_wooden_board 3",
-    recipe = {"stairs:slab_pine_wood", "luxury_decor:saw"},
-	replacements = {{"", "luxury_decor:saw"}}
+    recipe = {"stairs:slab_pine_wood", "luxury_decor:saw"}
 })
-
-minetest.register_on_craft(function (itemstack, player, old_craft_grid, craft_inv)
-	minetest.debug(dump(old_craft_grid))
-	for i = 1, #old_craft_grid do
-		local ud = old_craft_grid[i]
-		local name = ud:get_name()
-		if name == "luxury_decor:saw" then
-                          minetest.sound_play("wood_sawing", {
-				to_player = player:get_player_name()
-				})
-                          return 
-		end
-	end
-end)
 
 minetest.register_craft({
     type = "shapeless",
