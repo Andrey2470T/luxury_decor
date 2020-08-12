@@ -167,12 +167,12 @@ minetest.register_node("luxury_decor:kitchen_wooden_chair", {
 })
  
 
-minetest.register_node("luxury_decor:luxury_wooden_chair_with_cushion", {
-    description = "Luxury Wooden Chair (with cushion)",
+minetest.register_node("luxury_decor:round_luxury_chair_with_cushion", {
+    description = "Round Luxury Chair (with cushion)",
     visual_scale = 0.5,
-    mesh = "luxury_wooden_chair_with_cushion.b3d",
-    tiles = {"luxury_wooden_chair_with_cushion.png"},
-    inventory_image = "luxury_wooden_chair_with_cushion_inv.png",
+    mesh = "round_luxury_chair.b3d",
+    tiles = {"round_luxury_chair.png"},
+    inventory_image = "round_luxury_chair_inv.png",
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {choppy = 3.5},
@@ -181,7 +181,7 @@ minetest.register_node("luxury_decor:luxury_wooden_chair_with_cushion", {
         type = "fixed",
         fixed = {
                  {-0.45, -0.5, -0.45, 0.45, 0.28, 0.42},
-                 {-0.3, 0.28, 0.28, 0.45, 1.4, 0.42}
+                 {-0.45, 0.28, 0.28, 0.45, 1.2, 0.42}
             --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
             {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
         }
@@ -190,7 +190,7 @@ minetest.register_node("luxury_decor:luxury_wooden_chair_with_cushion", {
         type = "fixed",
         fixed = {
                  {-0.45, -0.5, -0.45, 0.45, 0.28, 0.42},
-                 {-0.3, 0.28, 0.28, 0.45, 1.4, 0.42}
+                 {-0.45, 0.28, 0.28, 0.45, 1.2, 0.42}
         }
     },
     sounds = default.node_sound_wood_defaults(),
@@ -213,6 +213,8 @@ minetest.register_node("luxury_decor:luxury_wooden_chair_with_cushion", {
 	end
     end
 })  
+
+minetest.register_alias("luxury_decor:luxury_wooden_chair_with_cushion", "luxury_decor:round_luxury_chair_with_cushion")
 
 
 minetest.register_node("luxury_decor:decorative_wooden_chair", {
