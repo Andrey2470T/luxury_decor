@@ -224,13 +224,13 @@ minetest.register_craftitem("luxury_decor:wooden_board", {
 
 minetest.register_craftitem("luxury_decor:jungle_wooden_board", {
     description = "Jungle Board",
-    inventory_image = "jungle_board.png",
+    inventory_image = "jungle_wooden_board.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:pine_wooden_board", {
     description = "Pine Board",
-    inventory_image = "pine_board.png",
+    inventory_image = "pine_wooden_board.png",
     stack_max = 99
 })
 

@@ -189,7 +189,7 @@ minetest.register_node("luxury_decor:round_luxury_chair_with_cushion", {
     selection_box = {
         type = "fixed",
         fixed = {
-                 {-0.45, -0.5, -0.45, 0.45, 0.28, 0.42},
+                 {-0.45, -0.5, -0.45, 0.45, 0.2, 0.42},
                  {-0.45, 0.28, 0.28, 0.45, 1.2, 0.42}
         }
     },

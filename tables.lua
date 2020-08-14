@@ -125,12 +125,12 @@ minetest.register_node("luxury_decor:simple_wooden_table", {
     sounds = default.node_sound_wood_defaults()
 })
 
-minetest.register_node("luxury_decor:luxury_metallic_table", {
-    description = "Luxury Wooden Table",
+minetest.register_node("luxury_decor:round_luxury_table", {
+    description = "Round Luxury Wooden Table",
     visual_scale = 0.5,
-    mesh = "luxury_metallic_table.obj",
-    tiles = {"luxury_metallic_table.png"},
-    inventory_image = "luxury_metallic_table_inv.png",
+    mesh = "round_luxury_table.b3d",
+    tiles = {"dark_wood_material2.png"},
+    inventory_image = "round_luxury_table_inv.png",
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {choppy = 2.5},
@@ -138,7 +138,7 @@ minetest.register_node("luxury_decor:luxury_metallic_table", {
     collision_box = {
         type = "fixed",
         fixed = {
-            {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
+            {-0.5, -0.5, -0.5, 0.5, 0.425, 0.5},
             --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
             {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
         }
@@ -146,11 +146,13 @@ minetest.register_node("luxury_decor:luxury_metallic_table", {
     selection_box = {
         type = "fixed",
         fixed = {
-            {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+            {-0.5, -0.5, -0.5, 0.5, 0.425, 0.5}
         }
     },
     sounds = default.node_sound_wood_defaults()
 })
+
+minetest.register_alias("luxury_decor:luxury_metallic_table", "luxury_decor:round_luxury_table")
 
 minetest.register_node("luxury_decor:kitchen_wooden_table", {
     description = "Kitchen Wooden Table",
