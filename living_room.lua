@@ -825,11 +825,9 @@ for ind, sofa_count in pairs({"1", "2", "3", "4", "5"}) do
                             side_node_axis_opposite = "-" .. side_node_axis
                         end
                        if minetest.get_node(pos1).name == "luxury_decor:simple_2_"..color.."_sofa" or minetest.get_node(pos1).name == "luxury_decor:simple_5_"..color.."_sofa" then
-                            minetest.debug("1")
                             for num, axis in pairs(ordered_axles) do
                                 if axis == str_axis then
                                     if (num == 1 and ordered_axles[#ordered_axles] == side_node_axis) or ordered_axles[num-1] == side_node_axis then
-                                        minetest.debug("TRUE")
                                         local vector_table = sofas.translate_str_vector_to_table(side_node_axis_opposite)
                                         minetest.remove_node(pos)
                                         if minetest.get_node(pos1).name == "luxury_decor:simple_2_"..color.."_sofa" then
@@ -842,7 +840,6 @@ for ind, sofa_count in pairs({"1", "2", "3", "4", "5"}) do
                             end
                         end
                         if minetest.get_node(pos2).name == "luxury_decor:simple_3_"..color.."_sofa" or minetest.get_node(pos2).name == "luxury_decor:simple_5_"..color.."_sofa" then
-                            minetest.debug("2")
                             local node2 = minetest.get_node(pos2)
                             local node2_str_vector = sofas.translate_vector_table_to_str(minetest.facedir_to_dir(node2.param2))
                             if str_axis == node2_str_vector then

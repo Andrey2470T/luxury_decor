@@ -94,7 +94,7 @@ luxury_decor.register_vase = function(def)
         vase.drop_flower(pos)
         
         local is_flower = minetest.get_item_group(itemstack:get_name(), "flower")
-        minetest.debug("is_flower: " .. is_flower)
+        
         if is_flower ~= 0 then
             local shift_pos = vase_def.flower_shift_pos
             local abs_pos = {x=pos.x+shift_pos.x, y=pos.y+shift_pos.y, z=pos.z+shift_pos.z}
@@ -102,7 +102,6 @@ luxury_decor.register_vase = function(def)
             minetest.get_meta(pos):set_string("flower_data", minetest.serialize({name=fl_name, pos=abs_pos}))
             local fl_obj = minetest.add_entity(abs_pos, "luxury_decor:flower_base")
             
-            minetest.debug("flowers_" .. fl_name:sub(9) .. ".png")
             fl_obj:set_properties({wield_item="flowers:" .. fl_name:sub(9)})
             
             itemstack:take_item()
@@ -113,7 +112,6 @@ luxury_decor.register_vase = function(def)
         vase.drop_flower(pos)
     end
     
-    minetest.debug("Simple plastic vase is being registered!")
     local name = "luxury_decor:" .. vase_def.style .. "_" .. (vase_def.material and vase_def.material .. "_" or "") .. (vase_def.color and vase_def.material .. "_" or "") .. "vase"
     minetest.register_node(name, {
         description         = vase_def.description,
@@ -140,5 +138,4 @@ luxury_decor.register_vase = function(def)
         on_destruct         = vase_def.on_destruct
     })
     
-    minetest.debug(dump(minetest.registered_nodes[name]))
 end
