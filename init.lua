@@ -1,6 +1,8 @@
-cabs_table = {}
+luxury_decor = {}
 
-rgb_colors = {
+luxury_decor.cabs_table = {}
+
+luxury_decor.rgb_colors = {
     ["black"] = "#000000",
     ["red"] = "#FF0000",
     ["green"] = "#00FF00",
@@ -18,9 +20,16 @@ rgb_colors = {
     ["violet"] = "#4B0082"
 }
 
+    
 local modpath = minetest.get_modpath("luxury_decor")
 
+--  API
+dofile(modpath.."/api/helper_funcs.lua")
 dofile(modpath.."/api/sitting.lua")
+dofile(modpath.."/api/vase.lua")
+
+
+--  Stuff
 dofile(modpath.."/materials.lua")
 dofile(modpath.."/bedroom.lua")
 dofile(modpath.."/chairs.lua")

@@ -66,63 +66,13 @@ function chairs.set_look_dir(player)
         return
     end
 end
-            
-        
--- "seats" table should contain: {[1]={is_busy={bool, player_obj}, pos=table}, [2]={is_busy={bool, player_obj}, pos=table}, ... [n]}
-function chairs.sit_player(sitter, node, pos, sitter_anim)
-    
-    local meta = minetest.get_meta(pos)
-    local seats = minetest.deserialize(meta:get_string("seats_range"))
-    
-    for seat_num, seat_data in pairs(seats) do
-        if seat_num == #seats and seat_data.is_busy.bool == true then
-            minetest.chat_send_player(sitter:get_player_name(), "All seats are busy!")
-            return
-        end
-        if seat_data.is_busy.bool == false then
-            seat_data.is_busy.bool = true
-            seat_data.is_busy.player = sitter:get_player_name()
-            meta:set_string("seats_range", minetest.serialize(seats))
-            chairs.attach_player_to_node(sitter, node, pos, seat_data.pos)
-            if #sitter_anim > 1 then
-                local random_anim = math.random(1, #sitter_anim)
-                sitter:set_animation(sitter_anim[random_anim][1], sitter_anim[random_anim][frame_speed], sitter_anim[random_anim][frame_blend])
-            else
-                sitter:set_animation(sitter_anim[1][1], sitter_anim[1][frame_speed], sitter_anim[1][frame_blend])
-            end
-            
-        end
-        
-    end
-end
-
-function chairs.standup_player(player, pos, oldmetadata_seats)
-    local meta = minetest.get_meta(pos)
-    local player_meta = minetest.deserialize(player:get_meta():get_string("is_attached"))
-    minetest.debug(dump(player_meta))
-    if player_meta ~= nil then
-        local pos = player_meta.node_pos
-        local seats = minetest.deserialize(meta:get_string("seats_range")) or oldmetadata_seats or {}
-        
-        for seat_num, seat_data in pairs(seats) do
-            if seat_data.is_busy.player == player:get_player_name() then
-                seat_data.is_busy.bool = false
-                seat_data.is_busy.player = nil
-                meta:set_string("seats_range", minetest.serialize(seats))
-                chairs.disattach_player_from_node(player)
-                player:set_animation({x=1,y=1}, 15, 0)
-            end
-        end
-    else
-        return
-    end
-end]]
+]]
                 
 minetest.register_node("luxury_decor:kitchen_wooden_chair", {
     description = "Kitchen Wooden Chair",
     visual_scale = 0.5,
     mesh = "kitchen_wooden_chair.obj",
-    tiles = {"bright_wood_material.png"},
+    tiles = {"luxury_decor_bright_wood_material.png"},
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {choppy = 2.5},
@@ -171,8 +121,8 @@ minetest.register_node("luxury_decor:round_luxury_chair_with_cushion", {
     description = "Round Luxury Chair (with cushion)",
     visual_scale = 0.5,
     mesh = "round_luxury_chair.b3d",
-    tiles = {"round_luxury_chair.png"},
-    inventory_image = "round_luxury_chair_inv.png",
+    tiles = {"luxury_decor_round_luxury_chair.png"},
+    inventory_image = "luxury_decor_round_luxury_chair_inv.png",
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {choppy = 3.5},
@@ -221,8 +171,8 @@ minetest.register_node("luxury_decor:decorative_wooden_chair", {
     description = "Decorative Wooden Chair",
     visual_scale = 0.5,
     mesh = "decorative_wooden_chair.b3d",
-    inventory_image = "decorative_chair_inv.png",
-    tiles = {"dark_wood_material2.png"},
+    inventory_image = "luxury_decor_decorative_chair_inv.png",
+    tiles = {"luxury_decor_dark_wood_material2.png"},
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {choppy = 2.5},
@@ -267,7 +217,7 @@ minetest.register_node("luxury_decor:round_wooden_chair", {
     description = "Round Wooden Chair",
     visual_scale = 0.5,
     mesh = "round_wooden_chair.obj",
-    tiles = {"bright_wood_material2.png"},
+    tiles = {"luxury_decor_bright_wood_material2.png"},
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {choppy = 3.5},

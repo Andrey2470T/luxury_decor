@@ -1,4 +1,6 @@
-cabs_table["simple_wooden_bedside_table"] = {
+local cabs = luxury_decor.cabs_table
+
+cabs["simple_wooden_bedside_table"] = {
     ["simple_wooden_bedside_table_1"] = {
         {mode="closed", button = "sw_bedt1_1", img_button = "open_button.png"},
         {mode="closed", button = "sw_bedt1_2", img_button = "open_button.png"},
@@ -57,14 +59,14 @@ cabs_table["simple_wooden_bedside_table"] = {
     inv_list = {{}, {}, {}} 
 }
 
-for bedside_t, bedside_ts in pairs(cabs_table["simple_wooden_bedside_table"]) do
+for bedside_t, bedside_ts in pairs(cabs["simple_wooden_bedside_table"]) do
   if bedside_t ~= "inv_list" then
     minetest.register_node("luxury_decor:"..bedside_t, {
         description = "Simple Wooden Bedside Table",
         visual_scale = 0.5,
-        inventory_image = "simple_wooden_bedside_table_inv.png",
+        inventory_image = "luxury_decor_simple_wooden_bedside_table_inv.png",
         mesh = bedside_t..".b3d",
-        tiles = {"simple_bedside_table.png"},
+        tiles = {"luxury_decor_simple_bedside_table.png"},
         paramtype = "light",
         paramtype2 = "facedir",
         drop = "luxury_decor:simple_wooden_bedside_table_1",
@@ -90,8 +92,8 @@ for bedside_t, bedside_ts in pairs(cabs_table["simple_wooden_bedside_table"]) do
             for num, drawer in pairs(bedside_ts) do
                 if type(drawer) == "table" and drawer.mode == "opened" then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    if not cabs_table["simple_wooden_bedside_table"].inv_list[num][str_pos] then
-                       cabs_table["simple_wooden_bedside_table"].inv_list[num][str_pos] = {}
+                    if not cabs["simple_wooden_bedside_table"].inv_list[num][str_pos] then
+                       cabs["simple_wooden_bedside_table"].inv_list[num][str_pos] = {}
                    end
                    local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";1.5,".. y .. ";6, 2]"
                    form = form .. list
@@ -107,7 +109,7 @@ for bedside_t, bedside_ts in pairs(cabs_table["simple_wooden_bedside_table"]) do
             for num2, drawer2 in pairs(bedside_ts) do
                 if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    inv:set_list(bedside_ts[num2].listname, cabs_table["simple_wooden_bedside_table"].inv_list[num2][str_pos])
+                    inv:set_list(bedside_ts[num2].listname, cabs["simple_wooden_bedside_table"].inv_list[num2][str_pos])
                     inv:set_size(bedside_ts[num2].listname, bedside_ts[num2].inv_size)
                 end
                 
@@ -142,12 +144,12 @@ for bedside_t, bedside_ts in pairs(cabs_table["simple_wooden_bedside_table"]) do
             local name = string.sub(oldnode.name, 14)
             local generalized_name = string.sub(name, 1, -3)
               
-            if cabs_table[generalized_name][name] then
-                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+            if cabs[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs[generalized_name].inv_list) do
                     for cab_pos, drawer_list in pairs(drawer_lists) do
                         local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
                         if cab_pos == str_pos then
-                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                            cabs[generalized_name].inv_list[num][cab_pos] = nil
                         end
                     end
                 end
@@ -172,7 +174,7 @@ end
 
 minetest.register_craftitem("luxury_decor:bedside_drawer", {
     description = "Bedside Drawer",
-    inventory_image = "bedside_drawer.png",
+    inventory_image = "luxury_decor_bedside_drawer.png",
     stack_max = 99
 })
 
@@ -186,12 +188,12 @@ minetest.register_craft({
 })
     
 
-for color, rgb_code in pairs(rgb_colors) do
+for color, rgb_code in pairs(luxury_decor.rgb_colors) do
     minetest.register_node("luxury_decor:royal_single_bed_" .. color, {
         description = "Royal Single Bed",
         visual_scale = 0.5,
         mesh = "royal_single_bed.obj",
-        tiles = {"royal_bed.png^(royal_bed_2.png^[colorize:"..rgb_code..")"},
+        tiles = {"luxury_decor_royal_bed.png^(luxury_decor_royal_bed_2.png^[colorize:"..rgb_code..")"},
         paramtype = "light",
         paramtype2 = "facedir",
         groups = {choppy=3},
@@ -271,7 +273,7 @@ for color, rgb_code in pairs(rgb_colors) do
         description = "Royal Double Bed",
         visual_scale = 0.5,
         mesh = "royal_double_bed.b3d",
-        tiles = {"royal_bed.png^(royal_bed_2.png^[colorize:"..rgb_code..")"},
+        tiles = {"luxury_decor_royal_bed.png^(luxury_decor_royal_bed_2.png^[colorize:"..rgb_code..")"},
         paramtype = "light",
         paramtype2 = "facedir",
         groups = {choppy=3},

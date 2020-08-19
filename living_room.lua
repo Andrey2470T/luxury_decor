@@ -1,11 +1,6 @@
-dofile(minetest.get_modpath("luxury_decor") .. "/chairs.lua")
-
-local flowers_list = {
-    name = {"rose", "tulip_black", "tulip", "geranium"},
-    desc = {"Rose", "Tulip Black", "Tulip", "Geranium"}
-}
-
-minetest.register_node("luxury_decor:glass_vase", {
+local colors = luxury_decor.rgb_colors
+-- GLASS VASE WILL BE READDED WITH NEW MODEL IN NEXT VERSIONS
+--[[minetest.register_node("luxury_decor:glass_vase", {
     description = "Glass Vase",
     visual_scale = 0.5,
     drawtype = "mesh",
@@ -21,8 +16,6 @@ minetest.register_node("luxury_decor:glass_vase", {
         type = "fixed",
         fixed = {
             {-0.2, -0.5, -0.2, 0.2, 0.5, 0.2},
-            --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
-            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
         }
     },
     selection_box = {
@@ -40,9 +33,56 @@ minetest.register_node("luxury_decor:glass_vase", {
             end
         end
     end
+})]]
+
+luxury_decor.register_vase({
+    style = "simple",
+    material = "plastic",
+    mesh = "simple_plastic_vase.b3d",
+    textures = "luxury_decor_simple_plastic_vase.png",
+    collision_box = {-0.2, -0.5, -0.2, 0.2, 0.3, 0.2},
+    flower_shift_pos = {x=0, y=0.4, z=0}
 })
 
---[[function set_x_or_y_for_pos(player, node, value, y)    -- Finish writing!!!
+-- FOR NOW IT HAS REPLACED TO NEW VASE
+--[[minetest.register_node("luxury_decor:simple_plastic_vase", {
+    description = "Simple Plastic Vase",
+    visual_scale = 0.5,
+    drawtype = "mesh",
+    mesh = "simple_plastic_vase.b3d",
+    use_texture_alpha = true,
+    tiles = {"luxury_decor_simple_plastic_vase.png"},
+    --inventory_image = "luxury_decor_simple_plastic_vase_inv.png",
+    sunlight_propagates = true,
+    paramtype = "light",
+    paramtype2 = "facedir",
+    groups = {choppy = 1.5},
+    collision_box = {
+        type = "fixed",
+        fixed = {
+            {-0.2, -0.5, -0.2, 0.2, 0.5, 0.2},
+            {-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
+            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}
+        }
+    },
+    selection_box = {
+        type = "fixed",
+        fixed = {
+            {-0.2, -0.5, -0.2, 0.2, 0.5, 0.2}
+        }
+    },
+    sounds = default.node_sound_glass_defaults(),
+    on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
+        for _, flower in ipairs(flowers_list.name) do
+            if "flowers:" .. flower == itemstack:get_name() then
+                minetest.remove_node(pos)
+                minetest.set_node(pos, {name="luxury_decor:simple_plastic_vase_with_"..flower})
+            end
+        end
+    end
+})
+    
+function set_x_or_y_for_pos(player, node, value, y)    -- Finish writing!!!
     local signs = {
         ["z"] = "0",
         ["x"], = "1",
@@ -53,8 +93,10 @@ minetest.register_node("luxury_decor:glass_vase", {
     local new_pos = {x=nil, y=y, z=nil}
     for val, sign in pairs(signs) do
         if value == sign then
-            new_pos[tonumber(string.gmatch(val, string.find(val, "-") or "") or val)] = ]]
+            new_pos[tonumber(string.gmatch(val, string.find(val, "-") or "") or val)] = 
     
+
+-- GLASS VASE WITH FLOWER WILL BE READDED WITH NEW MODEL IN NEXT VERSIONS
 for ind, f in pairs(flowers_list.name) do
     minetest.register_node("luxury_decor:glass_vase_with_"..f, {
         description = "Glass Vase With " .. flowers_list.desc[ind],
@@ -71,9 +113,7 @@ for ind, f in pairs(flowers_list.name) do
         collision_box = {
             type = "fixed",
             fixed = {
-                {-0.2, -0.5, -0.2, 0.2, 0.5, 0.2},
-            --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
-            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
+                {-0.2, -0.5, -0.2, 0.2, 0.5, 0.2}
             }
         },
         selection_box = {
@@ -102,23 +142,54 @@ for ind, f in pairs(flowers_list.name) do
     })
 end
 
-local sofas_rgb_colors = {
-    ["black"] = "#000000",
-    ["red"] = "#FF0000",
-    ["green"] = "#00FF00",
-    ["white"] = "#FFFFFF",
-    ["blue"] = "#0000FF",
-    ["yellow"] = "#FFFF00",
-    ["magenta"] = "#FF00FF",
-    ["cyan"] = "#00FFFF",
-    ["dark_green"] = "#008000",
-    ["dark_grey"] = "#808080",
-    ["grey"] = "#C0C0C0",
-    ["brown"] = "#A52A2A",
-    ["orange"] = "#FF4500",
-    ["pink"] = "#F08080",
-    ["violet"] = "#4B0082"
-}
+-- FOR NOW IT HAS REPLACED TO NEW VASE
+for ind, f in pairs(flowers_list.name) do
+    minetest.register_node("luxury_decor:simple_plastic_vase_with_"..f, {
+        description = " Simple Plastic Vase With " .. flowers_list.desc[ind],
+        visual_scale = 0.5,
+        --inventory_image = "luxury_decor_simple_plastic_vase_inv.png",
+        mesh = "simple_plastic_vase_with_flower.b3d",
+        tiles = {
+                 {"luxury_decor_simple_plastic_vase.png", "flowers_"..f..".png"}
+        },
+        paramtype = "light",
+        paramtype2 = "facedir",
+        drop = {"luxury_decor:simple_plastic_vase", "flowers:" .. f},
+        groups = {choppy = 1.5, not_in_creative_inventory=1},
+        use_texture_alpha = true,
+        drawtype = "mesh",
+        collision_box = {
+            type = "fixed",
+            fixed = {
+                {-0.2, -0.5, -0.2, 0.2, 0.5, 0.2}
+            }
+        },
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-0.2, -0.5, -0.2, 0.2, 0.5, 0.2}
+            }
+        },
+        sounds = default.node_sound_glass_defaults(),
+        on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
+            for _, flower in ipairs(flowers_list.name) do
+                if "flowers:" .. flower == itemstack:get_name() then
+                    minetest.remove_node(pos)
+                    minetest.set_node(pos, {name="luxury_decor:simple_plastic_vase_with_"..flower})
+                    itemstack:add_item("luxury_decor:simple_plastic_vase")
+                    itemstack:add_item("flowers:" .. string.sub(node.name, 30))
+                    return itemstack
+                end
+            end
+            
+            minetest.remove_node(pos)
+            minetest.set_node(pos, {name="luxury_decor:simple_plastic_vase"})
+            
+            itemstack:add_item("flowers:" .. string.sub(node.name, 30))
+        end
+    })
+end]]
+
 
 local sofas_collision_boxes = {
     ["1"] = {
@@ -467,13 +538,13 @@ end
                                 
              
         
-for color, rgb_color in pairs(sofas_rgb_colors) do
+for color, rgb_color in pairs(colors) do
     for _, pillow_color in ipairs({"red", "green" , "blue", "yellow", "violet"}) do
         minetest.register_node("luxury_decor:simple_" .. color .. "_armchair_with_" .. pillow_color .. "_pillow", {
-            description = minetest.colorize(sofas_rgb_colors[color], "Simple " .. string.upper(color) .. " Armchair With " .. string.upper(pillow_color) .. " Pillow" ),
+            description = minetest.colorize(rgb_color, "Simple " .. string.upper(color) .. " Armchair With " .. string.upper(pillow_color) .. " Pillow" ),
             visual_scale = 0.5,
             mesh = "simple_armchair.obj",
-            tiles = {"simple_armchair.png^(simple_armchair_2_1.png^[colorize:" .. rgb_color .. "^simple_armchair_2.png)^(simple_armchair_3.png^[colorize:" .. pillow_color .. ")"},
+            tiles = {"luxury_decor_simple_armchair.png^(luxury_decor_simple_armchair_2_1.png^[colorize:" .. rgb_color .. "^luxury_decor_simple_armchair_2.png)^(luxury_decor_simple_armchair_3.png^[colorize:" .. pillow_color .. ")"},
             paramtype = "light",
             paramtype2 = "facedir",
             groups = {choppy = 2.5, },
@@ -521,7 +592,7 @@ for color, rgb_color in pairs(sofas_rgb_colors) do
                                 end
                             end
                         else
-                            for color2, rgb_code in pairs(sofas_rgb_colors) do
+                            for color2, rgb_code in pairs(colors) do
                                 if "dye:" .. color2 == itemstack:get_name() then
                                     itemstack:take_item()
                                     minetest.remove_node(pos)
@@ -552,15 +623,15 @@ end
 
 for ind, sofa_count in pairs({"1", "2", "3", "4", "5"}) do
     local not_in_cinv = 0
-    for color, rgb_color in pairs(sofas_rgb_colors) do
+    for color, rgb_color in pairs(colors) do
         if sofa_count ~= "1" then
             not_in_cinv = 1
         end
         minetest.register_node("luxury_decor:simple_".. sofa_count .. "_" .. color .. "_sofa", {
-            description = minetest.colorize(sofas_rgb_colors[color], "Simple " .. string.upper(color) .. " Sofa"),
+            description = minetest.colorize(rgb_color, "Simple " .. string.upper(color) .. " Sofa"),
             visual_scale = 0.5,
             mesh = "simple_sofa_" .. sofa_count .. ".obj",
-            tiles = {"simple_sofa.png^(simple_sofa_2_1.png^[colorize:" .. rgb_color.. "^simple_sofa_2.png)"},
+            tiles = {"luxury_decor_simple_sofa.png^(luxury_decor_simple_sofa_2_1.png^[colorize:" .. rgb_color.. "^luxury_decor_simple_sofa_2.png)"},
             paramtype = "light",
             paramtype2 = "facedir",
             groups = {choppy = 2.5, not_in_creative_inventory = not_in_cinv},
@@ -587,7 +658,7 @@ for ind, sofa_count in pairs({"1", "2", "3", "4", "5"}) do
             end,
             on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
                 if string.find(itemstack:get_name(), "dye:") then
-                    for color2, rgb_code in pairs(sofas_rgb_colors) do
+                    for color2, rgb_code in pairs(colors) do
                         if "dye:" .. color2 == itemstack:get_name() then
                             itemstack:take_item()
                             minetest.remove_node(pos)
@@ -810,12 +881,12 @@ end
             
         
 for ind, footstool_type in pairs({"small", "middle", "long"}) do
-    for color, rgb_code in pairs(sofas_rgb_colors) do
+    for color, rgb_code in pairs(colors) do
         minetest.register_node("luxury_decor:simple_" .. color .. "_" .. footstool_type .. "_footstool", {
-            description = minetest.colorize(sofas_rgb_colors[color], "Simple " .. string.upper(color) .. " " .. string.upper(footstool_type) .. " Footstool"),
+            description = minetest.colorize(colors[color], "Simple " .. string.upper(color) .. " " .. string.upper(footstool_type) .. " Footstool"),
             visual_scale = 0.5,
             mesh = "simple_"..footstool_type.."_footstool.b3d",
-            tiles = {"simple_sofa.png^(simple_sofa_2_1.png^[colorize:" .. rgb_code.. "^simple_sofa_2.png)"},
+            tiles = {"luxury_decor_simple_sofa.png^(luxury_decor_simple_sofa_2_1.png^[colorize:" .. rgb_code.. "^luxury_decor_simple_sofa_2.png)"},
             paramtype = "light",
             paramtype2 = "facedir",
             groups = {choppy = 2},
@@ -845,7 +916,7 @@ for ind, footstool_type in pairs({"small", "middle", "long"}) do
                     local get_player_contr = clicker:get_player_control()
                         
                     
-                    for color2, rgb_code in pairs(sofas_rgb_colors) do
+                    for color2, rgb_code in pairs(colors) do
                         if "dye:" .. color2 == itemstack:get_name() then
                             itemstack:take_item()
                             minetest.remove_node(pos)
@@ -936,12 +1007,11 @@ minetest.register_node("luxury_decor:simple_wooden_wall_clock", {
     mesh = "simple_wooden_wall_clock.b3d",
     tiles = {
         {
-            name = "simple_wooden_wall_clock_animated.png",
+            name = "luxury_decor_simple_wooden_wall_clock_animated.png",
             animation = {type = "vertical_frames", aspect_w = 64, aspect_h = 64, length = 60.0}
         }
     },
-    inventory_image = "simple_wooden_wall_clock_inv.png",
-    wield_image = "simple_wooden_wall_clock_inv.png",
+    inventory_image = "luxury_decor_simple_wooden_wall_clock_inv.png",
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {choppy = 2},

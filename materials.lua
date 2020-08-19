@@ -9,7 +9,7 @@ end
 for _, material in ipairs({"", "jungle_", "pine_"}) do
     minetest.register_craftitem("luxury_decor:" .. material .. "wooden_plank", {
         description = string.upper(string.sub(material, 1, 1)) .. string.sub(material, 2, -2) .. " Wooden Plank",
-        inventory_image = material .. "wooden_plank.png",
+        inventory_image = "luxury_decor_" .. material .. "wooden_plank.png",
         stack_max = 99
     })
     
@@ -44,14 +44,14 @@ minetest.register_craft({
 
 minetest.register_craftitem("luxury_decor:bucket_oil", {
     description = "Bucket Oil",
-    inventory_image = "bucket_oil.png",
+    inventory_image = "luxury_decor_bucket_oil.png",
     stack_max = 99
 })
 
 minetest.register_node("luxury_decor:oil_source", {
 	description = "Oil Source",
 	drawtype = "liquid",
-	tiles = {"oil_source.png"},
+	tiles = {"luxury_decor_oil_source.png"},
 	alpha = 250,
 	paramtype = "light",
 	walkable = false,
@@ -81,7 +81,7 @@ minetest.register_node("luxury_decor:oil_source", {
 
 minetest.register_node("luxury_decor:solid_oil", {
     description = "Solid Oil (use furnace to melt)",
-    tiles = {"solid_oil.png"},
+    tiles = {"luxury_decor_solid_oil.png"},
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {cracky = 2},
@@ -91,10 +91,10 @@ minetest.register_node("luxury_decor:solid_oil", {
 minetest.register_node("luxury_decor:oil_flowing", {
 	description = "Flowing Oil",
 	drawtype = "flowingliquid",
-	tiles = {"oil_source.png"},
+	tiles = {"luxury_decor_oil_source.png"},
     special_tiles = {
 		{
-			name = "oil_source_animated.png",
+			name = "luxury_decor_oil_source_animated.png",
 			backface_culling = false,
 			animation = {
 				type = "vertical_frames",
@@ -104,7 +104,7 @@ minetest.register_node("luxury_decor:oil_flowing", {
 			},
 		},
 		{
-			name = "oil_source_animated.png",
+			name = "luxury_decor_oil_source_animated.png",
 			backface_culling = true,
 			animation = {
 				type = "vertical_frames",
@@ -145,7 +145,7 @@ minetest.register_node("luxury_decor:oil_flowing", {
 
 minetest.register_craftitem("luxury_decor:bucket_oil", {
 	description = "Oil Bucket",
-	inventory_image = "bucket_oil.png",
+	inventory_image = "luxury_decor_bucket_oil.png",
 	on_place = function(itemstack, placer, pointed_thing)
 		itemstack:take_item()
 		local stack = ItemStack("bucket:bucket_empty")
@@ -158,133 +158,133 @@ minetest.register_craftitem("luxury_decor:bucket_oil", {
 
 minetest.register_craftitem("luxury_decor:steel_scissors", {
     description = "Steel Scissors",
-    inventory_image = "steel_scissors.png",
+    inventory_image = "luxury_decor_steel_scissors.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:lampshade", {
     description = "Lampshade",
-    inventory_image = "lampshade.png",
+    inventory_image = "luxury_decor_lampshade.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:lampshades", {
     description = "Lampshades",
-    inventory_image = "lampshades.png",
+    inventory_image = "luxury_decor_lampshades.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:paraffin_cake", {
     description = "Paraffin Cake",
-    inventory_image = "paraffin.png",
+    inventory_image = "luxury_decor_paraffin.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:wax_lump", {
     description = "Wax Lump",
-    inventory_image = "wax_lump.png",
+    inventory_image = "luxury_decor_wax_lump.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:brass_ingot", {
     description = "Brass Ingot",
-    inventory_image = "brass_ingot.png",
+    inventory_image = "luxury_decor_brass_ingot.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:brass_stick", {
     description = "Brass Stick",
-    inventory_image = "brass_stick.png",
+    inventory_image = "luxury_decor_brass_stick.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:zinc_ingot", {
     description = "Zinc Ingot",
-    inventory_image = "zinc_ingot.png",
+    inventory_image = "luxury_decor_zinc_ingot.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:zinc_fragments", {
     description = "Zinc Fragments",
-    inventory_image = "zinc_fragments.png",
+    inventory_image = "luxury_decor_zinc_fragments.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:copper_and_zinc", {
     description = "Copper and Zinc",
-    inventory_image = "copper_and_zinc.png",
+    inventory_image = "luxury_decor_copper_and_zinc.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:wooden_board", {
     description = "Wooden Board",
-    inventory_image = "wooden_board.png",
+    inventory_image = "luxury_decor_wooden_board.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:jungle_wooden_board", {
     description = "Jungle Board",
-    inventory_image = "jungle_wooden_board.png",
+    inventory_image = "luxury_decor_jungle_wooden_board.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:pine_wooden_board", {
     description = "Pine Board",
-    inventory_image = "pine_wooden_board.png",
+    inventory_image = "luxury_decor_pine_wooden_board.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:plastic_sheet", {
     description = "Plastic Sheet",
-    inventory_image = "plastic_sheet.png",
+    inventory_image = "luxury_decor_plastic_sheet.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:incandescent_bulb", {
     description = "Incandescent Bulb",
-    inventory_image = "incandescent_bulb.png",
+    inventory_image = "luxury_decor_incandescent_bulb.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:incandescent_bulbs", {
     description = "Incandescent Bulbs",
-    inventory_image = "incandescent_bulbs.png",
+    inventory_image = "luxury_decor_incandescent_bulbs.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:wolfram_lump", {
     description = "Wolfram Lump",
-    inventory_image = "wolfram_lump.png",
+    inventory_image = "luxury_decor_wolfram_lump.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:wolfram_ingot", {
     description = "Wolfram Ingot",
-    inventory_image = "wolfram_ingot.png",
+    inventory_image = "luxury_decor_wolfram_ingot.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:wolfram_wire_reel", {
     description = "Wolfram Wire Reel",
-    inventory_image = "wolfram_wire_reel.png",
+    inventory_image = "luxury_decor_wolfram_wire_reel.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:dial", {
     description = "Dial",
-    inventory_image = "dial.png",
+    inventory_image = "luxury_decor_dial.png",
     stack_max = 99
 })
 
 minetest.register_craftitem("luxury_decor:siphon", {
     description = "Siphon",
-    inventory_image = "siphon.png",
+    inventory_image = "luxury_decor_siphon.png",
     stack_max = 99
 })
 
 minetest.register_node("luxury_decor:zinc_ore", {
     description = "Zinc Ore",
-    tiles = {"default_stone.png^mineral_zinc.png"},
+    tiles = {"default_stone.png^luxury_decor_mineral_zinc.png"},
     is_ground_content = true,
     paramtype = "light",
     light_source = 6,
@@ -298,7 +298,7 @@ minetest.register_node("luxury_decor:zinc_ore", {
 
 minetest.register_node("luxury_decor:wolfram_ore", {
     description = "Wolfram Ore",
-    tiles = {"default_stone.png^mineral_wolfram.png"},
+    tiles = {"default_stone.png^luxury_decor_mineral_wolfram.png"},
     is_ground_content = true,
     paramtype = "light",
     light_source = 2,
@@ -462,7 +462,7 @@ minetest.register_craft({
 
 minetest.register_craftitem("luxury_decor:saw", {
     description = "Saw",
-    inventory_image = "saw.png",
+    inventory_image = "luxury_decor_saw.png",
     stack_max = 99
 })
 

@@ -1,5 +1,6 @@
 cabinets = {}
 
+local cabs = luxury_decor.cabs_table
 --[[Arguments:
 *pos - position of clicked node;
 *cabinet_name - same value as well as one of cabinets.open();
@@ -37,11 +38,11 @@ cabinets.open = function (pos, node_replace, clicked_button_name, formspec, soun
     
     -- The lower loop is running departments of the node as kitchen_wooden_cabinet_1... then it compares clicked_button_name is equal to the button name in the department.
     
-    for depart_num, depart_data in pairs(cabs_table[general_name][actual_name]) do
+    for depart_num, depart_data in pairs(cabs[general_name][actual_name]) do
         if type(depart_data) == "table" and depart_data.mode == "opened" then
 		local list = inv:get_list(depart_data.listname)
 		local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-		cabs_table[general_name].inv_list[depart_num][str_pos] = list
+		cabs[general_name].inv_list[depart_num][str_pos] = list
 	end
 	if type(depart_data) == "table" and depart_data.button == clicked_button_name then
 		minetest.sound_play(sounds_play[depart_num], {
@@ -65,11 +66,11 @@ cabinets.close = function (pos, node_replace, clicked_button_name, formspec, sou
     
     -- The lower loop is running departments of the node as kitchen_wooden_cabinet_1... then it compares clicked_button_name is equal to the button name in the department.
     
-    for depart_num, depart_data in pairs(cabs_table[general_name][actual_name]) do
+    for depart_num, depart_data in pairs(cabs[general_name][actual_name]) do
         if type(depart_data) == "table" and depart_data.mode == "opened" then
             local list = inv:get_list(depart_data.listname)
             local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-            cabs_table[general_name].inv_list[depart_num][str_pos] = list
+            cabs[general_name].inv_list[depart_num][str_pos] = list
 	end
 	if type(depart_data) == "table" and depart_data.button == clicked_button_name then
 		minetest.sound_play(sounds_play[depart_num], {
@@ -87,14 +88,14 @@ local modes = {}
 cabinets.define_needed_cabinet = function (fields, nodename)
     local substring = string.sub(nodename, 14)
     local generalized_name = string.sub(substring, 1, -3)
-    for _, depart in ipairs(cabs_table[generalized_name][substring]) do
+    for _, depart in ipairs(cabs[generalized_name][substring]) do
         modes[#modes+1] = depart.mode
     end
     
-    for _, depart in ipairs(cabs_table[generalized_name][substring]) do
+    for _, depart in ipairs(cabs[generalized_name][substring]) do
         local name = depart.button
         if fields[name] then
-            for num, depart2 in pairs(cabs_table[generalized_name][substring]) do
+            for num, depart2 in pairs(cabs[generalized_name][substring]) do
                 if depart2.button == depart.button then
                     if depart2.mode == "closed" then
                         modes[num] = "opened"
@@ -108,7 +109,7 @@ cabinets.define_needed_cabinet = function (fields, nodename)
         end
     end
     
-    for name, cabs_list in pairs(cabs_table[generalized_name]) do
+    for name, cabs_list in pairs(cabs[generalized_name]) do
         local mode_num = 0
         for num, cab in pairs(cabs_list) do
             mode_num = mode_num + 1
@@ -126,7 +127,7 @@ local number = 0
 cabinets.define_mode = function (fields, nodename)
     local substring = string.sub(nodename, 14)
     local general_name = string.sub(substring, 1, -3)
-    for num, depart in pairs(cabs_table[general_name][substring]) do
+    for num, depart in pairs(cabs[general_name][substring]) do
         if type(depart) == "table" then
             local name = depart.button
             if fields[name] then
@@ -139,7 +140,7 @@ end
 --[[Create a table with external table for each cabinet sort (depends to boxes). Inside each second field a list of boxes and their datas.
      Besides, it *must* contain "inv_list" is a list with items inside each the cabinet department]]
 
-cabs_table["kitchen_wooden_cabinet"] = {
+cabs["kitchen_wooden_cabinet"] = {
     ["kitchen_wooden_cabinet_1"] = {
         {mode="closed", button = "kwc1_1", img_button = "open_button.png"},
         {mode="closed", button = "kwc1_2", img_button = "open_button.png"},
@@ -166,7 +167,7 @@ cabs_table["kitchen_wooden_cabinet"] = {
     inv_list = {{}, {}}
 }
 
-cabs_table["kitchen_wooden_cabinet_with_door"] = {
+cabs["kitchen_wooden_cabinet_with_door"] = {
     ["kitchen_wooden_cabinet_with_door_1"] = {
         {mode="closed", button = "kwc_with_door1", img_button = "open_button.png"}
         
@@ -179,7 +180,7 @@ cabs_table["kitchen_wooden_cabinet_with_door"] = {
     inv_list = {{}}
 }
 
-cabs_table["kitchen_wooden_cabinet_with_door_and_drawer"] = {
+cabs["kitchen_wooden_cabinet_with_door_and_drawer"] = {
     ["kitchen_wooden_cabinet_with_door_and_drawer_1"] = {
         {mode="closed", button = "kwc_with_door_and_drawer1_1", img_button = "open_button.png"},
         {mode="closed", button = "kwc_with_door_and_drawer1_2", img_button = "open_button.png"},
@@ -206,7 +207,7 @@ cabs_table["kitchen_wooden_cabinet_with_door_and_drawer"] = {
     inv_list = {{}, {}}
 }
 
-cabs_table["kitchen_wooden_cabinet_with_two_doors"] = {
+cabs["kitchen_wooden_cabinet_with_two_doors"] = {
     ["kitchen_wooden_cabinet_with_two_doors_1"] = {
         {mode="closed", button = "kwc_with_two_doors1", img_button = "open_button.png"}
         
@@ -219,7 +220,7 @@ cabs_table["kitchen_wooden_cabinet_with_two_doors"] = {
     inv_list = {{}}
 }
 
-cabs_table["kitchen_wooden_cabinet_with_two_doors_and_drawer"] = {
+cabs["kitchen_wooden_cabinet_with_two_doors_and_drawer"] = {
     ["kitchen_wooden_cabinet_with_two_doors_and_drawer_1"] = {
         {mode="closed", button = "kwc_with_two_doors_and_drawer1_1", img_button = "open_button.png"},
         {mode="closed", button = "kwc_with_two_doors_and_drawer1_2", img_button = "open_button.png"},
@@ -246,7 +247,7 @@ cabs_table["kitchen_wooden_cabinet_with_two_doors_and_drawer"] = {
     inv_list = {{}, {}}
 }
 
-cabs_table["kitchen_wooden_half_cabinet"] = {
+cabs["kitchen_wooden_half_cabinet"] = {
     ["kitchen_wooden_half_cabinet_1"] = {
         {mode="closed", button = "kwc_half1", img_button = "open_button.png"}
         
@@ -259,7 +260,7 @@ cabs_table["kitchen_wooden_half_cabinet"] = {
     inv_list = {{}}
 }
 
-cabs_table["kitchen_wooden_threedrawer_cabinet"] = {
+cabs["kitchen_wooden_threedrawer_cabinet"] = {
     ["kitchen_wooden_threedrawer_cabinet_1"] = {
         {mode="closed", button = "kwc_threedrawer1_1", img_button = "open_button.png"},
         {mode="closed", button = "kwc_threedrawer1_2", img_button = "open_button.png"},
@@ -318,7 +319,7 @@ cabs_table["kitchen_wooden_threedrawer_cabinet"] = {
     inv_list = {{}, {}, {}}
 }
 
-cabs_table["kitchen_wooden_cabinet_with_sink"] = {
+cabs["kitchen_wooden_cabinet_with_sink"] = {
     ["kitchen_wooden_cabinet_with_sink_1"] = {
         {mode="closed", button = "kwc_with_sink1", img_button = "open_button.png"}
         
@@ -331,7 +332,7 @@ cabs_table["kitchen_wooden_cabinet_with_sink"] = {
     inv_list = {{}}
 }
 
-cabs_table["fridge"] = {
+cabs["fridge"] = {
     ["fridge_1"] = {
         {mode="closed", button = "fridge_closed", img_button = "open_button.png"}
         
@@ -345,14 +346,14 @@ cabs_table["fridge"] = {
 }
 -- The loop is running the table above and register each cabinet sort.
 
-for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet"]) do
+for cab, cab_boxes in pairs(cabs["kitchen_wooden_cabinet"]) do
   if cab ~= "inv_list" then
     minetest.register_node("luxury_decor:"..cab, {
         description = "Kitchen Wooden Cabinet With Two Drawers",
         visual_scale = 0.5,
-        inventory_image = "kitchen_wooden_cabinet_with_two_drawers.png",
+        inventory_image = "luxury_decor_kitchen_wooden_cabinet_with_two_drawers.png",
         mesh = cab..".b3d",
-        tiles = {"simple_kitchen_cabinet.png"},
+        tiles = {"luxury_decor_simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
         drop = "luxury_decor:kitchen_wooden_cabinet_1",
@@ -377,8 +378,8 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet"]) do
             for num, drawer in pairs(cab_boxes) do
                 if type(drawer) == "table" then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    if not cabs_table["kitchen_wooden_cabinet"].inv_list[num][str_pos] then
-                       cabs_table["kitchen_wooden_cabinet"].inv_list[num][str_pos] = {}
+                    if not cabs["kitchen_wooden_cabinet"].inv_list[num][str_pos] then
+                       cabs["kitchen_wooden_cabinet"].inv_list[num][str_pos] = {}
                     end
                    if drawer.mode == "opened" then
                        local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";1.5,".. y .. ";6, 2]"
@@ -396,7 +397,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet"]) do
             for num2, drawer2 in pairs(cab_boxes) do
                 if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_cabinet"].inv_list[num2][str_pos])
+                    inv:set_list(cab_boxes[num2].listname, cabs["kitchen_wooden_cabinet"].inv_list[num2][str_pos])
                     inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
                 end
                 
@@ -431,12 +432,12 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet"]) do
             local name = string.sub(oldnode.name, 14)
             local generalized_name = string.sub(name, 1, -3)
               
-            if cabs_table[generalized_name][name] then
-                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+            if cabs[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs[generalized_name].inv_list) do
                     for cab_pos, drawer_list in pairs(drawer_lists) do
                         local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
                         if cab_pos == str_pos then
-                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                            cabs[generalized_name].inv_list[num][cab_pos] = nil
                         end
                     end
                 end
@@ -448,14 +449,14 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet"]) do
 end
 
 
-for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_door"]) do
+for cab, cab_boxes in pairs(cabs["kitchen_wooden_cabinet_with_door"]) do
   if cab ~= "inv_list" then
     minetest.register_node("luxury_decor:"..cab, {
         description = "Kitchen Wooden Cabinet With Door",
         visual_scale = 0.5,
-        inventory_image = "kitchen_wooden_cabinet_with_door.png",
+        inventory_image = "luxury_decor_kitchen_wooden_cabinet_with_door.png",
         mesh = cab..".b3d",
-        tiles = {"simple_kitchen_cabinet.png"},
+        tiles = {"luxury_decor_simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
         drop = "luxury_decor:kitchen_wooden_cabinet_with_door_1",
@@ -478,8 +479,8 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_door"]) do
             for num, drawer in pairs(cab_boxes) do
                 if type(drawer) == "table" and drawer.mode == "opened" then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    if not cabs_table["kitchen_wooden_cabinet_with_door"].inv_list[num][str_pos] then
-                       cabs_table["kitchen_wooden_cabinet_with_door"].inv_list[num][str_pos] = {}
+                    if not cabs["kitchen_wooden_cabinet_with_door"].inv_list[num][str_pos] then
+                       cabs["kitchen_wooden_cabinet_with_door"].inv_list[num][str_pos] = {}
                    end
                    local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";2.5, 0.5;6, 4]"
                    form = form .. list
@@ -494,7 +495,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_door"]) do
             for num2, drawer2 in pairs(cab_boxes) do
                 if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_cabinet_with_door"].inv_list[num2][str_pos])
+                    inv:set_list(cab_boxes[num2].listname, cabs["kitchen_wooden_cabinet_with_door"].inv_list[num2][str_pos])
                     inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
                 end
                 
@@ -529,12 +530,12 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_door"]) do
             local name = string.sub(oldnode.name, 14)
             local generalized_name = string.sub(name, 1, -3)
             
-            if cabs_table[generalized_name][name] then
-                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+            if cabs[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs[generalized_name].inv_list) do
                     for cab_pos, drawer_list in pairs(drawer_lists) do
                         local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
                         if cab_pos == str_pos then
-                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                            cabs[generalized_name].inv_list[num][cab_pos] = nil
                         end
                     end
                 end
@@ -545,14 +546,14 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_door"]) do
   end
 end
 
-for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_door_and_drawer"]) do
+for cab, cab_boxes in pairs(cabs["kitchen_wooden_cabinet_with_door_and_drawer"]) do
   if cab ~= "inv_list" then
     minetest.register_node("luxury_decor:"..cab, {
         description = "Kitchen Wooden Cabinet With Door And Drawer",
         visual_scale = 0.5,
-        inventory_image = "kitchen_wooden_cabinet_with_door_and_drawer.png",
+        inventory_image = "luxury_decor_kitchen_wooden_cabinet_with_door_and_drawer.png",
         mesh = cab..".b3d",
-        tiles = {"simple_kitchen_cabinet.png"},
+        tiles = {"luxury_decor_simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
         drop = "luxury_decor:kitchen_wooden_cabinet_with_door_and_drawer_1",
@@ -578,8 +579,8 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_door_and_dra
             for num, drawer in pairs(cab_boxes) do
                 if type(drawer) == "table" and drawer.mode == "opened" then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    if not cabs_table["kitchen_wooden_cabinet_with_door_and_drawer"].inv_list[num][str_pos] then
-                       cabs_table["kitchen_wooden_cabinet_with_door_and_drawer"].inv_list[num][str_pos] = {}
+                    if not cabs["kitchen_wooden_cabinet_with_door_and_drawer"].inv_list[num][str_pos] then
+                       cabs["kitchen_wooden_cabinet_with_door_and_drawer"].inv_list[num][str_pos] = {}
                    end
                    local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";1.5,".. y .. ";6," .. y_size .."]"
                    form = form .. list
@@ -596,7 +597,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_door_and_dra
             for num2, drawer2 in pairs(cab_boxes) do
                 if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_cabinet_with_door_and_drawer"].inv_list[num2][str_pos])
+                    inv:set_list(cab_boxes[num2].listname, cabs["kitchen_wooden_cabinet_with_door_and_drawer"].inv_list[num2][str_pos])
                     inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
                 end
 	    end
@@ -629,12 +630,12 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_door_and_dra
             local name = string.sub(oldnode.name, 14)
             local generalized_name = string.sub(name, 1, -3)
             
-            if cabs_table[generalized_name][name] then
-                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+            if cabs[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs[generalized_name].inv_list) do
                     for cab_pos, drawer_list in pairs(drawer_lists) do
                         local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
                         if cab_pos == str_pos then
-                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                            cabs[generalized_name].inv_list[num][cab_pos] = nil
                         end
                     end
                 end
@@ -645,14 +646,14 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_door_and_dra
   end
 end
 
-for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_two_doors"]) do
+for cab, cab_boxes in pairs(cabs["kitchen_wooden_cabinet_with_two_doors"]) do
   if cab ~= "inv_list" then
     minetest.register_node("luxury_decor:"..cab, {
         description = "Kitchen Wooden Cabinet With Two Doors",
         visual_scale = 0.5,
-        inventory_image = "kitchen_wooden_cabinet_with_two_doors.png",
+        inventory_image = "luxury_decor_kitchen_wooden_cabinet_with_two_doors.png",
         mesh = cab..".b3d",
-        tiles = {"simple_kitchen_cabinet.png"},
+        tiles = {"luxury_decor_simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
         drop = "luxury_decor:kitchen_wooden_cabinet_with_two_doors_1",
@@ -675,8 +676,8 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_two_doors"])
             for num, drawer in pairs(cab_boxes) do
                 if type(drawer) == "table" and drawer.mode == "opened" then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    if not cabs_table["kitchen_wooden_cabinet_with_two_doors"].inv_list[num][str_pos] then
-                       cabs_table["kitchen_wooden_cabinet_with_two_doors"].inv_list[num][str_pos] = {}
+                    if not cabs["kitchen_wooden_cabinet_with_two_doors"].inv_list[num][str_pos] then
+                       cabs["kitchen_wooden_cabinet_with_two_doors"].inv_list[num][str_pos] = {}
                    end
                    local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";2.5, 0.5;6, 4]"
                    form = form .. list
@@ -691,7 +692,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_two_doors"])
             for num2, drawer2 in pairs(cab_boxes) do
                 if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_cabinet_with_two_doors"].inv_list[num2][str_pos])
+                    inv:set_list(cab_boxes[num2].listname, cabs["kitchen_wooden_cabinet_with_two_doors"].inv_list[num2][str_pos])
                     inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
                 end
                 
@@ -726,12 +727,12 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_two_doors"])
             local name = string.sub(oldnode.name, 14)
             local generalized_name = string.sub(name, 1, -3)
             
-            if cabs_table[generalized_name][name] then
-                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+            if cabs[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs[generalized_name].inv_list) do
                     for cab_pos, drawer_list in pairs(drawer_lists) do
                         local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
                         if cab_pos == str_pos then
-                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                            cabs[generalized_name].inv_list[num][cab_pos] = nil
                         end
                     end
                 end
@@ -742,14 +743,14 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_two_doors"])
   end
 end
 
-for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_two_doors_and_drawer"]) do
+for cab, cab_boxes in pairs(cabs["kitchen_wooden_cabinet_with_two_doors_and_drawer"]) do
   if cab ~= "inv_list" then
     minetest.register_node("luxury_decor:"..cab, {
         description = "Kitchen Wooden Cabinet With Two Drawers And Drawer",
         visual_scale = 0.5,
-        inventory_image = "kitchen_wooden_cabinet_with_two_doors_and_drawer.png",
+        inventory_image = "luxury_decor_kitchen_wooden_cabinet_with_two_doors_and_drawer.png",
         mesh = cab..".b3d",
-        tiles = {"simple_kitchen_cabinet.png"},
+        tiles = {"luxury_decor_simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
         drop = "luxury_decor:kitchen_wooden_cabinet_with_two_doors_and_drawer_1",
@@ -775,8 +776,8 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_two_doors_an
             for num, drawer in pairs(cab_boxes) do
                 if type(drawer) == "table" and drawer.mode == "opened" then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    if not cabs_table["kitchen_wooden_cabinet_with_two_doors_and_drawer"].inv_list[num][str_pos] then
-                       cabs_table["kitchen_wooden_cabinet_with_two_doors_and_drawer"].inv_list[num][str_pos] = {}
+                    if not cabs["kitchen_wooden_cabinet_with_two_doors_and_drawer"].inv_list[num][str_pos] then
+                       cabs["kitchen_wooden_cabinet_with_two_doors_and_drawer"].inv_list[num][str_pos] = {}
                    end
                    local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";1.5,".. y .. ";6," .. y_size .."]"
                    form = form .. list
@@ -793,7 +794,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_two_doors_an
             for num2, drawer2 in pairs(cab_boxes) do
                 if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_cabinet_with_two_doors_and_drawer"].inv_list[num2][str_pos])
+                    inv:set_list(cab_boxes[num2].listname, cabs["kitchen_wooden_cabinet_with_two_doors_and_drawer"].inv_list[num2][str_pos])
                     inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
                 end
                 
@@ -828,12 +829,12 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_two_doors_an
             local name = string.sub(oldnode.name, 14)
             local generalized_name = string.sub(name, 1, -3)
             
-            if cabs_table[generalized_name][name] then
-                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+            if cabs[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs[generalized_name].inv_list) do
                     for cab_pos, drawer_list in pairs(drawer_lists) do
                         local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
                         if cab_pos == str_pos then
-                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                            cabs[generalized_name].inv_list[num][cab_pos] = nil
                         end
                     end
                 end
@@ -844,14 +845,14 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_two_doors_an
   end
 end
 
-for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_half_cabinet"]) do
+for cab, cab_boxes in pairs(cabs["kitchen_wooden_half_cabinet"]) do
   if cab ~= "inv_list" then
     minetest.register_node("luxury_decor:"..cab, {
         description = "Kitchen Wooden Half-Cabinet",
         visual_scale = 0.5,
-        inventory_image = "kitchen_wooden_half_cabinet.png",
+        inventory_image = "luxury_decor_kitchen_wooden_half_cabinet.png",
         mesh = cab..".b3d",
-        tiles = {"simple_kitchen_cabinet.png"},
+        tiles = {"luxury_decor_simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
         drop = "luxury_decor:kitchen_wooden_half_cabinet_1",
@@ -874,8 +875,8 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_half_cabinet"]) do
             for num, drawer in pairs(cab_boxes) do
                 if type(drawer) == "table" and drawer.mode == "opened" then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    if not cabs_table["kitchen_wooden_half_cabinet"].inv_list[num][str_pos] then
-                       cabs_table["kitchen_wooden_half_cabinet"].inv_list[num][str_pos] = {}
+                    if not cabs["kitchen_wooden_half_cabinet"].inv_list[num][str_pos] then
+                       cabs["kitchen_wooden_half_cabinet"].inv_list[num][str_pos] = {}
                    end
                    local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";1.5, 0.5;6, 2]"
                    form = form .. list
@@ -890,7 +891,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_half_cabinet"]) do
             for num2, drawer2 in pairs(cab_boxes) do
                 if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_half_cabinet"].inv_list[num2][str_pos])
+                    inv:set_list(cab_boxes[num2].listname, cabs["kitchen_wooden_half_cabinet"].inv_list[num2][str_pos])
                     inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
                 end
                 
@@ -925,12 +926,12 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_half_cabinet"]) do
             local name = string.sub(oldnode.name, 14)
             local generalized_name = string.sub(name, 1, -3)
             
-            if cabs_table[generalized_name][name] then
-                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+            if cabs[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs[generalized_name].inv_list) do
                     for cab_pos, drawer_list in pairs(drawer_lists) do
                         local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
                         if cab_pos == str_pos then
-                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                            cabs[generalized_name].inv_list[num][cab_pos] = nil
                         end
                     end
                 end
@@ -942,14 +943,14 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_half_cabinet"]) do
 end
 
 --cab_boxes is a cabinet sort with certain opened/closed drawers/shelves.
-for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_threedrawer_cabinet"]) do
+for cab, cab_boxes in pairs(cabs["kitchen_wooden_threedrawer_cabinet"]) do
   if cab ~= "inv_list" then
     minetest.register_node("luxury_decor:"..cab, {
         description = "Kitchen Wooden Cabinet With Three Drawers",
         visual_scale = 0.5,
-        inventory_image = "kitchen_wooden_cabinet_with_three_drawers.png",
+        inventory_image = "luxury_decor_kitchen_wooden_cabinet_with_three_drawers.png",
         mesh = cab..".b3d",
-        tiles = {"simple_kitchen_cabinet.png"},
+        tiles = {"luxury_decor_simple_kitchen_cabinet.png"},
         paramtype = "light",
         paramtype2 = "facedir",
         drop = "luxury_decor:kitchen_wooden_threedrawer_cabinet_1",
@@ -975,8 +976,8 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_threedrawer_cabinet"]) do
             for num, drawer in pairs(cab_boxes) do
                 if type(drawer) == "table" and drawer.mode == "opened" then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    if not cabs_table["kitchen_wooden_threedrawer_cabinet"].inv_list[num][str_pos] then
-                       cabs_table["kitchen_wooden_threedrawer_cabinet"].inv_list[num][str_pos] = {}
+                    if not cabs["kitchen_wooden_threedrawer_cabinet"].inv_list[num][str_pos] then
+                       cabs["kitchen_wooden_threedrawer_cabinet"].inv_list[num][str_pos] = {}
                    end
                    local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";1.5,".. y .. ";6, 2]"
                    form = form .. list
@@ -992,7 +993,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_threedrawer_cabinet"]) do
             for num2, drawer2 in pairs(cab_boxes) do
                 if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_threedrawer_cabinet"].inv_list[num2][str_pos])
+                    inv:set_list(cab_boxes[num2].listname, cabs["kitchen_wooden_threedrawer_cabinet"].inv_list[num2][str_pos])
                     inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
                 end
                 
@@ -1027,12 +1028,12 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_threedrawer_cabinet"]) do
             local name = string.sub(oldnode.name, 14)
             local generalized_name = string.sub(name, 1, -3)
               
-            if cabs_table[generalized_name][name] then
-                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+            if cabs[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs[generalized_name].inv_list) do
                     for cab_pos, drawer_list in pairs(drawer_lists) do
                         local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
                         if cab_pos == str_pos then
-                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                            cabs[generalized_name].inv_list[num][cab_pos] = nil
                         end
                     end
                 end
@@ -1043,14 +1044,14 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_threedrawer_cabinet"]) do
   end
 end
 
-for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_sink"]) do
+for cab, cab_boxes in pairs(cabs["kitchen_wooden_cabinet_with_sink"]) do
   if cab ~= "inv_list" then
     minetest.register_node("luxury_decor:"..cab, {
         description = "Kitchen Wooden Cabinet With Sink",
         visual_scale = 0.5,
-        inventory_image = "kitchen_wooden_cabinet_with_sink.png",
+        inventory_image = "luxury_decor_kitchen_wooden_cabinet_with_sink.png",
         mesh = cab..".b3d",
-        tiles = {"simple_kitchen_cabinet_with_sink.png"},
+        tiles = {"luxury_decor_simple_kitchen_cabinet_with_sink.png"},
         paramtype = "light",
         paramtype2 = "facedir",
         drop = "luxury_decor:kitchen_wooden_cabinet_with_sink_1",
@@ -1085,8 +1086,8 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_sink"]) do
             for num, drawer in pairs(cab_boxes) do
                 if type(drawer) == "table" and drawer.mode == "opened" then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    if not cabs_table["kitchen_wooden_cabinet_with_sink"].inv_list[num][str_pos] then
-                       cabs_table["kitchen_wooden_cabinet_with_sink"].inv_list[num][str_pos] = {}
+                    if not cabs["kitchen_wooden_cabinet_with_sink"].inv_list[num][str_pos] then
+                       cabs["kitchen_wooden_cabinet_with_sink"].inv_list[num][str_pos] = {}
                    end
                    local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";2.5, 0.5;3, 3]"
                    local trash_button = "button[2.5, 3.5;3, 1;kwc_trash;Trash Items]"
@@ -1102,7 +1103,7 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_sink"]) do
             for num2, drawer2 in pairs(cab_boxes) do
                 if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    inv:set_list(cab_boxes[num2].listname, cabs_table["kitchen_wooden_cabinet_with_sink"].inv_list[num2][str_pos])
+                    inv:set_list(cab_boxes[num2].listname, cabs["kitchen_wooden_cabinet_with_sink"].inv_list[num2][str_pos])
                     inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
                 end
                 
@@ -1159,12 +1160,12 @@ for cab, cab_boxes in pairs(cabs_table["kitchen_wooden_cabinet_with_sink"]) do
             local name = string.sub(oldnode.name, 14)
             local generalized_name = string.sub(name, 1, -3)
             
-            if cabs_table[generalized_name][name] then
-                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+            if cabs[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs[generalized_name].inv_list) do
                     for cab_pos, drawer_list in pairs(drawer_lists) do
                         local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
                         if cab_pos == str_pos then
-                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                            cabs[generalized_name].inv_list[num][cab_pos] = nil
                         end
                     end
                 end
@@ -1179,8 +1180,8 @@ minetest.register_node("luxury_decor:kitchen_tap_off", {
     description = "Kitchen Tap (off)",
     visual_scale = 0.5,
     mesh = "kitchen_tap_off.b3d",
-    inventory_image = "kitchen_tap_inv.png",
-    tiles = {"kitchen_tap.png"},
+    inventory_image = "luxury_decor_kitchen_tap_inv.png",
+    tiles = {"luxury_decor_kitchen_tap.png"},
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {snappy=1.5},
@@ -1209,8 +1210,8 @@ minetest.register_node("luxury_decor:kitchen_tap_on", {
     description = "Kitchen Tap (on)",
     visual_scale = 0.5,
     mesh = "kitchen_tap_on.b3d",
-    inventory_image = "kitchen_tap_inv.png",
-    tiles = {"kitchen_tap.png"},
+    inventory_image = "luxury_decor_kitchen_tap_inv.png",
+    tiles = {"luxury_decor_kitchen_tap.png"},
     paramtype = "light",
     paramtype2 = "facedir",
     drop = "luxury_decor:kitchen_tap_off",
@@ -1311,14 +1312,14 @@ minetest.register_node("luxury_decor:kitchen_tap_on", {
     end
 })
 
-for cab, cab_boxes in pairs(cabs_table["fridge"]) do
+for cab, cab_boxes in pairs(cabs["fridge"]) do
   if cab ~= "inv_list" then
     minetest.register_node("luxury_decor:"..cab, {
         description = "Fridge",
         visual_scale = 0.5,
-        inventory_image = "fridge_inv.png",
+        inventory_image = "luxury_decor_fridge_inv.png",
         mesh = cab..".b3d",
-        tiles = {"fridge.png"},
+        tiles = {"luxury_decor_fridge.png"},
         paramtype = "light",
         paramtype2 = "facedir",
         drop = "luxury_decor:fridge_1",
@@ -1347,8 +1348,8 @@ for cab, cab_boxes in pairs(cabs_table["fridge"]) do
             for num, drawer in pairs(cab_boxes) do
                 if type(drawer) == "table" and drawer.mode == "opened" then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    if not cabs_table["fridge"].inv_list[num][str_pos] then
-                       cabs_table["fridge"].inv_list[num][str_pos] = {}
+                    if not cabs["fridge"].inv_list[num][str_pos] then
+                       cabs["fridge"].inv_list[num][str_pos] = {}
                    end
                    local list = "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";".. drawer.listname .. ";3.5, 0.5;6, 6]"
                    form = form .. list
@@ -1363,7 +1364,7 @@ for cab, cab_boxes in pairs(cabs_table["fridge"]) do
             for num2, drawer2 in pairs(cab_boxes) do
                 if type(drawer2) == "table" and drawer2.inv_size ~= nil and drawer2.listname ~= nil then
                     local str_pos = tostring(pos.x) .. ", " .. tostring(pos.y) .. ", " .. tostring(pos.z)
-                    inv:set_list(cab_boxes[num2].listname, cabs_table["fridge"].inv_list[num2][str_pos])
+                    inv:set_list(cab_boxes[num2].listname, cabs["fridge"].inv_list[num2][str_pos])
                     inv:set_size(cab_boxes[num2].listname, cab_boxes[num2].inv_size)
                 end
                 
@@ -1398,12 +1399,12 @@ for cab, cab_boxes in pairs(cabs_table["fridge"]) do
             local name = string.sub(oldnode.name, 14)
             local generalized_name = string.sub(name, 1, -3)
             
-            if cabs_table[generalized_name][name] then
-                for num, drawer_lists in pairs(cabs_table[generalized_name].inv_list) do
+            if cabs[generalized_name][name] then
+                for num, drawer_lists in pairs(cabs[generalized_name].inv_list) do
                     for cab_pos, drawer_list in pairs(drawer_lists) do
                         local str_pos = tostring(pos.x) .. "," .. tostring(pos.y) .. "," .. tostring(pos.z)
                         if cab_pos == str_pos then
-                            cabs_table[generalized_name].inv_list[num][cab_pos] = nil
+                            cabs[generalized_name].inv_list[num][cab_pos] = nil
                         end
                     end
                 end
@@ -1417,8 +1418,8 @@ minetest.register_node("luxury_decor:cooker", {
     description = "Cooker",
     visual_scale = 0.5,
     mesh = "cooker.obj",
-    inventory_image = "cooker_inv.png",
-    tiles = {"cooker.png"},
+    inventory_image = "luxury_decor_cooker_inv.png",
+    tiles = {"luxury_decor_cooker.png"},
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {cracky=3.5},
@@ -1442,7 +1443,7 @@ minetest.register_node("luxury_decor:cooker", {
 
 minetest.register_craftitem("luxury_decor:wooden_drawer", {
         description = "Wooden Drawer",
-        inventory_image = "wooden_drawer.png",
+        inventory_image = "luxury_decor_wooden_drawer.png",
         stack_max = 99
 })
 
