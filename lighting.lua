@@ -506,15 +506,18 @@ minetest.register_node("luxury_decor:luxury_brass_candlestick", {
 
 minetest.register_alias("luxury_decor:brass_candlestick", "luxury_brass_candlestick")
 
-minetest.register_node("luxury_decor:brass_candlestick_with_three_candles", {
-    description = "Brass Candlestick (with three candles)",
+minetest.register_node("luxury_decor:luxury_brass_triple_candlestick", {
+    description = "Luxury Brass Candlestick (with three candles)",
     visual_scale = 0.5,
-    mesh = "brass_candlestick_with_three_candles.b3d",
+    mesh = "luxury_brass_triple_candlestick.b3d",
     --inventory_image = "brass_candlestick_inv.png",
-    tiles = {{
+    tiles = {
+        "luxury_decor_brass_candlestick.png", 
+        {
             name = "luxury_decor_brass_candlestick_animated.png",
-            animation = {type = "vertical_frames", aspect_w = 32, aspect_h = 32, length = 8}
-    }},
+            animation = {type = "vertical_frames", aspect_w = 32, aspect_h = 32, length = 3.0}
+        },
+    },
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {choppy = 1.8},
@@ -536,6 +539,8 @@ minetest.register_node("luxury_decor:brass_candlestick_with_three_candles", {
     sounds = default.node_sound_wood_defaults()
     
 }) 
+
+minetest.register_alias("luxury_decor:brass_candlestick_with_three_candles", "luxury_decor:luxury_brass_triple_candlestick")
 
 minetest.register_node("luxury_decor:ceiling_lantern", {
     description = "Ceiling Lantern",
