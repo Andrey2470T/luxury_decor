@@ -191,11 +191,11 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
-    output = "luxury_decor:luxury_metallic_table",
+    output = "luxury_decor:round_luxury_table",
     recipe = {
-        {"luxury_decor:jungle_wooden_plank", "luxury_decor:jungle_wooden_plank", "luxury_decor:jungle_wooden_plank"}, 
-        {"luxury_decor:brass_stick", "", "luxury_decor:brass_stick"},
-        {"", "", ""}
+        {"default:junglewood", "luxury_decor:jungle_wooden_board", "default:junglewood"}, 
+        {"", "luxury_decor:jungle_wooden_plank", ""},
+        {"", "luxury_decor:jungle_wooden_plank", ""}
     }
 })
 

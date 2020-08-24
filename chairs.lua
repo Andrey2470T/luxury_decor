@@ -272,25 +272,25 @@ end
 minetest.register_craft({
     output = "luxury_decor:kitchen_wooden_chair",
     recipe = {
-        {"luxury_decor:wooden_plank", "default:stick", "default:stick"},
+        {"default:wood", "luxury_decor:wooden_plank", "default:stick"},
         {"luxury_decor:wooden_plank", "default:stick", ""},
         {"luxury_decor:wooden_plank", "default:stick", ""}
     }
 })
 
 minetest.register_craft({
-    output = "luxury_decor:luxury_wooden_chair_with_cushion",
+    output = "luxury_decor:round_luxury_chair_with_cushion",
     recipe = {
-        {"luxury_decor:jungle_wooden_plank", "default:stick", "default:stick"},
-        {"luxury_decor:jungle_wooden_plank", "default:stick", "wool:white"},
-        {"luxury_decor:jungle_wooden_plank", "default:stick", ""}
+        {"default:junglewood", "luxury_decor:jungle_wooden_plank", "luxury_decor:jungle_wooden_plank"},
+        {"default:stick", "default:stick", "wool:white"},
+        {"default:stick", "default:stick", ""}
     }
 })
 
 minetest.register_craft({
     output = "luxury_decor:round_wooden_chair",
     recipe = {
-        {"luxury_decor:pine_wooden_plank", "default:stick", "default:stick"},
+        {"default:pinewood", "default:stick", "default:stick"},
         {"luxury_decor:pine_wooden_plank", "default:stick", ""},
         {"luxury_decor:pine_wooden_plank", "default:stick", ""}
     }
@@ -299,8 +299,8 @@ minetest.register_craft({
 minetest.register_craft({
     output = "luxury_decor:decorative_wooden_chair",
     recipe = {
-        {"luxury_decor:jungle_wooden_plank", "default:stick", "default:stick"},
-        {"luxury_decor:jungle_wooden_plank", "default:stick", ""},
+        {"default:junglewood", "default:stick", "default:stick"},
+        {"default:junglewood", "default:stick", ""},
         {"luxury_decor:jungle_wooden_plank", "default:stick", ""}
     }
 })

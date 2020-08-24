@@ -44,6 +44,15 @@ luxury_decor.register_vase({
     flower_shift_pos = {x=0, y=0.4, z=0}
 })
 
+
+minetest.register_craft({
+    type = "shapeless",
+    output = "luxury_decor:simple_plastic_vase",
+    recipe = {"luxury_decor:plastic_sheet", "luxury_decor:steel_scissors"},
+    replacements = {
+        {"", "luxury_decor:steel_scissors"}
+    }
+})
 -- FOR NOW IT HAS REPLACED TO NEW VASE
 --[[minetest.register_node("luxury_decor:simple_plastic_vase", {
     description = "Simple Plastic Vase",
