@@ -75,7 +75,7 @@ minetest.register_node("luxury_decor:iron_chandelier", {
     paramtype2 = "facedir",
     groups = {choppy = 2.5},
     drawtype = "mesh",
-    light_source = 12,
+    light_source = minetest.LIGHT_MAX,
     collision_box = {
         type = "fixed",
         fixed = {
@@ -139,7 +139,7 @@ minetest.register_node("luxury_decor:wall_glass_lamp_on", {
     groups = {choppy = 2.5, not_in_creative_inventory=1},
     drawtype = "mesh",
     drop = "luxury_decor:luxury_desk_lamp_off",
-    light_source = 11,
+    light_source = minetest.LIGHT_MAX,
     collision_box = {
         type = "fixed",
         fixed = {
@@ -206,7 +206,7 @@ minetest.register_node("luxury_decor:royal_brass_chandelier_on", {
     groups = {choppy = 2.5, not_in_creative_inventory=1},
     drawtype = "mesh",
     drop = "luxury_decor:royal_brass_chandelier_off",
-    light_source = 11,
+    light_source = minetest.LIGHT_MAX,
     collision_box = {
         type = "fixed",
         fixed = {
@@ -273,7 +273,7 @@ minetest.register_node("luxury_decor:luxury_steel_chandelier_on", {
     groups = {snappy = 2.5, not_in_creative_inventory=1},
     drawtype = "mesh",
     drop = "luxury_decor:luxury_steel_chandelier_off",
-    light_source = 9,
+    light_source = minetest.LIGHT_MAX-2,
     collision_box = {
         type = "fixed",
         fixed = {
@@ -346,7 +346,7 @@ for color, rgb_code in pairs(luxury_decor.rgb_colors) do
     groups = {snappy = 1.5, not_in_creative_inventory=1},
     drawtype = "mesh",
     drop = "luxury_decor:simple_plastic_"..color.."_chandelier_off",
-    light_source = 8,
+    light_source = minetest.LIGHT_MAX-3,
     collision_box = {
         type = "fixed",
         fixed = {
@@ -425,7 +425,7 @@ for color, rgb_code in pairs(luxury_decor.rgb_colors) do
     groups = {snappy = 1.5, not_in_creative_inventory=1},
     drawtype = "mesh",
     drop = "luxury_decor:plastic_"..color.."_desk_lamp_off",
-    light_source = 9,
+    light_source = minetest.LIGHT_MAX-2,
     collision_box = {
         type = "fixed",
         fixed = {
@@ -470,20 +470,23 @@ for color, rgb_code in pairs(luxury_decor.rgb_colors) do
    })
 end
 
-minetest.register_node("luxury_decor:brass_candlestick", {
-    description = "Brass Candlestick (with one candle)",
+minetest.register_node("luxury_decor:luxury_brass_candlestick", {
+    description = "Luxury Brass Candlestick (with one candle)",
     visual_scale = 0.5,
-    mesh = "brass_candlestick.b3d",
+    mesh = "luxury_brass_candlestick.obj",
     --inventory_image = "brass_candlestick_inv.png",
-    tiles = {{
+    tiles = {
+        "luxury_decor_brass_candlestick.png",
+        {
             name = "luxury_decor_brass_candlestick_animated.png",
-            animation = {type = "vertical_frames", aspect_w = 32, aspect_h = 32, lenght = 8}
-    }},
+            animation = {type = "vertical_frames", aspect_w = 32, aspect_h = 32, length = 3.0}
+        },
+    },
     paramtype = "light",
     paramtype2 = "facedir",
     groups = {choppy = 1.5},
     drawtype = "mesh",
-    light_source = 10,
+    light_source = minetest.LIGHT_MAX-1,
     collision_box = {
         type = "fixed",
         fixed = {
@@ -501,6 +504,8 @@ minetest.register_node("luxury_decor:brass_candlestick", {
     
 }) 
 
+minetest.register_alias("luxury_decor:brass_candlestick", "luxury_brass_candlestick")
+
 minetest.register_node("luxury_decor:brass_candlestick_with_three_candles", {
     description = "Brass Candlestick (with three candles)",
     visual_scale = 0.5,
@@ -508,7 +513,7 @@ minetest.register_node("luxury_decor:brass_candlestick_with_three_candles", {
     --inventory_image = "brass_candlestick_inv.png",
     tiles = {{
             name = "luxury_decor_brass_candlestick_animated.png",
-            animation = {type = "vertical_frames", aspect_w = 32, aspect_h = 32, lenght = 8}
+            animation = {type = "vertical_frames", aspect_w = 32, aspect_h = 32, length = 8}
     }},
     paramtype = "light",
     paramtype2 = "facedir",

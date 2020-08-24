@@ -138,7 +138,7 @@ minetest.register_node("luxury_decor:round_luxury_table", {
     collision_box = {
         type = "fixed",
         fixed = {
-            {-0.5, -0.5, -0.5, 0.5, 0.425, 0.5},
+            {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
             --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
             {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
         }
@@ -146,7 +146,7 @@ minetest.register_node("luxury_decor:round_luxury_table", {
     selection_box = {
         type = "fixed",
         fixed = {
-            {-0.5, -0.5, -0.5, 0.5, 0.425, 0.5}
+            {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
         }
     },
     sounds = default.node_sound_wood_defaults()
