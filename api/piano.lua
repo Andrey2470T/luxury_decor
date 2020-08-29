@@ -3,9 +3,9 @@
 piano = {} 
 
 --  Constants
-piano.keys_num <const> = 52
+piano.keys_num = 52
 
-piano.keys_sounds <const> = {
+piano.keys_sounds = {
     "A0",
     "H0",
     "C1",
@@ -61,7 +61,7 @@ piano.keys_sounds <const> = {
 }
 
 --  Functions
-piano.register_piano = function(def)
+luxury_decor.register_piano = function(def)
     local piano_def = {}
     
     piano_def.type  = def.type or "piano"
@@ -70,53 +70,62 @@ piano.register_piano = function(def)
     
     if not def.description or def.description == "" then
         piano_def.description = luxury_decor.upper_letters(piano_def.style, 1, 1) .. " " .. 
-                luxury_decor.upper_letters(piano_def.color) .. " " .. 
-                luxury_decor.upper_letters(piano_def.type)
+                luxury_decor.upper_letters(piano_def.color, 1, 1) .. " " .. 
+                luxury_decor.upper_letters(piano_def.type, 1, 1)
         
         if def.item_info then
             piano_def = piano_def .. " " .. def.item_info
         end
     end
     
-    piano_def.visual_scale      = def.visual_scale or 0.5
-    piano_def.mesh              = def.mesh
-    piano_def.tiles             = def.textures
-    piano_def.paramtype         = "light"
-    piano_def.paramtype2        = "facedir"
-    piano_def.inventory_image   = def.inventory_image 
-    piano_def.groups            = def.groups or {choppy=1}
-    piano_def.drawtype          = "mesh"
-    piano_def.collision_box     = def.collision_box or {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
-    piano_def.selection_box     = def.selection_box or piano_def.collision_box
-    piano_def.sounds            = def.sounds
+    piano_def.visual_scale          = def.visual_scale or 0.5
+    piano_def.mesh                  = def.mesh
+    piano_def.tiles                 = def.textures
+    piano_def.paramtype             = "light"
+    piano_def.paramtype2            = "facedir"
+    piano_def.sunlight_propagates   = true
+    piano_def.inventory_image       = def.inventory_image 
+    piano_def.groups                = def.groups or {choppy=1}
+    piano_def.drawtype              = "mesh"
+    piano_def.collision_box         = {
+        type = "fixed",
+        fixed = def.collision_box or {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+    }
+    piano_def.selection_box         = {
+        type = "fixed",
+        fixed = def.selection_box or piano_def.collision_box
+    }
+    piano_def.sounds                = def.sounds
     
     
     -- Start and end positions are defined relatively Z-axis that is facing for node
     -- Start position of the keyboard (at upper left corner!) (x, y, z)
-    piano_def.keys_row_start_p  = def.keys_row_start_p
+    piano_def.keys_row_start_p      = def.keys_row_start_p
     -- End position of the keyboard (x, y, z)
-    piano_def.keys_row_end_p    = def.keys_row_end_p
+    piano_def.keys_row_end_p        = def.keys_row_end_p
 
     
     -- Width of single key
-    piano_def.key_w
+    piano_def.key_w                 = def.key_w
     
     -- Calculates length of single key and save it further
-    piano_def.key_len           = vector.distance(piano_def.keys_row_start_p, piano_def.keys_row_end_p)/piano.keys_num
+    piano_def.key_len               = vector.distance(piano_def.keys_row_start_p, piano_def.keys_row_end_p)/piano.keys_num
     
     local nodename = "luxury_decor:" .. piano_def.style .. "_" .. piano_def.color .. "_" .. piano_def.type
     
     -- Register pianos with each pressed key
-    for i, ksound in ipairs(piano.key_sounds) do
+    for i, ksound in ipairs(piano.keys_sounds) do
+        local find_dot = piano_def.mesh:find("%.", 1)
         minetest.register_node(nodename .. "_" .. ksound, {
             visual_scale        = piano_def.visual_scale,
             drawtype            = "mesh",
-            mesh                = piano_def.mesh .. "_" .. ksound,
+            mesh                = piano_def.mesh:sub(1, find_dot-1) .. "_" .. ksound .. piano_def.mesh:sub(find_dot, piano_def.mesh:len()),
             paramtype           = piano_def.paramtype,
             paramtype2          = piano_def.paramtype2,
+            sunlight_propagates = piano_def.sunlight_propagates,
             tiles               = piano_def.tiles,
             inventory_image     = piano_def.inventory_image,
-            groups              = {table.unpack(piano_def.groups), not_in_creative_inventory=1},
+            groups              = {choppy=piano_def.groups.choppy, not_in_creative_inventory=1},
             collision_box       = piano_def.collision_box,
             selection_box       = piano_def.selection_box,
             sounds              = piano_def.sounds
@@ -128,7 +137,7 @@ piano.register_piano = function(def)
         local krow_sp = def.keys_row_start_p
         local krow_ep = def.keys_row_start_p
         if krow_sp.y ~= krow_ep.y then return end
-        local dir = minetest.facedir_to_dir(node.pos2)
+        local dir = minetest.facedir_to_dir(node.param2)
         
         if dir.y == 0 and (dir.z < 0 or dir.z == 0) then
             local yaw = vector.angle({x=0, y=0, z=1}, dir)
@@ -152,6 +161,8 @@ piano.register_piano = function(def)
         end
         
     end
+    
+    minetest.register_node(nodename, piano_def)
 end
 
 piano.get_pressed_key_i = function(pos, exact_pos)
@@ -199,7 +210,7 @@ piano.play_keysound = function(pos, key_i)
     local node = minetest.get_node(pos)
     
     minetest.sound_play(
-        name = key_sounds[key_i] .. ".ogg", 
+        "piano_key_" .. key_sounds[key_i] .. ".ogg", 
         {
          pos = pos,
          max_hear_distance = 30

@@ -19,7 +19,7 @@ for _, material in ipairs({"", "jungle_", "pine_"}) do
         output = "luxury_decor:" .. material .. "wooden_board 3",
         recipe = {"stairs:slab_" .. (material == "jungle_" and "jungle" or material) .. "wood", "luxury_decor:saw"},
         replacements = {
-            {"", "luxury_decor:saw 1"}
+            {"luxury_decor:saw", "luxury_decor:saw"}
         }
     })
     
@@ -34,7 +34,7 @@ for _, material in ipairs({"", "jungle_", "pine_"}) do
         output = "luxury_decor:" .. material .. "wooden_plank 2",
         recipe = {"luxury_decor:" .. material .. "wooden_board", "luxury_decor:saw"},
         replacements = {
-            {"", "luxury_decor:saw 1"}
+            {"luxury_decor:saw", "luxury_decor:saw"}
         }
     })
     

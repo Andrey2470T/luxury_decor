@@ -25,6 +25,7 @@ local modpath = minetest.get_modpath("luxury_decor")
 
 --  API
 dofile(modpath.."/api/helper_funcs.lua")
+dofile(modpath.."/api/piano.lua")
 dofile(modpath.."/api/sitting.lua")
 dofile(modpath.."/api/vase.lua")
 
