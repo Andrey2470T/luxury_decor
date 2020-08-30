@@ -81,10 +81,12 @@ luxury_decor.register_piano = function(def)
     piano_def.visual_scale          = def.visual_scale or 0.5
     piano_def.mesh                  = def.mesh
     piano_def.tiles                 = def.textures
+    piano_def.use_texture_alpha     = true
     piano_def.paramtype             = "light"
     piano_def.paramtype2            = "facedir"
     piano_def.sunlight_propagates   = true
-    piano_def.inventory_image       = def.inventory_image 
+    --[[piano_def.inventory_image       = def.inventory_image 
+    piano_def.wield_image           = def.wield_image or piano_def.inventory_image]]
     piano_def.groups                = def.groups or {choppy=1}
     piano_def.drawtype              = "mesh"
     piano_def.collision_box         = {
@@ -93,7 +95,7 @@ luxury_decor.register_piano = function(def)
     }
     piano_def.selection_box         = {
         type = "fixed",
-        fixed = def.selection_box or piano_def.collision_box
+        fixed = def.selection_box or piano_def.collision_box.fixed
     }
     piano_def.sounds                = def.sounds
     
@@ -154,7 +156,7 @@ luxury_decor.register_piano = function(def)
         
         local pl_pos = clicker:get_pos()
         local ray = minetest.raycast(pl_pos, {x=pl_pos.x+reach_vec.x, y=pl_pos.y+reach_vec.y, z=pl_pos.z+reach_vec.z}, false, false)]]
-        local exact_pos = mninetest.pointed_thing_to_face_pos(clicker, pointed_thing)
+        local exact_pos = minetest.pointed_thing_to_face_pos(clicker, pointed_thing)
         local key_i = piano.get_pressed_key_i(pos, exact_pos)
         if key_i then
             piano.play_keysound(pos, key_i)
@@ -163,6 +165,7 @@ luxury_decor.register_piano = function(def)
     end
     
     minetest.register_node(nodename, piano_def)
+    minetest.debug("GRANDPIANO_DEF: " .. dump(minetest.registered_nodes[nodename]))
 end
 
 piano.get_pressed_key_i = function(pos, exact_pos)
@@ -187,7 +190,7 @@ piano.get_pressed_key_i = function(pos, exact_pos)
     local shift_pos = kboard_r.spoint
     for key_i = 1, piano.keys_num do
         local udir_angle = vector.angle(udir, {x=0, y=0, z=vector.length(udir)})
-        local rot_to_lr_crn = vector.rotate({x=0, y=0, z=minetest.registered_nodes[minetest.get_node(pos).name].key_w}, {x=0, y=udir-90, z=0})
+        local rot_to_lr_crn = vector.rotate({x=0, y=0, z=minetest.registered_nodes[minetest.get_node(pos).name].key_w}, {x=0, y=udir_angle-90, z=0})
         local shift_pos2 = vector.add(vector.add(udir, rot_to_lr_crn), shift_pos)
         
         local x_diff = math.abs(shift_pos2.x-shift_pos.x)

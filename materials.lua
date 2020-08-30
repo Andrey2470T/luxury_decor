@@ -486,7 +486,6 @@ minetest.register_craft({
 
 
 minetest.register_on_craft(function (itemstack, player, old_craft_grid, craft_inv)
-	minetest.debug(dump(old_craft_grid))
 	for i = 1, #old_craft_grid do
 		local ud = old_craft_grid[i]
 		local name = ud:get_name()
