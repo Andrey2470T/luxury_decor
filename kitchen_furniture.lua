@@ -1414,7 +1414,23 @@ for cab, cab_boxes in pairs(cabs["fridge"]) do
     })
   end
 end
-minetest.register_node("luxury_decor:cooker", {
+
+
+luxury_decor.register_cooker({
+    burners_n = 4,
+    closed = {
+        mesh = "cooker_new.b3d",
+        textures = "luxury_decor_cooker.png",
+        inventory_image = "luxury_decor_cooker_inv.png"
+    },
+    opened = {
+        mesh = "cooker_opened_new.b3d",
+        textures = "luxury_decor_cooker.png",
+        inventory_image = "luxury_decor_cooker_inv.png"
+    }
+
+})
+--[[minetest.register_node("luxury_decor:cooker", {
     description = "Cooker",
     visual_scale = 0.5,
     mesh = "cooker.obj",
@@ -1436,10 +1452,10 @@ minetest.register_node("luxury_decor:cooker", {
             {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
         }
     },
-    sounds = default.node_sound_stone_defaults()--[[,
-    on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)]]
+    sounds = default.node_sound_stone_defaults(),
+    on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
         
-})
+})]]
 
 minetest.register_craftitem("luxury_decor:wooden_drawer", {
         description = "Wooden Drawer",

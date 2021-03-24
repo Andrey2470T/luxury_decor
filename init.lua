@@ -24,6 +24,7 @@ luxury_decor.rgb_colors = {
 local modpath = minetest.get_modpath("luxury_decor")
 
 --  API
+dofile(modpath.."/api/cooker.lua")
 dofile(modpath.."/api/helper_funcs.lua")
 dofile(modpath.."/api/piano.lua")
 dofile(modpath.."/api/sitting.lua")

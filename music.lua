@@ -1,8 +1,8 @@
 luxury_decor.register_piano({
-    type = "grandpiano",
+    fashion = "grandpiano",
     mesh = "grand_piano_new.b3d",
     textures = {"luxury_decor_grand_piano.png"},
-    inventory_image = "luxury_decor_grand_piano_inv.png",
+    inventory_image = "luxury_decor_grand_piano_inv_new.png",
     collision_box = {
             {-1.4, -0.5, -1.4, 1.4, 0.4, 1.0},
             {-1.4, -0.5, 1.0, 1.4, 0.08, 1.4}
@@ -10,8 +10,8 @@ luxury_decor.register_piano({
             {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
     },
     sounds = default.node_sound_wood_defaults(),
-    keys_row_start_p = {x=-1.3, y=0.08, z=-1.1},
-    keys_row_end_p = {x=1.3, y=0.08, z=-1.1},
+    keys_row_start_p = {x=1.2, y=0.08, z=1.4},
+    keys_row_end_p = {x=-1.2, y=0.08, z=1.2},
     key_w = 0.3
 })
 

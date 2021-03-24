@@ -137,6 +137,4 @@ luxury_decor.register_vase = function(def)
         on_rightclick       = vase_def.on_rightclick,
         on_destruct         = vase_def.on_destruct
     })
-    
-    minetest.debug("VASE_DEF: " .. dump(minetest.registered_nodes[name]))
 end

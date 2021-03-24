@@ -80,8 +80,8 @@ minetest.register_node("luxury_decor:kitchen_wooden_chair", {
     collision_box = {
         type = "fixed",
         fixed = {
-            {-0.43, -0.45, -0.4, 0.43, 0.39, 0.35},
-            {-0.43, -0.45, 0.35, 0.43, 1.3, 0.46}
+            {-0.35, -0.5, -0.35, 0.35, 0.2, 0.25},
+            {-0.35, -0.5, 0.25, 0.35, 0.925, 0.35}
             --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
             {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
         }
@@ -89,8 +89,8 @@ minetest.register_node("luxury_decor:kitchen_wooden_chair", {
     selection_box = {
         type = "fixed",
         fixed = {
-            {-0.43, -0.45, -0.4, 0.43, 0.39, 0.35},
-            {-0.43, -0.45, 0.35, 0.43, 1.3, 0.46}
+            {-0.35, -0.5, -0.35, 0.35, 0.2, 0.25},
+            {-0.35, -0.5, 0.25, 0.35, 0.925, 0.35}
         }
     },
     sounds = default.node_sound_wood_defaults(),
