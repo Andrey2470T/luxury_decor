@@ -1,5 +1,5 @@
 luxury_decor.register_piano({
-    fashion = "grandpiano",
+    type = "grandpiano",
     mesh = "grand_piano_new.b3d",
     textures = {"luxury_decor_grand_piano.png"},
     inventory_image = "luxury_decor_grand_piano_inv_new.png",

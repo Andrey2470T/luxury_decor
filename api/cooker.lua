@@ -97,6 +97,9 @@ luxury_decor.register_cooker = function(def)
         end
     end
     
+	cookdef.paramtype = "light"
+	cookdef.paramtype2 = "facedir"
+	cookdef.use_texture_alpha = true
     cookdef.groups			= def.groups or {cracky=1.5}
     
     cookdef.sounds = {}
@@ -146,7 +149,8 @@ luxury_decor.register_cooker = function(def)
 				cdef.description = cdef.description .. cdef.item_info
 			end
 		end
-
+		
+		cdef.groups.not_in_creative_inventory = st == "opened" and 1 or 0
         cdef.inventory_image = cdef[st].inventory_image
         cdef.light_source = cdef[st].light_source or 0
         cdef.collision_box = {

@@ -142,25 +142,25 @@ end
 
 cabs["kitchen_wooden_cabinet"] = {
     ["kitchen_wooden_cabinet_1"] = {
-        {mode="closed", button = "kwc1_1", img_button = "open_button.png"},
-        {mode="closed", button = "kwc1_2", img_button = "open_button.png"},
+        {mode="closed", button = "kwc1_1", img_button = "luxury_decor_open_button.png"},
+        {mode="closed", button = "kwc1_2", img_button = "luxury_decor_open_button.png"},
         
     },
     ["kitchen_wooden_cabinet_2"] = {
-        {mode="opened", button = "kwc2_1", img_button = "close_button.png", listname = "kwc2_1", inv_size=6*2},
-        {mode="closed", button = "kwc2_2", img_button = "open_button.png"},
+        {mode="opened", button = "kwc2_1", img_button = "luxury_decor_close_button.png", listname = "kwc2_1", inv_size=6*2},
+        {mode="closed", button = "kwc2_2", img_button = "luxury_decor_open_button.png"},
         not_in_creative_inventory=1
         
     },
     ["kitchen_wooden_cabinet_3"] = {
-        {mode="closed", button = "kwc3_1", img_button = "open_button.png"},
-        {mode="opened", button = "kwc3_2", img_button = "close_button.png", listname = "kwc3_2", inv_size=6*2},
+        {mode="closed", button = "kwc3_1", img_button = "luxury_decor_open_button.png"},
+        {mode="opened", button = "kwc3_2", img_button = "luxury_decor_close_button.png", listname = "kwc3_2", inv_size=6*2},
         not_in_creative_inventory=1
         
     },
     ["kitchen_wooden_cabinet_4"] = {
-        {mode="opened", button = "kwc4_1", img_button = "close_button.png", listname = "kwc4_1", inv_size=6*2},
-        {mode="opened", button = "kwc4_2", img_button = "close_button.png", listname = "kwc4_2", inv_size=6*2},
+        {mode="opened", button = "kwc4_1", img_button = "luxury_decor_close_button.png", listname = "kwc4_1", inv_size=6*2},
+        {mode="opened", button = "kwc4_2", img_button = "luxury_decor_close_button.png", listname = "kwc4_2", inv_size=6*2},
         not_in_creative_inventory=1
         
     },
@@ -169,11 +169,11 @@ cabs["kitchen_wooden_cabinet"] = {
 
 cabs["kitchen_wooden_cabinet_with_door"] = {
     ["kitchen_wooden_cabinet_with_door_1"] = {
-        {mode="closed", button = "kwc_with_door1", img_button = "open_button.png"}
+        {mode="closed", button = "kwc_with_door1", img_button = "luxury_decor_open_button.png"}
         
     },
     ["kitchen_wooden_cabinet_with_door_2"] = {
-        {mode="opened", button = "kwc_with_door2", img_button = "close_button.png", listname = "kwc_with_door2", inv_size=6*4},
+        {mode="opened", button = "kwc_with_door2", img_button = "luxury_decor_close_button.png", listname = "kwc_with_door2", inv_size=6*4},
         not_in_creative_inventory=1
         
     },
@@ -182,25 +182,25 @@ cabs["kitchen_wooden_cabinet_with_door"] = {
 
 cabs["kitchen_wooden_cabinet_with_door_and_drawer"] = {
     ["kitchen_wooden_cabinet_with_door_and_drawer_1"] = {
-        {mode="closed", button = "kwc_with_door_and_drawer1_1", img_button = "open_button.png"},
-        {mode="closed", button = "kwc_with_door_and_drawer1_2", img_button = "open_button.png"},
+        {mode="closed", button = "kwc_with_door_and_drawer1_1", img_button = "luxury_decor_open_button.png"},
+        {mode="closed", button = "kwc_with_door_and_drawer1_2", img_button = "luxury_decor_open_button.png"},
         
     },
     ["kitchen_wooden_cabinet_with_door_and_drawer_2"] = {
-        {mode="opened", button = "kwc_with_door_and_drawer2_1", img_button = "close_button.png", listname = "kwc_with_door_and_drawer2_1", inv_size=6},
-        {mode="closed", button = "kwc_with_door_and_drawer2_2", img_button = "open_button.png"},
+        {mode="opened", button = "kwc_with_door_and_drawer2_1", img_button = "luxury_decor_close_button.png", listname = "kwc_with_door_and_drawer2_1", inv_size=6},
+        {mode="closed", button = "kwc_with_door_and_drawer2_2", img_button = "luxury_decor_open_button.png"},
         not_in_creative_inventory=1
         
     },
     ["kitchen_wooden_cabinet_with_door_and_drawer_3"] = {
-        {mode="closed", button = "kwc_with_door_and_drawer3_1", img_button = "open_button.png"},
-        {mode="opened", button = "kwc_with_door_and_drawer3_2", img_button = "close_button.png", listname = "kwc_with_door_and_drawer3_2", inv_size=6*3},
+        {mode="closed", button = "kwc_with_door_and_drawer3_1", img_button = "luxury_decor_open_button.png"},
+        {mode="opened", button = "kwc_with_door_and_drawer3_2", img_button = "luxury_decor_close_button.png", listname = "kwc_with_door_and_drawer3_2", inv_size=6*3},
         not_in_creative_inventory=1
         
     },
     ["kitchen_wooden_cabinet_with_door_and_drawer_4"] = {
-        {mode="opened", button = "kwc_with_door_and_drawer4_1", img_button = "close_button.png", listname = "kwc_with_door_and_drawer4_1", inv_size=6},
-        {mode="opened", button = "kwc_with_door_and_drawer4_2", img_button = "close_button.png", listname = "kwc_with_door_and_drawer4_2", inv_size=6*3},
+        {mode="opened", button = "kwc_with_door_and_drawer4_1", img_button = "luxury_decor_close_button.png", listname = "kwc_with_door_and_drawer4_1", inv_size=6},
+        {mode="opened", button = "kwc_with_door_and_drawer4_2", img_button = "luxury_decor_close_button.png", listname = "kwc_with_door_and_drawer4_2", inv_size=6*3},
         not_in_creative_inventory=1
         
     },
@@ -209,11 +209,11 @@ cabs["kitchen_wooden_cabinet_with_door_and_drawer"] = {
 
 cabs["kitchen_wooden_cabinet_with_two_doors"] = {
     ["kitchen_wooden_cabinet_with_two_doors_1"] = {
-        {mode="closed", button = "kwc_with_two_doors1", img_button = "open_button.png"}
+        {mode="closed", button = "kwc_with_two_doors1", img_button = "luxury_decor_open_button.png"}
         
     },
     ["kitchen_wooden_cabinet_with_two_doors_2"] = {
-        {mode="opened", button = "kwc_with_two_doors2", img_button = "close_button.png", listname = "kwc_with_two_doors2", inv_size=6*4},
+        {mode="opened", button = "kwc_with_two_doors2", img_button = "luxury_decor_close_button.png", listname = "kwc_with_two_doors2", inv_size=6*4},
         not_in_creative_inventory=1
         
     },
@@ -222,25 +222,25 @@ cabs["kitchen_wooden_cabinet_with_two_doors"] = {
 
 cabs["kitchen_wooden_cabinet_with_two_doors_and_drawer"] = {
     ["kitchen_wooden_cabinet_with_two_doors_and_drawer_1"] = {
-        {mode="closed", button = "kwc_with_two_doors_and_drawer1_1", img_button = "open_button.png"},
-        {mode="closed", button = "kwc_with_two_doors_and_drawer1_2", img_button = "open_button.png"},
+        {mode="closed", button = "kwc_with_two_doors_and_drawer1_1", img_button = "luxury_decor_open_button.png"},
+        {mode="closed", button = "kwc_with_two_doors_and_drawer1_2", img_button = "luxury_decor_open_button.png"},
         
     },
     ["kitchen_wooden_cabinet_with_two_doors_and_drawer_2"] = {
-        {mode="opened", button = "kwc_with_two_doors_and_drawer2_1", img_button = "close_button.png", listname = "kwc_with_two_doors_and_drawer2_1", inv_size=6},
-        {mode="closed", button = "kwc_with_two_doors_and_drawer2_2", img_button = "open_button.png"},
+        {mode="opened", button = "kwc_with_two_doors_and_drawer2_1", img_button = "luxury_decor_close_button.png", listname = "kwc_with_two_doors_and_drawer2_1", inv_size=6},
+        {mode="closed", button = "kwc_with_two_doors_and_drawer2_2", img_button = "luxury_decor_open_button.png"},
         not_in_creative_inventory=1
         
     },
     ["kitchen_wooden_cabinet_with_two_doors_and_drawer_3"] = {
-        {mode="closed", button = "kwc_with_two_doors_and_drawer3_1", img_button = "open_button.png"},
-        {mode="opened", button = "kwc_with_two_doors_and_drawer3_2", img_button = "close_button.png", listname = "kwc_with_two_doors_and_drawer3_2", inv_size=6*3},
+        {mode="closed", button = "kwc_with_two_doors_and_drawer3_1", img_button = "luxury_decor_open_button.png"},
+        {mode="opened", button = "kwc_with_two_doors_and_drawer3_2", img_button = "luxury_decor_close_button.png", listname = "kwc_with_two_doors_and_drawer3_2", inv_size=6*3},
         not_in_creative_inventory=1
         
     },
     ["kitchen_wooden_cabinet_with_two_doors_and_drawer_4"] = {
-        {mode="opened", button = "kwc_with_two_doors_and_drawer4_1", img_button = "close_button.png", listname = "kwc_with_two_doors_and_drawer4_1", inv_size=6},
-        {mode="opened", button = "kwc_with_two_doors_and_drawer4_2", img_button = "close_button.png", listname = "kwc_with_two_doors_and_drawer4_2", inv_size=6*3},
+        {mode="opened", button = "kwc_with_two_doors_and_drawer4_1", img_button = "luxury_decor_close_button.png", listname = "kwc_with_two_doors_and_drawer4_1", inv_size=6},
+        {mode="opened", button = "kwc_with_two_doors_and_drawer4_2", img_button = "luxury_decor_close_button.png", listname = "kwc_with_two_doors_and_drawer4_2", inv_size=6*3},
         not_in_creative_inventory=1
         
     },
@@ -249,11 +249,11 @@ cabs["kitchen_wooden_cabinet_with_two_doors_and_drawer"] = {
 
 cabs["kitchen_wooden_half_cabinet"] = {
     ["kitchen_wooden_half_cabinet_1"] = {
-        {mode="closed", button = "kwc_half1", img_button = "open_button.png"}
+        {mode="closed", button = "kwc_half1", img_button = "luxury_decor_open_button.png"}
         
     },
     ["kitchen_wooden_half_cabinet_2"] = {
-        {mode="opened", button = "kwc_half2", img_button = "close_button.png", listname = "kwc_half2", inv_size=6*2},
+        {mode="opened", button = "kwc_half2", img_button = "luxury_decor_close_button.png", listname = "kwc_half2", inv_size=6*2},
         not_in_creative_inventory=1
         
     },
@@ -262,57 +262,57 @@ cabs["kitchen_wooden_half_cabinet"] = {
 
 cabs["kitchen_wooden_threedrawer_cabinet"] = {
     ["kitchen_wooden_threedrawer_cabinet_1"] = {
-        {mode="closed", button = "kwc_threedrawer1_1", img_button = "open_button.png"},
-        {mode="closed", button = "kwc_threedrawer1_2", img_button = "open_button.png"},
-        {mode="closed", button = "kwc_threedrawer1_3", img_button = "open_button.png"},
+        {mode="closed", button = "kwc_threedrawer1_1", img_button = "luxury_decor_open_button.png"},
+        {mode="closed", button = "kwc_threedrawer1_2", img_button = "luxury_decor_open_button.png"},
+        {mode="closed", button = "kwc_threedrawer1_3", img_button = "luxury_decor_open_button.png"},
         
     },
     ["kitchen_wooden_threedrawer_cabinet_2"] = {
-        {mode="opened", button = "kwc_threedrawer2_1", img_button = "close_button.png", listname = "kwc_threedrawer2_1", inv_size=6*2},
-        {mode="closed", button = "kwc_threedrawer2_2", img_button = "open_button.png"},
-        {mode="closed", button = "kwc_threedrawer2_3", img_button = "open_button.png"},
+        {mode="opened", button = "kwc_threedrawer2_1", img_button = "luxury_decor_close_button.png", listname = "kwc_threedrawer2_1", inv_size=6*2},
+        {mode="closed", button = "kwc_threedrawer2_2", img_button = "luxury_decor_open_button.png"},
+        {mode="closed", button = "kwc_threedrawer2_3", img_button = "luxury_decor_open_button.png"},
         not_in_creative_inventory=1
         
     },
     ["kitchen_wooden_threedrawer_cabinet_3"] = {
-        {mode="closed", button = "kwc_threedrawer3_1", img_button = "open_button.png"},
-        {mode="opened", button = "kwc_threedrawer3_2", img_button = "close_button.png", listname = "kwc_threedrawer3_2", inv_size=6*2},
-        {mode="closed", button = "kwc_threedrawer3_3", img_button = "open_button.png"},
+        {mode="closed", button = "kwc_threedrawer3_1", img_button = "luxury_decor_open_button.png"},
+        {mode="opened", button = "kwc_threedrawer3_2", img_button = "luxury_decor_close_button.png", listname = "kwc_threedrawer3_2", inv_size=6*2},
+        {mode="closed", button = "kwc_threedrawer3_3", img_button = "luxury_decor_open_button.png"},
         not_in_creative_inventory=1
         
     },
     ["kitchen_wooden_threedrawer_cabinet_4"] = {
-        {mode="closed", button = "kwc_threedrawer4_1", img_button = "open_button.png"},
-        {mode="closed", button = "kwc_threedrawer4_2", img_button = "open_button.png"},
-        {mode="opened", button = "kwc_threedrawer4_3", img_button = "close_button.png", listname = "kwc_threedrawer4_3", inv_size=6*2},
+        {mode="closed", button = "kwc_threedrawer4_1", img_button = "luxury_decor_open_button.png"},
+        {mode="closed", button = "kwc_threedrawer4_2", img_button = "luxury_decor_open_button.png"},
+        {mode="opened", button = "kwc_threedrawer4_3", img_button = "luxury_decor_close_button.png", listname = "kwc_threedrawer4_3", inv_size=6*2},
         not_in_creative_inventory=1
         
     },
     ["kitchen_wooden_threedrawer_cabinet_5"] = {
-        {mode="opened", button = "kwc_threedrawer5_1", img_button = "close_button.png", listname = "kwc_threedrawer5_1", inv_size=6*2},
-        {mode="closed", button = "kwc_threedrawer5_2", img_button = "open_button.png"},
-        {mode="opened", button = "kwc_threedrawer5_3", img_button = "close_button.png", listname = "kwc_threedrawer5_3", inv_size=6*2},
+        {mode="opened", button = "kwc_threedrawer5_1", img_button = "luxury_decor_close_button.png", listname = "kwc_threedrawer5_1", inv_size=6*2},
+        {mode="closed", button = "kwc_threedrawer5_2", img_button = "luxury_decor_open_button.png"},
+        {mode="opened", button = "kwc_threedrawer5_3", img_button = "luxury_decor_close_button.png", listname = "kwc_threedrawer5_3", inv_size=6*2},
         not_in_creative_inventory=1
         
     },
     ["kitchen_wooden_threedrawer_cabinet_6"] = {
-        {mode="opened", button = "kwc_threedrawer6_1", img_button = "close_button.png", listname = "kwc_threedrawer6_1", inv_size=6*2},
-        {mode="opened", button = "kwc_threedrawer6_2", img_button = "close_button.png", listname = "kwc_threedrawer6_2", inv_size=6*2},
-        {mode="closed", button = "kwc_threedrawer6_3", img_button = "open_button.png"},
+        {mode="opened", button = "kwc_threedrawer6_1", img_button = "luxury_decor_close_button.png", listname = "kwc_threedrawer6_1", inv_size=6*2},
+        {mode="opened", button = "kwc_threedrawer6_2", img_button = "luxury_decor_close_button.png", listname = "kwc_threedrawer6_2", inv_size=6*2},
+        {mode="closed", button = "kwc_threedrawer6_3", img_button = "luxury_decor_open_button.png"},
         not_in_creative_inventory=1
         
     },
     ["kitchen_wooden_threedrawer_cabinet_7"] = {
-        {mode="closed", button = "kwc_threedrawer7_1", img_button = "open_button.png"},
-        {mode="opened", button = "kwc_threedrawer7_2", img_button = "close_button.png", listname = "kwc_threedrawer7_2", inv_size=6*2},
-        {mode="opened", button = "kwc_threedrawer7_3", img_button = "close_button.png", listname = "kwc_threedrawer7_3", inv_size=6*2},
+        {mode="closed", button = "kwc_threedrawer7_1", img_button = "luxury_decor_open_button.png"},
+        {mode="opened", button = "kwc_threedrawer7_2", img_button = "luxury_decor_close_button.png", listname = "kwc_threedrawer7_2", inv_size=6*2},
+        {mode="opened", button = "kwc_threedrawer7_3", img_button = "luxury_decor_close_button.png", listname = "kwc_threedrawer7_3", inv_size=6*2},
         not_in_creative_inventory=1
         
     },
     ["kitchen_wooden_threedrawer_cabinet_8"] = {
-        {mode="opened", button = "kwc_threedrawer8_1", img_button = "close_button.png", listname = "kwc_threedrawer8_1", inv_size=6*2},
-        {mode="opened", button = "kwc_threedrawer8_2", img_button = "close_button.png", listname = "kwc_threedrawer8_2", inv_size=6*2},
-        {mode="opened", button = "kwc_threedrawer8_3", img_button = "close_button.png", listname = "kwc_threedrawer8_3", inv_size=6*2},
+        {mode="opened", button = "kwc_threedrawer8_1", img_button = "luxury_decor_close_button.png", listname = "kwc_threedrawer8_1", inv_size=6*2},
+        {mode="opened", button = "kwc_threedrawer8_2", img_button = "luxury_decor_close_button.png", listname = "kwc_threedrawer8_2", inv_size=6*2},
+        {mode="opened", button = "kwc_threedrawer8_3", img_button = "luxury_decor_close_button.png", listname = "kwc_threedrawer8_3", inv_size=6*2},
         not_in_creative_inventory=1
         
     },
@@ -321,11 +321,11 @@ cabs["kitchen_wooden_threedrawer_cabinet"] = {
 
 cabs["kitchen_wooden_cabinet_with_sink"] = {
     ["kitchen_wooden_cabinet_with_sink_1"] = {
-        {mode="closed", button = "kwc_with_sink1", img_button = "open_button.png"}
+        {mode="closed", button = "kwc_with_sink1", img_button = "luxury_decor_open_button.png"}
         
     },
     ["kitchen_wooden_cabinet_with_sink_2"] = {
-        {mode="opened", button = "kwc_with_sink2", img_button = "close_button.png", listname = "kwc_with_sink2", inv_size=3*3},
+        {mode="opened", button = "kwc_with_sink2", img_button = "luxury_decor_close_button.png", listname = "kwc_with_sink2", inv_size=3*3},
         not_in_creative_inventory=1
         
     },
@@ -334,11 +334,11 @@ cabs["kitchen_wooden_cabinet_with_sink"] = {
 
 cabs["fridge"] = {
     ["fridge_1"] = {
-        {mode="closed", button = "fridge_closed", img_button = "open_button.png"}
+        {mode="closed", button = "fridge_closed", img_button = "luxury_decor_open_button.png"}
         
     },
     ["fridge_2"] = {
-        {mode="opened", button = "fridge_opened", img_button = "close_button.png", listname = "fridge_opened", inv_size=6*6},
+        {mode="opened", button = "fridge_opened", img_button = "luxury_decor_close_button.png", listname = "fridge_opened", inv_size=6*6},
         not_in_creative_inventory=1
         
     },

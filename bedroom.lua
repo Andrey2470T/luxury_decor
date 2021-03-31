@@ -188,7 +188,7 @@ minetest.register_craft({
 })
     
 
-for color, rgb_code in pairs(luxury_decor.rgb_colors) do
+for color, rgb_code in pairs(paint.rgb_colors) do
     minetest.register_node("luxury_decor:royal_single_bed_" .. color, {
         description = "Royal Single Bed",
         visual_scale = 0.5,

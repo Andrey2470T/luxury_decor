@@ -2,7 +2,6 @@
 
 piano = {} 
 
---  Constants
 piano.keys_num = 52
 
 piano.keys_sounds = {
@@ -61,17 +60,25 @@ piano.keys_sounds = {
 }
 
 --  Functions
+
+-- Register piano.
+-- Supported types: 'piano', 'grandpiano'.
+-- Supported styles: 'simple', 'luxury'.
+-- Supported colors: all.
+
+-- Params:
+-- 'def' is definition of piano.
 luxury_decor.register_piano = function(def)
     local piano_def = {}
     
-    piano_def.fashion  = def.fashion or "piano"
+    piano_def.type  = def.type or "piano"
     piano_def.style = def.style or "simple"
     piano_def.base_color = def.base_color or "black"
     
     if not def.description or def.description == "" then
         piano_def.description = luxury_decor.upper_letters(piano_def.style, 1, 1) .. " " .. 
                 luxury_decor.upper_letters(piano_def.base_color, 1, 1) .. " " .. 
-                luxury_decor.upper_letters(piano_def.fashion, 1, 1)
+                luxury_decor.upper_letters(piano_def.type, 1, 1)
         
         if def.item_info then
             piano_def.description = piano_def.description .. " " .. def.item_info
@@ -114,7 +121,7 @@ luxury_decor.register_piano = function(def)
     -- Calculates length of single key and save it further
     piano_def.key_len               = vector.distance(piano_def.keys_row_start_p, piano_def.keys_row_end_p)/piano.keys_num
     
-    local nodename = "luxury_decor:" .. piano_def.style .. "_" .. piano_def.base_color .. "_" .. piano_def.fashion
+    local nodename = "luxury_decor:" .. piano_def.style .. "_" .. piano_def.base_color .. "_" .. piano_def.type
 	
     -- Register pianos with each pressed key
     for i, ksound in ipairs(piano.keys_sounds) do
@@ -125,7 +132,7 @@ luxury_decor.register_piano = function(def)
         minetest.register_node(nodename .. "_" .. ksound, piano_def_pressed_key)
     end
 	
-    piano_def.on_construct      = function(pos)
+    piano_def.on_construct      = def.on_construct or function(pos)
         local node = minetest.get_node(pos)
         local def = minetest.registered_nodes[node.name]
         local krow_sp = def.keys_row_start_p
@@ -142,7 +149,7 @@ luxury_decor.register_piano = function(def)
         local meta = minetest.get_meta(pos)
         meta:set_string("keyboard_range", minetest.serialize({spoint=krow_sp, epoint=krow_ep}))
     end
-    piano_def.on_rightclick     = function(pos, node, clicker, itemstack, pointed_thing)
+    piano_def.on_rightclick     = def.on_rightclick or function(pos, node, clicker, itemstack, pointed_thing)
         --[[local reach_vec = {x=0, y=0, z=30}
         reach_vec = vector.rotate(reach_vec, {x=clicker:get_look_vertical(), y=clicker:get_look_horizontal(), z=0})
         
@@ -171,6 +178,10 @@ luxury_decor.register_piano = function(def)
     minetest.register_node(nodename, piano_def)
 end
 
+-- Returns a key index of 'piano.keys_sounds' table that should be played out.
+-- Params:
+-- 'pos' is position of piano.
+-- 'exact_pos' is position of point that is on the square of some key that this function will return, else nil.
 piano.get_pressed_key_i = function(pos, exact_pos)
     --[[local node = minetest.get_node(pos)
     local intersect_p
@@ -227,15 +238,11 @@ piano.get_pressed_key_i = function(pos, exact_pos)
     return
 end
 
-piano.is_point_inside_xz_rect = function(rect, p)
-	if rect[1].y ~= rect[2].y then return end
-	
-	local along_x = rect[1].x <= p.x and p.x <= rect[2].x or rect[1].x >= p.x and p.x >= rect[2].x
-	local along_z = rect[1].z <= p.z and p.z <= rect[2].z or rect[1].z >= p.z and p.z >= rect[2].z
-	
-	return along_x and along_z
-end
+-- Play sound of key with 'key_i' index when pressed by a player.
 
+-- Params:
+-- 'pos' is piano position.
+-- 'key_i' is index of the key in 'piano.keys_sounds'.
 piano.play_keysound = function(pos, key_i)
     local node = minetest.get_node(pos)
     
