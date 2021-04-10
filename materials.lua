@@ -6,38 +6,49 @@ local function random_dropped_items_amount(player, itemstack, max_items_amount)
 	inv:add_item("main", stack)
 end
 
-for _, material in ipairs({"", "jungle_", "pine_"}) do
-    local upcase_letters = luxury_decor.upper_letters(material, 1, 1)
-    minetest.register_craftitem("luxury_decor:" .. material .. "wooden_board", {
-        description = upcase_letters:sub(1, upcase_letters:len()-1) .. " Wooden Board",
-        inventory_image = "luxury_decor_" .. material .. "wooden_board.png",
-        stack_max = 99
-    })
-    
-    minetest.register_craft({
-        type = "shapeless",
-        output = "luxury_decor:" .. material .. "wooden_board 3",
-        recipe = {"stairs:slab_" .. (material == "jungle_" and "jungle" or material) .. "wood", "luxury_decor:saw"},
-        replacements = {
-            {"luxury_decor:saw", "luxury_decor:saw"}
-        }
-    })
-    
-    minetest.register_craftitem("luxury_decor:" .. material .. "wooden_plank", {
-        description = upcase_letters:sub(1, upcase_letters:len()-1) .. " Wooden Plank",
-        inventory_image = "luxury_decor_" .. material .. "wooden_plank.png",
-        stack_max = 99
-    })
-    
-    minetest.register_craft({
-        type = "shapeless",
-        output = "luxury_decor:" .. material .. "wooden_plank 2",
-        recipe = {"luxury_decor:" .. material .. "wooden_board", "luxury_decor:saw"},
-        replacements = {
-            {"luxury_decor:saw", "luxury_decor:saw"}
-        }
-    })
-    
+for _, wood_sort in ipairs(luxury_decor.wood_sorts) do
+	local upcase_letters = luxury_decor.upper_letters(wood_sort, 1, 1)
+	minetest.register_craftitem("luxury_decor:" .. wood_sort .. "_wooden_board", {
+		description = upcase_letters .. " Wooden Board",
+		inventory_image = "luxury_decor_" .. wood_sort .. "_board.png"
+	})
+	
+	minetest.register_craft({
+		type = "shapeless", 
+		output = "luxury_decor:" .. wood_sort .. "_wooden_board 3",
+		recipe = {"stairs:slab_" .. wood_sort .. (wood_sort ~= "jungle" and "_" or "") .. "wood", "luxury_decor:saw"},
+		replacements = {
+			{"", "luxury_decor:saw"}
+		}
+	})
+	
+	minetest.register_craftitem("luxury_decor:" .. wood_sort .. "_wooden_plank", {
+		description = upcase_letters .. " Wooden Plank",
+		inventory_image = "luxury_decor_" .. wood_sort .. "_plank.png"
+	})
+	
+	minetest.register_craft({
+		type = "shapeless", 
+		output = "luxury_decor:" .. wood_sort .. "_wooden_plank 2",
+		recipe = {"luxury_decor:" .. wood_sort .. "wooden_board", "luxury_decor:saw"},
+		replacements = {
+			{"", "luxury_decor:saw"}
+		}
+	})
+	
+	minetest.register_craftitem("luxury_decor:" .. wood_sort .. "_wooden_drawer", {
+		description = upcase_letters .. " Wooden Drawer",
+		inventory_image = "luxury_decor_" .. wood_sort .. "_drawer.png"
+	})
+	
+	minetest.register_craft({
+		output = "luxury_decor:" .. wood_sort .. "_wooden_drawer",
+		recipe = {
+			{"luxury_decor:" .. wood_sort .. "_wooden_board", "luxury_decor:" .. wood_sort .. "_wooden_board", ""},
+			{"luxury_decor:" .. wood_sort .. "_wooden_board", "", ""},
+			{"default:stick", "", ""}
+		}
+	})
 end
 
 minetest.register_craftitem("luxury_decor:bucket_oil", {

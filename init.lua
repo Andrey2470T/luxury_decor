@@ -1,7 +1,7 @@
 luxury_decor = {}
 
 luxury_decor.cabs_table = {}
-
+luxury_decor.wood_sorts = {"apple", "pine", "jungle", "aspen", "acacia"}
     
 local modpath = minetest.get_modpath("luxury_decor")
 
@@ -14,6 +14,7 @@ dofile(modpath.."/api/painting.lua")
 dofile(modpath.."/api/cooker.lua")
 dofile(modpath.."/api/light.lua")
 dofile(modpath.."/api/piano.lua")
+dofile(modpath.."/api/shelf.lua")
 dofile(modpath.."/api/sitting.lua")
 dofile(modpath.."/api/vase.lua")
 

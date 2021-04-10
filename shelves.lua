@@ -1,4 +1,115 @@
-local wood_sorts = {"", "jungle_"}
+luxury_decor.register_shelf({
+	actual_name = "closed_wooden_shelf",
+	type = "bookshelf",
+	base_color = {
+		["apple"] = "peru",
+		["pine"] = "burlywood",
+		["aspen"] = "cornsilk",
+		["jungle"] = "brown",
+		["acacia"] = "red"
+	},
+	register_wood_sorts = shelf.wood_sorts,
+	visual_scale = 1,
+	drawtype = "nodebox",
+	node_box = {
+		{-0.4, 0.4, -0.5, 0.4, 0.5, 0.5},-- upper box
+		{-0.4, -0.5, -0.5, 0.4, -0.4, 0.5}, -- lower box
+		{-0.5, -0.5, -0.5, -0.4, 0.5, 0.5}, -- left box
+		{0.4, -0.5, -0.5, 0.5, 0.5, 0.5} -- right box
+	},
+	textures = {
+		["apple"] = {"luxury_decor_apple_material.png"},
+		["pine"] = {"luxury_decor_pine_material.png"},
+		["aspen"] = {"luxury_decor_aspen_material.png"},
+		["jungle"] = {"luxury_decor_jungle_material.png"},
+		["acacia"] = {"luxury_decor_acacia_material.png"}
+	},
+	multiply_by_color = {1},
+	paintable = true,
+	craft_recipe = {
+		recipe = {
+            {"wooden_board", "wooden_board", ""},
+            {"wooden_board", "wooden_board", ""},
+            {"", "", ""}
+        }
+	}
+})
+
+luxury_decor.register_shelf({
+	actual_name = "closed_wooden_shelf_with_back",
+	type = "bookshelf",
+	base_color = {
+		["apple"] = "peru",
+		["pine"] = "burlywood",
+		["aspen"] = "cornsilk",
+		["jungle"] = "brown",
+		["acacia"] = "red"
+	},
+	register_wood_sorts = shelf.wood_sorts,
+	visual_scale = 1,
+	drawtype = "nodebox",
+	node_box = {
+		{-0.4, 0.4, -0.5, 0.4, 0.5, 0.5},-- upper box
+	    {-0.4, -0.5, -0.5, 0.4, -0.4, 0.5}, -- lower box
+	    {-0.5, -0.5, -0.5, -0.4, 0.5, 0.5}, -- left box
+	    {0.4, -0.5, -0.5, 0.5, 0.5, 0.5}, -- right box
+	    {-0.5, -0.5, 0.4, 0.5, 0.5, 0.5} -- back box
+	},
+	textures = {
+		["apple"] = {"luxury_decor_apple_material.png"},
+		["pine"] = {"luxury_decor_pine_material.png"},
+		["aspen"] = {"luxury_decor_aspen_material.png"},
+		["jungle"] = {"luxury_decor_jungle_material.png"},
+		["acacia"] = {"luxury_decor_acacia_material.png"}
+	},
+    multiply_by_color = {1},                         
+	paintable = true,
+	craft_recipe = {
+		recipe = {
+            {"wooden_board", "wooden_board", ""},
+            {"wooden_board", "wooden_board", ""},
+            {"wooden_board", "", ""}
+        }
+	}
+})
+
+luxury_decor.register_shelf({
+	actual_name = "wall_wooden_shelf",
+	base_color = {
+		["apple"] = "peru",
+		["pine"] = "burlywood",
+		["aspen"] = "cornsilk",
+		["jungle"] = "brown",
+		["acacia"] = "red"
+	},
+	register_wood_sorts = shelf.wood_sorts,
+	drawtype = "mesh",
+	mesh = "wall_wooden_shelf.obj",
+	collision_box = {-0.5, -0.5, -0.05, 0.5, 0.3, 0.5},
+	textures = {
+		["apple"] = {"luxury_decor_apple_material.png"},
+		["pine"] = {"luxury_decor_pine_material.png"},
+		["aspen"] = {"luxury_decor_aspen_material.png"},
+		["jungle"] = {"luxury_decor_jungle_material.png"},
+		["acacia"] = {"luxury_decor_acacia_material.png"}
+	},
+	multiply_by_color = {1},
+	paintable = true,
+	craft_recipe = {
+		recipe = {
+            {"wooden_plank", "luxury_decor:saw", ""},
+            {"wooden_plank", "", ""},
+            {"", "", ""}
+        },
+		replacements = {
+            {"", "", "luxury_decor:saw"},
+            {"", "", ""},
+            {"", "", ""}
+        }
+	}
+})
+
+--[[local wood_sorts = {"", "jungle_"}
 for num, shelf_sort in ipairs({"bright", "dark"}) do
     minetest.register_node("luxury_decor:closed_"..shelf_sort.."_wooden_shelf", {
 	description = "Closed ".. string.upper(string.sub(shelf_sort, 1, 1)) .. string.sub(shelf_sort, 2) .. " Wooden Shelf",
@@ -61,10 +172,10 @@ for num, shelf_sort in ipairs({"bright", "dark"}) do
         type = "fixed",
         fixed = {
             {-0.5, -0.5, -0.05, 0.5, 0.3, 0.5}, --upper box
-	    --[[{-0.4, -0.5, -0.5, 0.4, -0.4, 0.5}, --lower box
+	    --{-0.4, -0.5, -0.5, 0.4, -0.4, 0.5}, --lower box
 	    {-0.5, -0.5, -0.5, -0.4, 0.5, 0.5}, --left box
 	    {0.4, -0.5, -0.5, 0.5, 0.5, 0.5}, --right box
-	    {-0.5, -0.5, 0.4, 0.5, 0.5, 0.5} --back box]]
+	    {-0.5, -0.5, 0.4, 0.5, 0.5, 0.5} --back box
         }
     },
     selection_box = {
@@ -119,7 +230,7 @@ for num, shelf_sort in ipairs({"bright", "dark"}) do
             {"", "", ""}
         }
     })
-end
+end]]
     
     
 

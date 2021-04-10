@@ -25,6 +25,8 @@ luxury_decor.register_light = function(def)
 	local material_state, rmaterial = luxury_decor.CHECK_FOR_MATERIAL(lights.materials, def.material)
 	local color_state, rcolor = luxury_decor.CHECK_FOR_COLOR(def.base_color)
 	
+	lightdef.base_color = rcolor
+	
 	if not type_state then return end
 	if not style_state then return end
 	if not material_state then return end
@@ -32,7 +34,7 @@ luxury_decor.register_light = function(def)
 	
 	local upper_name = ""
 	
-	for i, str in ipairs(string.split(def.actual_name, "_")) do
+	for i, str in ipairs(string.split(lightdef.actual_name, "_")) do
 		upper_name = upper_name .. luxury_decor.upper_letters(str, 1, 1) .. " "
 	end
 	
@@ -49,18 +51,13 @@ luxury_decor.register_light = function(def)
 	lightdef.visual_scale	= def.visual_scale or 0.5
 	lightdef.drawtype 		= "mesh"
 	lightdef.mesh 			= def.mesh
-	lightdef.tiles			= {}
 	
-	
-	if type(def.textures) == "table" then
-		for i, tile in ipairs(def.textures) do
-			lightdef.tiles[i] = tile
-			if type(tile) == "table" and tile.multiply_by_color then
-				lightdef.tiles[i].color = rcolor
+	lightdef.tiles = def.textures
+	lightdef.multiply_by_color = def.multiply_by_color
+		--[[if type(tile) == "table" and tile.multiply_by_color then
+			lightdef.tiles[i].color = rcolor
 				lightdef.tiles[i].multiply_by_color = nil
-			end
-		end
-	end
+		end]]
 
 	lightdef.use_texture_alpha 	= true
 	lightdef.paramtype			= "light"
@@ -95,21 +92,25 @@ luxury_decor.register_light = function(def)
 				(rmaterial == "steel" or rmaterial == "brass" or rmaterial == "gold") and default.node_sound_metal_defaults() or
 				rmaterial == "plastic" and default.node_sound_leaves_defaults() or
 				rmaterial == "glass" and default.node_sound_glass_defaults()
+	else
+		lightdef.sounds = def.sounds
 	end
 	
 	lightdef.toggleable = def.toggleable or false
 	lightdef.paintable = def.paintable or false
 	
 	
-	local res_name = "luxury_decor:" .. def.actual_name
+	local res_name = "luxury_decor:" .. lightdef.actual_name
 	if (rtype == "lantern" or rtype == "chandelier") and lightdef.toggleable then
+		lightdef.drop = def.drop_on or res_name .. "_off"
 		lightdef.on_rightclick = def.on_rightclick or function(pos, node, clicker, itemstack, pointed_thing)
-			paint.paint_node(pos, clicker)
+			local brush = paint.paint_node(pos, clicker)
 			lights.turn_on(pos)
+			
+			return brush
 		end
 		
-		minetest.debug(res_name .. "_off: " .. dump(lightdef))
-		minetest.register_node(res_name .. "_off", lightdef)
+		minetest.register_node(res_name .. "_off", table.copy(lightdef))
 		paint.register_colored_nodes(res_name .. "_off")
 		
 		if def.craft_recipe then
@@ -121,19 +122,25 @@ luxury_decor.register_light = function(def)
 			})
 		end
 		lightdef.light_source = def.light_source or minetest.LIGHT_MAX
-		lightdef.drop = def.drop_on or ""
+		lightdef.drop = def.drop_on or res_name .. "_on"
+		lightdef.groups.not_in_creative_inventory = 1
 		lightdef.on_rightclick = def.on_rightclick or function(pos, node, clicker, itemstack, pointed_thing)
-			paint.paint_node(pos, clicker)
+			local brush = paint.paint_node(pos, clicker)
 			lights.turn_off(pos)
+			
+			return brush
 		end
 		
 		minetest.register_node(res_name .. "_on", lightdef)
 		paint.register_colored_nodes(res_name .. "_on")
 	else
 		lightdef.on_rightclick = def.on_rightclick or function(pos, node, clicker, itemstack, pointed_thing)
-			paint.paint_node(pos, clicker)
+			local brush = paint.paint_node(pos, clicker)
+			
+			return brush
 		end
 		lightdef.light_source = def.light_source or minetest.LIGHT_MAX
+		lightdef.drop = def.drop_on or res_name
 		minetest.register_node(res_name, lightdef)
 		paint.register_colored_nodes(res_name)
 		
@@ -155,12 +162,16 @@ end
 lights.turn_on = function(pos)
 	local node = minetest.get_node(pos)
 	local def = minetest.registered_nodes[node.name]
+	minetest.debug("def: " .. dump(def))
 	
 	if def.toggleable then
 		local light_on_name = "luxury_decor:" .. def.actual_name .. "_on"
+		local color = luxury_decor.get_color(def)
+		minetest.debug("color: " .. (color or ""))
+		minetest.debug("def.base_color: " .. def.base_color)
 		
-		if def.base_color ~= def.groups.color then
-			light_on_name = light_on_name .. "_" .. def.groups.color
+		if def.base_color ~= color then
+			light_on_name = light_on_name .. "_" .. color
 		end
 		
 		minetest.set_node(pos, {name = light_on_name, param2 = node.param2})
@@ -180,9 +191,10 @@ lights.turn_off = function(pos)
 	
 	if def.toggleable then
 		local light_off_name = "luxury_decor:" .. def.actual_name .. "_off"
+		local color = luxury_decor.get_color(def)
 		
-		if def.base_color ~= def.groups.color then
-			light_off_name = light_off_name .. "_" .. def.groups.color
+		if def.base_color ~= color then
+			light_off_name = light_off_name .. "_" .. color
 		end
 		
 		minetest.set_node(pos, {name = light_off_name, param2 = node.param2})
@@ -190,4 +202,14 @@ lights.turn_off = function(pos)
 	end
 	
 	return false
+end
+
+-- Return a state of the light with 'def' node definition. If 'light_source' > 0 it interprets as 'on', else 'off'.
+-- NOTE: If not toggleable, return 'nil' !
+lights.get_state = function(def)
+	if not def.toggleable then
+		return
+	end
+	
+	return not def.light_source and "off" or "on"
 end

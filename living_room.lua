@@ -1,4 +1,4 @@
-local colors = luxury_decor.rgb_colors
+local colors = paint.rgb_colors
 -- GLASS VASE WILL BE READDED WITH NEW MODEL IN NEXT VERSIONS
 --[[minetest.register_node("luxury_decor:glass_vase", {
     description = "Glass Vase",

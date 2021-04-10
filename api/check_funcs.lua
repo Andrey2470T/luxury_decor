@@ -62,3 +62,52 @@ luxury_decor.CHECK_FOR_COLOR = function(color)
 	return false
 end
 
+luxury_decor.CHECK_FOR_WOOD_SORTS_LIST = function(table_ref, woods)
+	if woods == nil or woods == "" then
+		return
+	end
+	
+	table.sort(table_ref, function(a, b)
+		return a:byte() < b:byte()
+	end)
+	table.sort(woods, function(a, b) 
+		return a:byte() < b:byte()
+	end)
+	
+	woods = table.copy(woods)
+	for i, wood in ipairs(woods) do
+		local is_woodsort_found = false
+		for _, wood2 in ipairs(table_ref) do
+			if wood2 == wood then
+				is_woodsort_found = true
+			end
+		end
+		
+		if not is_woodsort_found then
+			woods[i] = nil
+			minetest.log("warning", "luxury_decor.CHECK_FOR_WOOD_TYPE_LIST(): Couldn`t find \'" .. wood .. "\' sort of wood in the wood types list!")
+		end
+	end
+	
+	return woods
+end
+
+luxury_decor.CHECK_FOR_COLORS_LIST = function(colors)
+	if colors == nil or colors == "" then
+		return
+	end
+	
+	colors = table.copy(colors)
+	for wood, color in pairs(colors) do
+		local state, col = luxury_decor.CHECK_FOR_COLOR(color)
+		
+		if state then
+			colors[wood] = col
+		else
+			colors[wood] = nil
+			minetest.log("warning", "luxury_decor.CHECK_FOR_COLORS_LIST(): Couldn`t find \'" .. color .. "\' color in the colors list!")
+		end
+	end
+	
+	return colors
+end

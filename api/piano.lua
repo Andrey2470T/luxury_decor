@@ -209,7 +209,7 @@ piano.get_pressed_key_i = function(pos, exact_pos)
     local shift_pos = kboard_r.spoint
     for key_i = 1, piano.keys_num do
 		local shift_pos2 = vector.add(shift_pos, vector.add(brange_along_shift, brange_cross_shift))
-		local is_intersect_p_inside_key_sq = piano.is_point_inside_xz_rect({vector.add(pos, shift_pos), vector.add(pos, shift_pos2)}, exact_pos)
+		local is_intersect_p_inside_key_sq = luxury_decor.is_point_inside_xz_rect({vector.add(pos, shift_pos), vector.add(pos, shift_pos2)}, exact_pos)
 		
 		if is_intersect_p_inside_key_sq then
 			return key_i

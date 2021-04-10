@@ -421,9 +421,11 @@ luxury_decor.register_light({
 	type = "chandelier",
 	material = "plastic",
 	mesh = "simple_plastic_chandelier.b3d",
-	textures = {"luxury_decor_simple_plastic_chandelier_base.png",
-             {name = "luxury_decor_simple_plastic_chandelier_lampshade.png", multiply_by_color=true}
+	textures = {
+		"luxury_decor_simple_plastic_chandelier_base.png",
+		"luxury_decor_simple_plastic_chandelier_lampshade.png",
 	},
+	multiply_by_color = {2},
 	collision_box = {
 		{-0.3, -0.1, -0.3, 0.3, 0.5, 0.3},
 		{-0.7, -0.65, -0.7, 0.7, -0.1, 0.7}
@@ -446,9 +448,11 @@ luxury_decor.register_light({
 	actual_name = "plastic_desk_lamp",
 	material = "plastic",
 	mesh = "plastic_desk_lamp.b3d",
-	textures = {"luxury_decor_plastic_desk_lamp_base.png",
-                {name = "luxury_decor_plastic_desk_lamp_lampshade.png", multiply_by_color=true}
+	textures = {
+		"luxury_decor_plastic_desk_lamp_base.png",
+		"luxury_decor_plastic_desk_lamp_lampshade.png"
 	},
+	multiply_by_color = {2},
 	collision_box = {
 		{-0.4, -0.5, -0.4, 0.4, 0.6, 0.4}
 	},

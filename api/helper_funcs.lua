@@ -98,3 +98,23 @@ luxury_decor.get_color = function(def)
 	
 	return -1
 end
+
+luxury_decor.build_wooden_item_string = function(item_type, wood_sort)
+	if item_type == "wooden_planks" then
+		return "default:" .. wood_sort .. (wood_sort ~= "jungle" and "_" or "") .. "wood"
+	elseif item_type == "wooden_plank" then
+		return "luxury_decor:" .. wood_sort .. "_wooden_plank"
+	elseif item_type == "wooden_board" then
+		return "luxury_decor:" .. wood_sort .. "_wooden_board"
+	elseif item_type == "wooden_stair" then
+		return "stairs:stair_" .. wood_sort .. (wood_sort ~= "jungle" and "_" or "") .. "wood"
+	elseif item_type == "wooden_slab" then
+		return "stairs:slab_" .. wood_sort .. (wood_sort ~= "jungle" and "_" or "") .. "wood"
+	elseif item_type == "wooden_stair_inner_corner" then
+		return "stairs:stair_inner_" .. wood_sort .. (wood_sort ~= "jungle" and "_" or "") .. "wood"
+	elseif item_type == "wooden_stair_outer_corner" then
+		return "stairs:stair_outer_" .. wood_sort .. (wood_sort ~= "jungle" and "_" or "") .. "wood"
+	end
+	
+	return
+end

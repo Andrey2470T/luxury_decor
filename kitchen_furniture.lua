@@ -1456,72 +1456,57 @@ luxury_decor.register_cooker({
     on_rightclick = function (pos, node, clicker, itemstack, pointed_thing)
         
 })]]
-
-minetest.register_craftitem("luxury_decor:wooden_drawer", {
-        description = "Wooden Drawer",
-        inventory_image = "luxury_decor_wooden_drawer.png",
-        stack_max = 99
-})
-
-minetest.register_craft({
-    output = "luxury_decor:wooden_drawer",
-    recipe = {
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_board", ""},
-        {"luxury_decor:wooden_board", "", ""},
-        {"default:stick", "", ""}
-    }
-})
                         
 minetest.register_craft({
     output = "luxury_decor:kitchen_wooden_cabinet_1",
     recipe = {
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_drawer", ""},
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_drawer", ""},
-        {"luxury_decor:wooden_board", "", ""}
+        {"luxury_decor:apple_wooden_board", "luxury_decor:apple_wooden_drawer", ""},
+        {"luxury_decor:apple_wooden_board", "luxury_decor:apple_wooden_drawer", ""},
+        {"luxury_decor:apple_wooden_board", "", ""}
     }
 })
 
 minetest.register_craft({
     output = "luxury_decor:kitchen_wooden_cabinet_with_door_1",
     recipe = {
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_board", ""},
-        {"luxury_decor:wooden_board", "", ""},
-        {"luxury_decor:wooden_board", "", ""}
+        {"luxury_decor:apple_wooden_board", "luxury_decor:apple_wooden_board", ""},
+        {"luxury_decor:apple_wooden_board", "", ""},
+        {"luxury_decor:apple_wooden_board", "", ""}
     }
 })
 
 minetest.register_craft({
     output = "luxury_decor:kitchen_wooden_cabinet_with_door_and_drawer_1",
     recipe = {
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_drawer", ""},
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_board", ""},
-        {"luxury_decor:wooden_board", "", ""}
+        {"luxury_decor:apple_wooden_board", "luxury_decor:apple_wooden_drawer", ""},
+        {"luxury_decor:apple_wooden_board", "luxury_decor:apple_apple_wooden_board", ""},
+        {"luxury_decor:apple_wooden_board", "", ""}
     }
 })
 
 minetest.register_craft({
     output = "luxury_decor:kitchen_wooden_cabinet_with_two_doors_1",
     recipe = {
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_board", ""},
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_board", ""},
-        {"luxury_decor:wooden_board", "", ""}
+        {"luxury_decor:apple_wooden_board", "luxury_decor:apple_wooden_board", ""},
+        {"luxury_decor:apple_wooden_board", "luxury_decor:apple_wooden_board", ""},
+        {"luxury_decor:apple_wooden_board", "", ""}
     }
 })
 
 minetest.register_craft({
     output = "luxury_decor:kitchen_wooden_cabinet_with_two_doors_and_drawer_1",
     recipe = {
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_board", ""},
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_board", ""},
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_drawer", ""}
+        {"luxury_decor:apple_wooden_board", "luxury_decor:apple_wooden_board", ""},
+        {"luxury_decor:apple_wooden_board", "luxury_decor:apple_wooden_board", ""},
+        {"luxury_decor:apple_wooden_board", "luxury_decor:apple_wooden_drawer", ""}
     }
 })
 
 minetest.register_craft({
     output = "luxury_decor:kitchen_wooden_half_cabinet_1",
     recipe = {
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_drawer", ""},
-        {"luxury_decor:wooden_board", "", ""},
+        {"luxury_decor:apple_wooden_board", "luxury_decor:apple_wooden_drawer", ""},
+        {"luxury_decor:apple_wooden_board", "", ""},
         {"", "", ""}
     }
 })
@@ -1529,18 +1514,18 @@ minetest.register_craft({
 minetest.register_craft({
     output = "luxury_decor:kitchen_wooden_threedrawer_cabinet_1",
     recipe = {
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_drawer", ""},
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_drawer", ""},
-        {"luxury_decor:wooden_board", "luxury_decor:wooden_drawer", ""}
+        {"luxury_decor:apple_wooden_board", "luxury_decor:apple_wooden_drawer", ""},
+        {"luxury_decor:apple_wooden_board", "luxury_decor:apple_wooden_drawer", ""},
+        {"luxury_decor:apple_wooden_board", "luxury_decor:apple_wooden_drawer", ""}
     }
 })
 
 minetest.register_craft({
     output = "luxury_decor:kitchen_wooden_cabinet_with_sink_1",
     recipe = {
-        {"luxury_decor:wooden_board", "luxury_decor:siphon", "dye:grey"},
-        {"luxury_decor:wooden_board", "luxury_decor:plastic_sheet", ""},
-        {"luxury_decor:wooden_board", "default:steel_ingot", ""}
+        {"luxury_decor:apple_wooden_board", "luxury_decor:siphon", "dye:grey"},
+        {"luxury_decor:apple_wooden_board", "luxury_decor:plastic_sheet", ""},
+        {"luxury_decor:apple_wooden_board", "default:steel_ingot", ""}
     }
 })
 

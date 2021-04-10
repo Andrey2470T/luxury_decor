@@ -1,4 +1,5 @@
 local cabs = luxury_decor.cabs_table
+local colors = paint.rgb_colors
 
 cabs["simple_wooden_bedside_table"] = {
     ["simple_wooden_bedside_table_1"] = {
@@ -188,7 +189,7 @@ minetest.register_craft({
 })
     
 
-for color, rgb_code in pairs(paint.rgb_colors) do
+for color, rgb_code in pairs(colors) do
     minetest.register_node("luxury_decor:royal_single_bed_" .. color, {
         description = "Royal Single Bed",
         visual_scale = 0.5,
