@@ -11,9 +11,11 @@ dofile(modpath.."/api/helper_funcs.lua")
 
 --  API
 dofile(modpath.."/api/painting.lua")
+dofile(modpath.."/api/wood.lua")
 dofile(modpath.."/api/cooker.lua")
 dofile(modpath.."/api/light.lua")
 dofile(modpath.."/api/piano.lua")
+dofile(modpath.."/api/seat.lua")
 dofile(modpath.."/api/shelf.lua")
 dofile(modpath.."/api/sitting.lua")
 dofile(modpath.."/api/vase.lua")

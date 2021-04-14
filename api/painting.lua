@@ -84,6 +84,7 @@ paint.register_colored_nodes = function(node_name)
 end
 
 -- Paints the node with the color of the wielded brush.
+-- Returns a call result and updated wielded stack.
 
 -- Params:
 -- 'pos' is a position of the node that will be painted.
@@ -96,7 +97,7 @@ paint.paint_node = function(pos, painter)
 	local def = minetest.registered_nodes[node.name]
 	
 	if not wielded_brush_name:match("luxury_decor:paint_brush_") or not def.paintable then
-		return wielded_brush
+		return false, wielded_brush
 	end
 
 	local color_brush = wielded_brush_name:sub(("luxury_decor:paint_brush_"):len()+1)
@@ -110,11 +111,11 @@ paint.paint_node = function(pos, painter)
 	end
 	
 	if not is_color_in_table then
-		return wielded_brush
+		return false, wielded_brush
 	end
 	
 	if luxury_decor.get_color(def) == color_brush then
-		return wielded_brush
+		return false, wielded_brush
 	end
 	
 	local meta = wielded_brush:get_meta()
@@ -141,7 +142,7 @@ paint.paint_node = function(pos, painter)
 	local name = color_brush ~= def.base_color and (def.base_color == cur_color and def.name .. "_" .. color_brush or def.name:gsub(cur_color, color_brush)) or def.name
 	minetest.set_node(pos, {name = name, param1 = node.param1, param2 = node.param2})
 	
-	return wielded_brush
+	return true, wielded_brush
 end
 
 

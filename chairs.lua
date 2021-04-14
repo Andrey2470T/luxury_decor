@@ -1,74 +1,174 @@
+luxury_decor.register_seat({
+	actual_name = "kitchen_wooden_chair",
+	base_color = {
+		["apple"] = "peru",
+		["pine"] = "burlywood",
+		["aspen"] = "cornsilk",
+		["jungle"] = "brown",
+		["acacia"] = "red"
+	},
+	register_wood_sorts = seat.wood_sorts,
+	mesh = "kitchen_wooden_chair.obj",
+	textures = {
+		["apple"] = {"luxury_decor_apple_material.png"},
+		["pine"] = {"luxury_decor_pine_material.png"},
+		["aspen"] = {"luxury_decor_aspen_material.png"},
+		["jungle"] = {"luxury_decor_jungle_material.png"},
+		["acacia"] = {"luxury_decor_acacia_material.png"}
+	},
+	multiply_by_color = {1},
+	groups = {choppy=2.5},
+	collision_box = {
+		{-0.35, -0.5, -0.35, 0.35, 0.2, 0.25},
+		{-0.35, -0.5, 0.25, 0.35, 0.925, 0.35}
+	},
+	paintable = true,
+	seat_data = {
+		pos = {x=0, y=0.3, z=0},
+		mesh = {
+			{
+				model = "character_sitting.b3d",
+				anim = {
+					range = {x=1, y=80},
+					speed = 15
+				}
+            }
+		}
+	},
+	craft_recipe = {
+		recipe = {
+			{"wooden_planks", "wooden_plank", "default:stick"},
+			{"wooden_plank", "default:stick", ""},
+			{"wooden_plank", "default:stick", ""}
+		}
+	}
+})
 
+luxury_decor.register_seat({
+	actual_name = "round_luxury_chair_with_cushion",
+	style = "luxury",
+	mesh = "round_luxury_chair.b3d",
+	textures = {"luxury_decor_round_luxury_chair.png"},
+	groups = {choppy=2.5},
+	collision_box = {
+		{-0.45, -0.5, -0.45, 0.45, 0.28, 0.42},
+		{-0.45, 0.28, 0.28, 0.45, 1.2, 0.42}
+	},
+	seat_data = {
+		pos = {x=0, y=0.32, z=0},
+		mesh = {
+			{
+				model = "character_sitting.b3d",
+				anim = {
+					range = {x=1, y=80},
+					speed = 15
+				}
+            }
+		}
+	},
+	craft_recipe = {
+		recipe = {
+			{"default:junglewood", "luxury_decor:jungle_wooden_plank", "luxury_decor:jungle_wooden_plank"},
+			{"default:stick", "default:stick", "wool:white"},
+			{"default:stick", "default:stick", ""}
+		}
+	}
+})
 
---[[function chairs.attach_player_to_node (attacher, node, node_pos, pos)    
-    attacher:set_pos(pos)
-    local phys_over = attacher:get_physics_override()
-    attacher:set_physics_override({speed=0, jump=0})
-    attacher:get_meta():set_string("is_attached", minetest.serialize({node=node, node_pos=node_pos, pos, old_phys_over = phys_over}))
-end
+luxury_decor.register_seat({
+	actual_name = "decorative_wooden_chair",
+	style = "luxury",
+	base_color = {
+		["apple"] = "peru",
+		["pine"] = "burlywood",
+		["aspen"] = "cornsilk",
+		["jungle"] = "brown",
+		["acacia"] = "red"
+	},
+	register_wood_sorts = seat.wood_sorts,
+	mesh = "decorative_wooden_chair.b3d",
+	textures = {
+		["apple"] = {"luxury_decor_apple_material.png"},
+		["pine"] = {"luxury_decor_pine_material.png"},
+		["aspen"] = {"luxury_decor_aspen_material.png"},
+		["jungle"] = {"luxury_decor_jungle_material.png"},
+		["acacia"] = {"luxury_decor_acacia_material.png"}
+	},
+	multiply_by_color = {1},
+	groups = {choppy=2.5},
+	collision_box = {
+		{-0.5, 0.36, 0.4, 0.5, 1.5, 0.5}, -- Upper box
+		{-0.5, -0.5, -0.5, 0.5, 0.29, 0.5}, -- Lower box
+		{-0.45, 0.29, -0.475, 0.45, 0.36, 0.4} -- Middle box
+	},
+	paintable = true,
+	seat_data = {
+		pos = {x=0, y=0.4, z=0},
+		mesh = {
+			{
+				model = "character_sitting.b3d",
+				anim = {
+					range = {x=1, y=80},
+					speed = 15
+				}
+            }
+		}
+	},
+	craft_recipe = {
+		recipe = {
+			{"wooden_planks", "default:stick", "default:stick"},
+			{"wooden_planks", "default:stick", ""},
+			{"wooden_plank", "default:stick", ""}
+		}
+	}
+})
 
-function chairs.disattach_player_from_node(disattacher)
-    local meta = disattacher:get_meta()
-    local is_attached = minetest.deserialize(meta:get_string("is_attached"))
-    local phys_over = is_attached.old_phys_over
-    disattacher:set_physics_override({speed=phys_over.speed, jump=phys_over.jump})
-    meta:set_string("is_attached", "")
-end
-
-function chairs.set_seat_pos(player, pos, dir, x_val, z_val)
-    local is_attached = minetest.deserialize(player:get_meta():get_string("is_attached"))
-    if is_attached ~= nil or is_attached ~= "" then
-        for axis, val in pairs(dir) do
-            if val ~= 0 then
-                local new_pos = pos
-                
-                
-                local dff = {
-                    ["x"] = {z={"-", "+"}},
-                    ["-x"] = {z={"+", "-"}},
-                    ["z"] = {x={"+", "-"}},
-                    ["-z"] = {x={"-", "+"}}
-                }
-                
-                new_pos[axis] = pos[axis] + val
-                
-                break
-            end
-        end
-        
-        local sdfd = {"x", "-x", "z", "-z"}
-        
-        for _, axis in ipairs(sdfd) do
-            local axis = tonumber(axis)
-            if axis == dir_axis then
-                local need_axis = pos[tonumber(string.sub(tostring(axis), 2))]
-                local need_sign = need_axis[string.sub(val, 1, 1)]
-    else
-        return
-
-
-function chairs.set_look_dir(player)
-    local is_attached = minetest.deserialize(player:get_meta():get_string("is_attached"))
-    if is_attached ~= nil or is_attached ~= "" then
-        minetest.debug(dump(is_attached))
-        local node_dir = is_attached.node.param2
-        local player_dir = player:get_look_dir()
-        local degrees = 0
-        local radians = 0
-        while node_dir ~= player_dir do
-            degrees = degrees + 90
-            radians = math.floor(math.rad(degrees))
-            player:set_look_horizontal(radians)
-            player_dir = player:get_look_dir()
-            minetest.debug(dump(player_dir))
-        end
-    else
-        return
-    end
-end
-]]
-                
-minetest.register_node("luxury_decor:kitchen_wooden_chair", {
+luxury_decor.register_seat({
+	actual_name = "round_wooden_chair",
+	base_color = {
+		["apple"] = "peru",
+		["pine"] = "burlywood",
+		["aspen"] = "cornsilk",
+		["jungle"] = "brown",
+		["acacia"] = "red"
+	},
+	register_wood_sorts = seat.wood_sorts,
+	mesh = "round_wooden_chair.obj",
+	textures = {
+		["apple"] = {"luxury_decor_apple_material.png"},
+		["pine"] = {"luxury_decor_pine_material.png"},
+		["aspen"] = {"luxury_decor_aspen_material.png"},
+		["jungle"] = {"luxury_decor_jungle_material.png"},
+		["acacia"] = {"luxury_decor_acacia_material.png"}
+	},
+	multiply_by_color = {1},
+	groups = {choppy=2.5},
+	collision_box = {
+		{-0.45, -0.5, -0.45, 0.45, 0.35, 0.45},
+		{-0.45, 0.35, 0.2, 0.45, 1.45, 0.35}
+	},
+	paintable = true,
+	seat_data = {
+		pos = {x=0, y=0.4, z=0},
+		mesh = {
+			{
+				model = "character_sitting.b3d",
+				anim = {
+					range = {x=1, y=80},
+					speed = 15
+				}
+            }
+		}
+	},
+	craft_recipe = {
+		recipe = {
+			{"wooden_planks", "default:stick", "default:stick"},
+			{"wooden_plank", "default:stick", ""},
+			{"wooden_plank", "default:stick", ""}
+    }
+	}
+})
+--[[minetest.register_node("luxury_decor:kitchen_wooden_chair", {
     description = "Kitchen Wooden Chair",
     visual_scale = 0.5,
     mesh = "kitchen_wooden_chair.obj",
@@ -82,8 +182,8 @@ minetest.register_node("luxury_decor:kitchen_wooden_chair", {
         fixed = {
             {-0.35, -0.5, -0.35, 0.35, 0.2, 0.25},
             {-0.35, -0.5, 0.25, 0.35, 0.925, 0.35}
-            --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
-            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
+            --{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
+            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}
         }
     },
     selection_box = {
@@ -95,8 +195,8 @@ minetest.register_node("luxury_decor:kitchen_wooden_chair", {
     },
     sounds = default.node_sound_wood_defaults(),
     on_construct = function (pos)
-        local meta = minetest.get_meta(pos)
-	meta:set_string("seat", minetest.serialize({busy_by=nil, pos = {x = pos.x, y = pos.y+0.3, z = pos.z}, anim={mesh="character_sitting.b3d", range={x=1, y=80}, speed=15, blend=0, loop=true}}))
+		local meta = minetest.get_meta(pos)
+		meta:set_string("seat", minetest.serialize({busy_by=nil, pos = {x = pos.x, y = pos.y+0.3, z = pos.z}, anim={mesh="character_sitting.b3d", range={x=1, y=80}, speed=15, blend=0, loop=true}}))
     end,
     after_dig_node = function (pos, oldnode, oldmetadata, digger)
         local seat = minetest.deserialize(oldmetadata.fields.seat)
@@ -132,8 +232,8 @@ minetest.register_node("luxury_decor:round_luxury_chair_with_cushion", {
         fixed = {
                  {-0.45, -0.5, -0.45, 0.45, 0.28, 0.42},
                  {-0.45, 0.28, 0.28, 0.45, 1.2, 0.42}
-            --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
-            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
+            --{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
+            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}
         }
     },
     selection_box = {
@@ -228,8 +328,8 @@ minetest.register_node("luxury_decor:round_wooden_chair", {
             {-0.45, -0.5, -0.45, 0.45, 0.35, 0.45},
             {-0.45, 0.35, 0.2, 0.45, 1.45, 0.35}
             
-            --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
-            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
+            --{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
+            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}
         }
     },
     selection_box = {
@@ -304,7 +404,7 @@ minetest.register_craft({
         {"luxury_decor:jungle_wooden_plank", "default:stick", ""}
     }
 })
---[[minetest.register_on_joinplayer(function (player)
+--minetest.register_on_joinplayer(function (player)
     local is_attached = minetest.deserialize(player:get_meta():get_string("is_attached"))
     --minetest.debug(dump(is_attached))
     

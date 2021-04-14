@@ -20,7 +20,11 @@ luxury_decor.register_shelf = function(def)
 	def.register_wood_sorts = luxury_decor.CHECK_FOR_WOOD_SORTS_LIST(shelf.wood_sorts, def.register_wood_sorts)
 	
 	if def.register_wood_sorts then
-		def.base_color = luxury_decor.CHECK_FOR_COLORS_LIST(def.base_color)
+		shelfdef.base_color = luxury_decor.CHECK_FOR_COLORS_LIST(def.base_color)
+		shelfdef.textures = def.textures
+		shelfdef.inventory_image = def.inventory_image
+		shelfdef.wield_image = def.wield_image or shelfdef.inventory_image
+		shelfdef.multiply_by_color = def.multiply_by_color
 	else
 		local color_state, rcolor = luxury_decor.CHECK_FOR_COLOR(def.base_color)
 		
@@ -87,74 +91,22 @@ luxury_decor.register_shelf = function(def)
 	end
 	
 	shelfdef.paintable = def.paintable or false
-	shelfdef.on_rightclick = shelfdef.paintable and function(pos, node, clicker, itemstack, pointed_thing)
-		local brush = paint.paint_node(pos, clicker)
-		if def.on_rightclick then 
-			def.on_rightclick(pos, node, clicker, itemstack, pointed_thing)
+	shelfdef.on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		local res, brush = paint.paint_node(pos, clicker)
+		if not res then
+			if def.on_rightclick then 
+				def.on_rightclick(pos, node, clicker, itemstack, pointed_thing)
+			else
+				minetest.item_place(itemstack, clicker, pointed_thing)
+			end
 		end
 			
 		return brush
-	end or def.on_rightclick
+	end
 	
 	local res_name = "luxury_decor:" .. shelfdef.actual_name
-	if type(def.register_wood_sorts) == "table" then
-		for i, wood_sort in ipairs(def.register_wood_sorts) do
-			local shelfdef2 = table.copy(shelfdef)
-			shelfdef2.base_color = def.base_color[wood_sort]
-			shelfdef2.tiles	= def.textures[wood_sort]
-				--[[if type(tile) == "table" and tile.multiply_by_color then
-					tile.color = tile.color or shelfdef2.base_color
-					tile.multiply_by_color = nil
-				end]]
-			
-			-- Multiply by given color the texture with given index in 'tiles' table when painted.
-			shelfdef2.multiply_by_color = def.multiply_by_color
-			shelfdef2.inventory_image = def.inventory_image and def.inventory_image[wood_sort]
-			shelfdef2.wield_image = def.wield_image and def.wield_image[wood_sort] or shelfdef2.inventory_image and shelfdef2.inventory_image[wood_sort]
-			
-			shelfdef2.description = shelfdef2.description .. "\n" .. 
-					minetest.colorize("#1a1af1", "color: " .. shelfdef2.base_color) .. "\n" .. 
-					minetest.colorize("#f9e900", "wood_sort: " .. wood_sort)
-			shelfdef2.groups["color_" .. shelfdef2.base_color] = 1
-			shelfdef2.groups["wood_sort_" .. wood_sort] = 1
-			shelfdef2.drop = def.drop or res_name .. "_" .. wood_sort
-			
-			minetest.register_node(res_name .. "_" .. wood_sort, shelfdef2)
-			
-			if def.craft_recipe then
-				local recipe = {
-					type = def.craft_recipe.type,
-					output = res_name .. "_" .. wood_sort,
-					recipe = def.craft_recipe.recipe,
-					replacements = def.craft_recipe.replacements or {}
-				}
-				
-				for i, item in ipairs(recipe.recipe) do
-					if type(item) == "table" then
-						for j, item2 in ipairs(item) do
-							item[j] = luxury_decor.build_wooden_item_string(item2, wood_sort) or item2
-						end
-					else
-						recipe.recipe[i] = luxury_decor.build_wooden_item_string(item, wood_sort) or item
-					end
-				end
-				
-				for i, item in ipairs(recipe.replacements) do
-					if type(item) == "table" then
-						for j, item2 in ipairs(item) do
-							item[j] = luxury_decor.build_wooden_item_string(item2, wood_sort) or item2
-						end
-					else
-						recipe.replacements[i] = luxury_decor.build_wooden_item_string(item, wood_sort) or item
-					end
-				end
-						
-				minetest.register_craft(recipe)
-			end
-			if shelfdef2.paintable then
-				paint.register_colored_nodes(res_name .. "_" .. wood_sort)
-			end
-		end
+	if rmaterial == "wooden" and type(def.register_wood_sorts) == "table" then
+		wood.register_wooden_sorts_nodes(shelfdef, def.register_wood_sorts)
 	else
 		shelfdef.tiles = def.textures
 			--[[if type(tile) == "table" and tile.multiply_by_color then

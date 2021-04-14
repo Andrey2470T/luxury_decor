@@ -162,7 +162,6 @@ end
 lights.turn_on = function(pos)
 	local node = minetest.get_node(pos)
 	local def = minetest.registered_nodes[node.name]
-	minetest.debug("def: " .. dump(def))
 	
 	if def.toggleable then
 		local light_on_name = "luxury_decor:" .. def.actual_name .. "_on"
