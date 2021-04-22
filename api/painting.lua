@@ -67,17 +67,16 @@ paint.register_colored_nodes = function(node_name)
 				minetest.colorize("#45de0f", "material: " .. luxury_decor.get_material(new_def)) .. "\n" ..
 				minetest.colorize("#1a1af1", "color: " .. luxury_decor.get_color(new_def))
 			
-			for i, tile in ipairs(def.tiles) do
-				if def.multiply_by_color[i] then
-					if type(tile) == "table" and type(tile.color) == "string" then
-						new_def.tiles[i].color = color
+			for i, tile_index in ipairs(def.multiply_by_color) do
+				if def.tiles[tile_index] then
+					if type(def.tiles[tile_index]) == "table" and type(def.tiles[tile_index].color) == "string" then
+						new_def.tiles[tile_index].color = color
 					else
-						new_def.tiles[i] = {name = tile, color = color}
+						new_def.tiles[tile_index] = {name = def.tiles[tile_index], color = color}
 					end
 				end
 			end
 			
-			new_def.drop = new_def.drop .. "_" .. color
 			minetest.register_node(def.name .. "_" .. color, new_def)
 		end
 	end

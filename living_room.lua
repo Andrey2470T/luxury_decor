@@ -1,4 +1,4 @@
-local colors = paint.rgb_colors
+--local colors = paint.rgb_colors
 -- GLASS VASE WILL BE READDED WITH NEW MODEL IN NEXT VERSIONS
 --[[minetest.register_node("luxury_decor:glass_vase", {
     description = "Glass Vase",
@@ -57,13 +57,12 @@ minetest.register_craft({
 luxury_decor.register_seat({
 	actual_name = "simple_armchair_with_pillow",
 	type = "armchair",
-	mesh = "simple_armchair.obj",
+	mesh = "simple_armchair.b3d",
 	textures = {
 		"luxury_decor_simple_armchair_base.png",
 		"luxury_decor_simple_armchair_soft.png",
 		"luxury_decor_simple_armchair_pillow.png"
 	},
-	visual_scale = 1,
 	multiply_by_color = {2},
 	groups = {choppy=2.5},
 	collision_box = {
@@ -97,44 +96,43 @@ luxury_decor.register_seat({
 luxury_decor.register_seat({
 	actual_name = "simple_sofa",
 	type = "sofa",
-	mesh = "simple_sofa_1.obj",
+	mesh = "simple_sofa.obj",
 	textures = {
 		"luxury_decor_simple_sofa_base.png",
 		"luxury_decor_simple_sofa_soft.png",
 	},
-	visual_scale = 1,
 	multiply_by_color = {2},
 	groups = {choppy=2.5},
 	collision_box = {
-		{-0.34, -0.5, -0.4, 0.34, 0.05, 0.35}, -- Lower box
-        {-0.34, -0.5, 0.35, 0.34, 0.55, 0.49}, -- Back box
-        {-0.34, -0.5, -0.5, -0.51, 0.2, 0.49}, -- Right box
-        {0.34, -0.5, -0.5, 0.51, 0.2, 0.49} -- Left box
+		{-0.34, -0.5, -0.5, 0.34, 0.05, 0.35}, -- Lower box
+        {-0.34, -0.5, 0.35, 0.34, 0.6, 0.49}, -- Back box
+        {-0.34, -0.5, -0.5, -0.5, 0.275, 0.49}, -- Right box
+        {0.34, -0.5, -0.5, 0.5, 0.275, 0.49} -- Left box
 	},
 	connectable = true,
 	connected_parts_meshes = {
-		left = "simple_sofa_2.obj",
-		right = "simple_sofa_3.obj",
-		corner = "simple_sofa_4.obj",
-		middle = "simple_sofa_5.obj"
+		left = "simple_sofa_left.obj",
+		right = "simple_sofa_right.obj",
+		corner = "simple_sofa_corner.obj",
+		middle = "simple_sofa_middle.obj"
 	},
 	connected_parts_node_boxes = {
 		left = {
-			{-0.34, -0.5, -0.5, 0.51, 0.05, 0.35},
-			{-0.34, -0.5, 0.35, 0.51, 0.55, 0.49},
-			{-0.34, -0.5, -0.5, -0.51, 0.2, 0.49}
+			{-0.34, -0.5, -0.5, 0.5, 0.05, 0.35},
+			{-0.34, -0.5, 0.35, 0.5, 0.6, 0.49},
+			{-0.34, -0.5, -0.5, -0.5, 0.275, 0.49}
 		},
 		right = {
-			{-0.51, -0.5, -0.5, 0.34, 0.05, 0.35},
-			{-0.51, -0.5, 0.35, 0.34, 0.55, 0.49},
-			{0.34, -0.5, -0.5, 0.51, 0.2, 0.49}
+			{-0.5, -0.5, -0.5, 0.34, 0.05, 0.35},
+			{-0.5, -0.5, 0.35, 0.34, 0.6, 0.49},
+			{0.34, -0.5, -0.5, 0.5, 0.275, 0.49}
 		},
 		corner = {
 			{-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
 		},
 		middle = {
-			{-0.48, -0.5, -0.5, 0.51, 0.05, 0.35},
-			{-0.48, -0.5, 0.35, 0.51, 0.55, 0.49},
+			{-0.48, -0.5, -0.5, 0.5, 0.05, 0.35},
+			{-0.48, -0.5, 0.35, 0.5, 0.55, 0.49},
 		}
 	},
 	paintable = true,
@@ -158,6 +156,9 @@ luxury_decor.register_seat({
 		}
 	}
 })
+
+minetest.debug("luxury_decor:simple_sofa", dump(minetest.registered_nodes["luxury_decor:simple_sofa"]))
+minetest.debug("luxury_decor:simple_armchair", dump(minetest.registered_nodes["luxury_decor:simple_armchair_with_pillow"]))
 -- FOR NOW IT HAS REPLACED TO NEW VASE
 --[[minetest.register_node("luxury_decor:simple_plastic_vase", {
     description = "Simple Plastic Vase",

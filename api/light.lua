@@ -17,13 +17,13 @@ lights.materials = {"wooden", "steel", "plastic", "glass", "brass", "gold"}
 -- Params:
 --'def' is light definition.
 luxury_decor.register_light = function(def)
-	local lightdef = {}
+	local lightdef = table.copy(def)
 	
-	lightdef.actual_name = def.actual_name or ""
-	local type_state, rtype = luxury_decor.CHECK_FOR_TYPE(lights.types, def.type)
-	local style_state, rstyle = luxury_decor.CHECK_FOR_STYLE(lights.styles, def.style)
-	local material_state, rmaterial = luxury_decor.CHECK_FOR_MATERIAL(lights.materials, def.material)
-	local color_state, rcolor = luxury_decor.CHECK_FOR_COLOR(def.base_color)
+	lightdef.actual_name = lightdef.actual_name or ""
+	local type_state, rtype = luxury_decor.CHECK_FOR_TYPE(lights.types, lightdef.type)
+	local style_state, rstyle = luxury_decor.CHECK_FOR_STYLE(lights.styles, lightdef.style)
+	local material_state, rmaterial = luxury_decor.CHECK_FOR_MATERIAL(lights.materials, lightdef.material)
+	local color_state, rcolor = luxury_decor.CHECK_FOR_COLOR(lightdef.base_color)
 	
 	lightdef.base_color = rcolor
 	
@@ -38,33 +38,23 @@ luxury_decor.register_light = function(def)
 		upper_name = upper_name .. luxury_decor.upper_letters(str, 1, 1) .. " "
 	end
 	
-	lightdef.description = upper_name .. "\n" ..
+	lightdef.description = lightdef.description or upper_name .. "\n" ..
 		minetest.colorize("#FF0000", "type: " .. rtype) .. "\n" ..
 		minetest.colorize("#FF00F1", "style: " .. rstyle) .. "\n" ..
 		minetest.colorize("#45de0f", "material: " .. rmaterial) .. "\n" ..
 		minetest.colorize("#1a1af1", "color: " .. rcolor)
 		
-	if def.item_info then
-		lightdef.description = lightdef.description .. def.item_info
+	if lightdef.item_info then
+		lightdef.description = lightdef.description .. lightdef.item_info
 	end
 	
-	lightdef.visual_scale	= def.visual_scale or 0.5
-	lightdef.drawtype 		= "mesh"
-	lightdef.mesh 			= def.mesh
-	
-	lightdef.tiles = def.textures
-	lightdef.multiply_by_color = def.multiply_by_color
-		--[[if type(tile) == "table" and tile.multiply_by_color then
-			lightdef.tiles[i].color = rcolor
-				lightdef.tiles[i].multiply_by_color = nil
-		end]]
-
+	lightdef.visual_scale = lightdef.visual_scale or 0.5
+	lightdef.tiles = lightdef.textures
+	lightdef.drawtype = lightdef.drawtype or "mesh"
+	lightdef.mesh = lightdef.drawtype == "mesh" and lightdef.mesh
 	lightdef.use_texture_alpha 	= true
 	lightdef.paramtype			= "light"
-	lightdef.paramtype2			= def.paramtype2 or "facedir"
-	lightdef.inventory_image	= def.inventory_image
-	lightdef.wield_image		= def.wield_image or lightdef.inventory_image
-	
+	lightdef.paramtype2			= lightdef.paramtype2 or "facedir"
 	lightdef.groups				= {
 		["style_" .. rstyle] = 1, 
 		["material_" .. rmaterial] = 1, 
@@ -79,54 +69,56 @@ luxury_decor.register_light = function(def)
 	
 	lightdef.collision_box		= {
 		type = "fixed",
-		fixed = def.collision_box or {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+		fixed = lightdef.collision_box or {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
 	}
 	lightdef.selection_box		= {
 		type = "fixed",
-		fixed = def.selection_box or lightdef.collision_box.fixed
+		fixed = lightdef.selection_box or lightdef.collision_box.fixed
 	}
-	lightdef.sounds = {}
 	
-	if not def.sounds then
+	if not lightdef.sounds then
 		lightdef.sounds = rmaterial == "wooden" and default.node_sound_wood_defaults() or
-				(rmaterial == "steel" or rmaterial == "brass" or rmaterial == "gold") and default.node_sound_metal_defaults() or
-				rmaterial == "plastic" and default.node_sound_leaves_defaults() or
-				rmaterial == "glass" and default.node_sound_glass_defaults()
-	else
-		lightdef.sounds = def.sounds
+			(rmaterial == "steel" or rmaterial == "brass" or rmaterial == "gold") and default.node_sound_metal_defaults() or
+			rmaterial == "plastic" and default.node_sound_leaves_defaults() or
+			rmaterial == "glass" and default.node_sound_glass_defaults()
 	end
 	
-	lightdef.toggleable = def.toggleable or false
-	lightdef.paintable = def.paintable or false
+	lightdef.toggleable = lightdef.toggleable or false
+	lightdef.paintable = lightdef.paintable or false
 	
 	
 	local res_name = "luxury_decor:" .. lightdef.actual_name
 	if (rtype == "lantern" or rtype == "chandelier") and lightdef.toggleable then
-		lightdef.drop = def.drop_on or res_name .. "_off"
-		lightdef.on_rightclick = def.on_rightclick or function(pos, node, clicker, itemstack, pointed_thing)
-			local brush = paint.paint_node(pos, clicker)
-			lights.turn_on(pos)
+		local copy_def = table.copy(lightdef)
+		copy_def.drop = lightdef.drop_on or res_name .. "_off"
+		copy_def.light_source = 0
+		copy_def.on_rightclick = lightdef.on_rightclick or function(pos, node, clicker, itemstack, pointed_thing)
+			local res, brush = paint.paint_node(pos, clicker)
+			if not res then
+				lights.turn_on(pos)
+			end
 			
 			return brush
 		end
 		
-		minetest.register_node(res_name .. "_off", table.copy(lightdef))
+		minetest.register_node(res_name .. "_off", copy_def)
 		paint.register_colored_nodes(res_name .. "_off")
 		
-		if def.craft_recipe then
+		if copy_def.craft_recipe then
 			minetest.register_craft({
-				type = def.craft_recipe.type,
+				type = copy_def.craft_recipe.type,
 				output = res_name .. "_off",
-				recipe = def.craft_recipe.recipe,
-				replacements = def.craft_recipe.replacements
+				recipe = copy_def.craft_recipe.recipe,
+				replacements = copy_def.craft_recipe.replacements
 			})
 		end
-		lightdef.light_source = def.light_source or minetest.LIGHT_MAX
-		lightdef.drop = def.drop_on or res_name .. "_on"
+		lightdef.light_source = lightdef.light_source or minetest.LIGHT_MAX
 		lightdef.groups.not_in_creative_inventory = 1
-		lightdef.on_rightclick = def.on_rightclick or function(pos, node, clicker, itemstack, pointed_thing)
-			local brush = paint.paint_node(pos, clicker)
-			lights.turn_off(pos)
+		lightdef.on_rightclick = lightdef.on_rightclick or function(pos, node, clicker, itemstack, pointed_thing)
+			local res, brush = paint.paint_node(pos, clicker)
+			if not res then
+				lights.turn_off(pos)
+			end
 			
 			return brush
 		end
@@ -134,22 +126,22 @@ luxury_decor.register_light = function(def)
 		minetest.register_node(res_name .. "_on", lightdef)
 		paint.register_colored_nodes(res_name .. "_on")
 	else
-		lightdef.on_rightclick = def.on_rightclick or function(pos, node, clicker, itemstack, pointed_thing)
-			local brush = paint.paint_node(pos, clicker)
+		lightdef.on_rightclick = lightdef.on_rightclick or function(pos, node, clicker, itemstack, pointed_thing)
+			local res, brush = paint.paint_node(pos, clicker)
 			
 			return brush
 		end
-		lightdef.light_source = def.light_source or minetest.LIGHT_MAX
-		lightdef.drop = def.drop_on or res_name
+		lightdef.light_source = lightdef.light_source or minetest.LIGHT_MAX
+		lightdef.drop = lightdef.drop_on or res_name
 		minetest.register_node(res_name, lightdef)
 		paint.register_colored_nodes(res_name)
 		
-		if def.craft_recipe then
+		if lightdef.craft_recipe then
 			minetest.register_craft({
-				type = def.craft_recipe.type,
+				type = lightdef.craft_recipe.type,
 				output = res_name,
-				recipe = def.craft_recipe.recipe,
-				replacements = def.craft_recipe.replacements
+				recipe = lightdef.craft_recipe.recipe,
+				replacements = lightdef.craft_recipe.replacements
 			})
 		end
 	end

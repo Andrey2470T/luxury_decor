@@ -92,7 +92,24 @@ luxury_decor.get_color = function(def)
 		local splits = string.split(name, "_")
 		
 		if splits[1] == "color" and val == 1 then
-			return splits[2]
+			table.remove(splits, 1)
+			return table.concat(splits, "_")
+		end
+	end
+	
+	return -1
+end
+
+luxury_decor.get_wood_sort = function(def)
+	for name, val in pairs(def.groups) do
+		local splits = string.split(name, "_")
+		
+		if #splits > 1 then
+			if (splits[1] .. "_" .. splits[2]) == "wood_sort" then
+				splits[1] = nil
+				splits[2] = nil
+				return table.concat(splits, "_")
+			end
 		end
 	end
 	

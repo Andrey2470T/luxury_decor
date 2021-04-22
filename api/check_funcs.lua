@@ -105,7 +105,6 @@ luxury_decor.CHECK_FOR_COLORS_LIST = function(colors)
 			colors[wood] = col
 		else
 			colors[wood] = nil
-			minetest.log("warning", "luxury_decor.CHECK_FOR_COLORS_LIST(): Couldn`t find \'" .. color .. "\' color in the colors list!")
 		end
 	end
 	
