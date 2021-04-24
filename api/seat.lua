@@ -387,5 +387,26 @@ seat.disconnect_sofa = function(pos)
 		end
 	end
 	
+	if destr_sofa_part == "corner" then
+		local adjacent_forward_pos = vector.add(pos, dir)
+		local adjacent_forward_node = minetest.get_node(adjacent_forward_pos)
+		
+		local are_forward_sofa_can_disconnect = seat.are_sofas_identical(minetest.registered_nodes[adjacent_forward_node.name], destroyed_sofa_def)
+		local forward_sofa_dir = vector.rotate_around_axis(minetest.facedir_to_dir(adjacent_forward_node.param2), {x=0, y=1, z=0}, math.pi)
+		are_param2_vals_eq = vector.dir_to_rotation(forward_sofa_dir).y - math.pi/2 == vector.dir_to_rotation(dir).y
+		
+		if are_forward_sofa_can_disconnect and are_param2_vals_eq then
+			local forward_sofa_part = seat.get_sofa_part(adjacent_forward_node.name)
+			
+			if forward_sofa_part == "middle" then
+				minetest.set_node(adjacent_forward_pos, {name = seat.get_sofa_name_from_part(destroyed_sofa_def, "right"), param2 = adjacent_forward_node.param2})
+			elseif forward_sofa_part == "left" then
+				minetest.set_node(adjacent_forward_pos, {name = seat.get_sofa_name_from_part(destroyed_sofa_def, ""), param2 = adjacent_forward_node.param2})
+			elseif forward_sofa_part == "corner" then
+				forward_sofa_dir = vector.rotate_around_axis(forward_sofa_dir, {x=0, y=1, z=0}, math.pi/2)
+				minetest.set_node(adjacent_forward_pos, {name = seat.get_sofa_name_from_part(destroyed_sofa_def, "right"), param2 = minetest.dir_to_facedir(forward_sofa_dir)})
+			end
+		end
+	end
 	return true
 end
