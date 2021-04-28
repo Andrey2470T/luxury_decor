@@ -28,10 +28,15 @@ luxury_decor.register_shelf({
 	paintable = true,
 	craft_recipe = {
 		recipe = {
-            {"wooden_board", "wooden_board", ""},
+            {"wooden_board", "wooden_board", "luxury_decor:hammer"},
             {"wooden_board", "wooden_board", ""},
             {"", "", ""}
-        }
+        },
+		replacements = {
+			{"", "", "luxury_decor:hammer"},
+			{"", "", ""},
+			{"", "", ""}
+		}
 	}
 })
 
@@ -66,10 +71,15 @@ luxury_decor.register_shelf({
 	paintable = true,
 	craft_recipe = {
 		recipe = {
-            {"wooden_board", "wooden_board", ""},
+            {"wooden_board", "wooden_board", "luxury_decor:hammer"},
             {"wooden_board", "wooden_board", ""},
             {"wooden_board", "", ""}
-        }
+        },
+		replacements = {
+			{"", "", "luxury_decor:hammer"},
+			{"", "", ""},
+			{"", "", ""}
+		}
 	}
 })
 
@@ -97,12 +107,12 @@ luxury_decor.register_shelf({
 	paintable = true,
 	craft_recipe = {
 		recipe = {
-            {"wooden_plank", "luxury_decor:saw", ""},
+            {"wooden_plank", "luxury_decor:hammer", ""},
             {"wooden_plank", "", ""},
             {"", "", ""}
         },
 		replacements = {
-            {"", "", "luxury_decor:saw"},
+            {"", "", "luxury_decor:hammer"},
             {"", "", ""},
             {"", "", ""}
         }

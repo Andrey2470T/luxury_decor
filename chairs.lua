@@ -37,9 +37,14 @@ luxury_decor.register_seat({
 	},
 	craft_recipe = {
 		recipe = {
-			{"wooden_planks", "wooden_plank", "default:stick"},
-			{"wooden_plank", "default:stick", ""},
-			{"wooden_plank", "default:stick", ""}
+			{"wooden_board", "wooden_board", "luxury_decor:hammer"},
+			{"wooden_plank", "wooden_plank", ""},
+			{"wooden_plank", "wooden_plank", ""}
+		},
+		replacements = {
+			{{"wooden_board", ""}, {"wooden_board", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"}},
+			{{"wooden_plank", ""}, {"wooden_plank", ""}, {"", ""}},
+			{{"wooden_plank", ""}, {"wooden_plank", ""}, {"", ""}}
 		}
 	}
 })
@@ -68,9 +73,14 @@ luxury_decor.register_seat({
 	},
 	craft_recipe = {
 		recipe = {
-			{"default:junglewood", "luxury_decor:jungle_wooden_plank", "luxury_decor:jungle_wooden_plank"},
-			{"default:stick", "default:stick", "wool:white"},
-			{"default:stick", "default:stick", ""}
+			{"", "luxury_decor:jungle_wooden_board", "luxury_decor:hammer"},
+			{"luxury_decor:jungle_wooden_plank", "wool:white", "luxury_decor:jungle_wooden_plank"},
+			{"luxury_decor:jungle_wooden_plank", "default:stick", "luxury_decor:jungle_wooden_plank"}
+		},
+		replacements = {
+			{{"", ""}, {"luxury_decor:jungle_wooden_board", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"}},
+			{{"luxury_decor:jungle_wooden_plank", ""}, {"wool:white", ""}, {"luxury_decor:jungle_wooden_plank", ""}},
+			{{"luxury_decor:jungle_wooden_plank", ""}, {"default:stick", ""}, {"luxury_decor:jungle_wooden_plank", ""}}
 		}
 	}
 })
@@ -116,9 +126,14 @@ luxury_decor.register_seat({
 	},
 	craft_recipe = {
 		recipe = {
-			{"wooden_planks", "default:stick", "default:stick"},
-			{"wooden_planks", "default:stick", ""},
-			{"wooden_plank", "default:stick", ""}
+			{"wooden_board", "wooden_plank", "wooden_plank"},
+			{"wooden_board", "wooden_plank", "wooden_plank"},
+			{"default:stick", "default:stick", "luxury_decor:hammer"}
+		},
+		replacements = {
+			{{"wooden_board", ""}, {"wooden_plank", ""}, {"wooden_plank", ""}},
+			{{"wooden_board", ""}, {"wooden_plank", ""}, {"wooden_plank", ""}},
+			{{"default:stick", ""}, {"default:stick", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"}}
 		}
 	}
 })
@@ -162,10 +177,15 @@ luxury_decor.register_seat({
 	},
 	craft_recipe = {
 		recipe = {
-			{"wooden_planks", "default:stick", "default:stick"},
-			{"wooden_plank", "default:stick", ""},
-			{"wooden_plank", "default:stick", ""}
-    }
+			{"default:stick", "wooden_board", "default:stick"},
+			{"default:stick", "wooden_plank", "default:stick"},
+			{"luxury_decor:hammer", "", ""}
+		},
+		replacements = {
+			{{"default:stick", ""}, {"wooden_board", ""}, {"default:stick", ""}},
+			{{"default:stick", ""}, {"wooden_plank", ""}, {"default:stick", ""}},
+			{{"luxury_decor:hammer", "luxury_decor:hammer"}, {"", ""}, {"", ""}}
+		}
 	}
 })
 --[[minetest.register_node("luxury_decor:kitchen_wooden_chair", {

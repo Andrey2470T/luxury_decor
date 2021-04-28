@@ -133,10 +133,6 @@ paint.paint_node = function(pos, painter)
 		wielded_brush:set_wear(new_wear)
 	end
 	
-	minetest.debug("luxury_decor.get_color(def): " .. luxury_decor.get_color(def))
-	minetest.debug("color_brush: " .. color_brush)
-	minetest.debug("def.name:gsub(): " .. def.name:gsub(luxury_decor.get_color(def), color_brush))
-	
 	local cur_color = luxury_decor.get_color(def)
 	local name = color_brush ~= def.base_color and (def.base_color == cur_color and def.name .. "_" .. color_brush or def.name:gsub(cur_color, color_brush)) or def.name
 	minetest.set_node(pos, {name = name, param1 = node.param1, param2 = node.param2})

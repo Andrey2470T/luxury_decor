@@ -53,7 +53,7 @@ luxury_decor.register_seat = function(def)
 		["style_" .. rstyle] = 1, 
 		["material_" .. rmaterial] = 1, 
 		["type_" .. rtype] = 1, 
-		snappy = 1.5
+		choppy = 2.5
 	}
 	
 	if type(def.groups) == "table" then
@@ -208,7 +208,6 @@ seat.get_sofa_part = function(sofaname)
 	end
 	
 	local splits = string.split(sofaname, "_")
-	minetest.debug("splits: " .. dump(splits))
 	
 	if #splits <= 1 then
 		return -1
@@ -354,7 +353,6 @@ seat.disconnect_sofa = function(pos)
 	local are_param2_vals_eq = seat.get_sofa_part(adjacent_right_node.name) == "corner" and 
 			vector.dir_to_rotation(dir).y - math.pi/2 == vector.dir_to_rotation(vector.rotate_around_axis(minetest.facedir_to_dir(adjacent_right_node.param2), {x=0, y=1, z=0}, math.pi)).y 
 			or node.param2 == adjacent_right_node.param2
-	minetest.debug("are_param2_vals_eq: " .. tostring(are_param2_vals_eq))
 	local are_right_and_destr_sofas_can_disconnect = seat.are_sofas_identical(minetest.registered_nodes[adjacent_right_node.name], destroyed_sofa_def) and are_param2_vals_eq
 	
 	local destr_sofa_part = seat.get_sofa_part(node.name)

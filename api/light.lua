@@ -158,8 +158,6 @@ lights.turn_on = function(pos)
 	if def.toggleable then
 		local light_on_name = "luxury_decor:" .. def.actual_name .. "_on"
 		local color = luxury_decor.get_color(def)
-		minetest.debug("color: " .. (color or ""))
-		minetest.debug("def.base_color: " .. def.base_color)
 		
 		if def.base_color ~= color then
 			light_on_name = light_on_name .. "_" .. color

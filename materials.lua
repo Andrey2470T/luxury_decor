@@ -8,44 +8,50 @@ end
 
 for _, wood_sort in ipairs(luxury_decor.wood_sorts) do
 	local upcase_letters = luxury_decor.upper_letters(wood_sort, 1, 1)
-	minetest.register_craftitem("luxury_decor:" .. wood_sort .. "_wooden_board", {
+	local wooden_board_itemstr = luxury_decor.build_wooden_item_string("wooden_board", wood_sort)
+	minetest.register_craftitem(wooden_board_itemstr, {
 		description = upcase_letters .. " Wooden Board",
-		inventory_image = "luxury_decor_" .. wood_sort .. "_board.png"
+		inventory_image = "luxury_decor_" .. wood_sort .. "_board.png",
+		groups = {wooden_board = 1}
 	})
 	
 	minetest.register_craft({
 		type = "shapeless", 
-		output = "luxury_decor:" .. wood_sort .. "_wooden_board 3",
-		recipe = {"stairs:slab_" .. wood_sort .. (wood_sort ~= "jungle" and "_" or "") .. "wood", "luxury_decor:saw"},
+		output = wooden_board_itemstr .. " 3",
+		recipe = {luxury_decor.build_wooden_item_string("wooden_slab", wood_sort), "luxury_decor:saw"},
 		replacements = {
-			{"", "luxury_decor:saw"}
+			{{luxury_decor.build_wooden_item_string("wooden_slab", wood_sort),""}, {"luxury_decor:saw", "luxury_decor:saw"}}
 		}
 	})
 	
-	minetest.register_craftitem("luxury_decor:" .. wood_sort .. "_wooden_plank", {
+	local wooden_plank_itemstr = luxury_decor.build_wooden_item_string("wooden_plank", wood_sort)
+	minetest.register_craftitem(wooden_plank_itemstr, {
 		description = upcase_letters .. " Wooden Plank",
-		inventory_image = "luxury_decor_" .. wood_sort .. "_plank.png"
+		inventory_image = "luxury_decor_" .. wood_sort .. "_plank.png",
+		groups = {wooden_plank = 1}
 	})
 	
 	minetest.register_craft({
 		type = "shapeless", 
-		output = "luxury_decor:" .. wood_sort .. "_wooden_plank 2",
-		recipe = {"luxury_decor:" .. wood_sort .. "wooden_board", "luxury_decor:saw"},
+		output = wooden_plank_itemstr .. " 2",
+		recipe = {wooden_board_itemstr, "luxury_decor:saw"},
 		replacements = {
-			{"", "luxury_decor:saw"}
+			{{wooden_board_itemstr ,""}, {"luxury_decor:saw", "luxury_decor:saw"}}
 		}
 	})
 	
-	minetest.register_craftitem("luxury_decor:" .. wood_sort .. "_wooden_drawer", {
+	local wooden_drawer_itemstr = luxury_decor.build_wooden_item_string("wooden_drawer", wood_sort)
+	minetest.register_craftitem(wooden_drawer_itemstr, {
 		description = upcase_letters .. " Wooden Drawer",
-		inventory_image = "luxury_decor_" .. wood_sort .. "_drawer.png"
+		inventory_image = "luxury_decor_" .. wood_sort .. "_drawer.png",
+		groups = {wooden_drawer = 1}
 	})
 	
 	minetest.register_craft({
-		output = "luxury_decor:" .. wood_sort .. "_wooden_drawer",
+		output = wooden_drawer_itemstr,
 		recipe = {
-			{"luxury_decor:" .. wood_sort .. "_wooden_board", "luxury_decor:" .. wood_sort .. "_wooden_board", ""},
-			{"luxury_decor:" .. wood_sort .. "_wooden_board", "", ""},
+			{wooden_board_itemstr, wooden_board_itemstr, ""},
+			{wooden_board_itemstr, "", ""},
 			{"default:stick", "", ""}
 		}
 	})
@@ -402,9 +408,9 @@ minetest.register_craft({
         {"", "", ""}
     },
     replacements = {
-        {"", "", ""},
-        {"luxury_decor:steel_scissors", "", ""},
-        {"", "", ""}
+        {{"wool:white", ""}, {"luxury_decor:brass_ingot", ""}, {"", ""}},
+        {{"luxury_decor:steel_scissors", "luxury_decor:steel_scissors"}, {"", ""}, {"", ""}},
+        {{"", ""}, {"", ""}, {"", ""}}
     }
 })
 
@@ -462,10 +468,20 @@ minetest.register_craftitem("luxury_decor:saw", {
 minetest.register_craft({
     type = "shapeless",
     output = "luxury_decor:saw",
-    recipe = {"default:wood", "default:steel_ingot"},
-    replacements = {
-        {"luxury_decor:wooden_board", ""}
-    }
+    recipe = {"group:wooden_plank", "default:steel_ingot"}
+})
+
+minetest.register_craftitem("luxury_decor:hammer", {
+    description = "Hammer",
+    inventory_image = "luxury_decor_hammer.png",
+    stack_max = 99
+})
+
+minetest.register_craft({
+	type = "shapeless",
+	output = "luxury_decor:hammer 2",
+	recipe = {"group:wooden_board", "default:steel_ingot", "luxury_decor:saw"},
+	replacements = {{"group:wooden_board", ""}, {"default:steel_ingot", ""}, {"luxury_decor:saw", "luxury_decor:saw"}}
 })
 
 minetest.register_craft({
@@ -473,7 +489,7 @@ minetest.register_craft({
     output = "luxury_decor:glass_vase 2",
     recipe = {"stairs:slab_glass", "luxury_decor:saw"},
     replacements = {
-        {"", "luxury_decor:saw"}
+        {{"stairs:slab_glass", ""}, {"luxury_decor:saw", "luxury_decor:saw"}}
     }
 })
 

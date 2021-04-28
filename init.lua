@@ -18,6 +18,7 @@ dofile(modpath.."/api/piano.lua")
 dofile(modpath.."/api/seat.lua")
 dofile(modpath.."/api/shelf.lua")
 dofile(modpath.."/api/sitting.lua")
+dofile(modpath.."/api/table.lua")
 dofile(modpath.."/api/vase.lua")
 
 

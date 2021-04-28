@@ -97,8 +97,114 @@ for ind, mesh in pairs(table_meshes) do
 end]]
 
 
+luxury_decor.register_table({
+	actual_name = "simple_wooden_table",
+	base_color = {
+		["apple"] = "peru",
+		["pine"] = "burlywood",
+		["aspen"] = "cornsilk",
+		["jungle"] = "brown",
+		["acacia"] = "red"
+	},
+	register_wood_sorts = tables.wood_sorts,
+	mesh = "simple_wooden_table.obj",
+	textures = {
+		["apple"] = {"luxury_decor_apple_material.png"},
+		["pine"] = {"luxury_decor_pine_material.png"},
+		["aspen"] = {"luxury_decor_aspen_material.png"},
+		["jungle"] = {"luxury_decor_jungle_material.png"},
+		["acacia"] = {"luxury_decor_acacia_material.png"}
+	},
+	groups = {choppy = 3},
+	multiply_by_color = {1},
+	paintable = true,
+	collision_box = {
+		{-1.45, -0.5, -0.5, 0.55, 0.5, 0.5}
+	},
+	craft_recipe = {
+		recipe = {
+			{"wooden_board", "wooden_board", "wooden_board"}, 
+			{"wooden_plank", "wooden_plank", "wooden_plank"},
+			{"luxury_decor:hammer", "wooden_plank", ""}
+		},
+		replacements = {
+			{{"wooden_board", ""}, {"wooden_board", ""}, {"wooden_board", ""}},
+			{{"wooden_plank", ""}, {"wooden_plank", ""}, {"wooden_plank", ""}},
+			{{"luxury_decor:hammer", "luxury_decor:hammer"}, {"", ""}, {"", ""}}
+		}
+	}
+})
 
-minetest.register_node("luxury_decor:simple_wooden_table", {
+luxury_decor.register_table({
+	actual_name = "round_luxury_table",
+	base_color = {
+		["apple"] = "peru",
+		["pine"] = "burlywood",
+		["aspen"] = "cornsilk",
+		["jungle"] = "brown",
+		["acacia"] = "red"
+	},
+	register_wood_sorts = tables.wood_sorts,
+	mesh = "round_luxury_table.b3d",
+	textures = {
+		["apple"] = {"luxury_decor_apple_material.png"},
+		["pine"] = {"luxury_decor_pine_material.png"},
+		["aspen"] = {"luxury_decor_aspen_material.png"},
+		["jungle"] = {"luxury_decor_jungle_material.png"},
+		["acacia"] = {"luxury_decor_acacia_material.png"}
+	},
+	multiply_by_color = {1},
+	paintable = true,
+	craft_recipe = {
+		recipe = {
+			{"", "wooden_board", ""}, 
+			{"", "wooden_plank", "luxury_decor:hammer"},
+			{"", "wooden_plank", ""}
+		},
+		replacements = {
+			{{"", ""}, {"wooden_board", ""}, {"", ""}},
+			{{"", ""}, {"wooden_plank", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"}},
+			{{"", ""}, {"wooden_plank", ""}, {"", ""}}
+		}
+	}
+})
+
+luxury_decor.register_table({
+	actual_name = "kitchen_wooden_table",
+	base_color = {
+		["apple"] = "peru",
+		["pine"] = "burlywood",
+		["aspen"] = "cornsilk",
+		["jungle"] = "brown",
+		["acacia"] = "red"
+	},
+	register_wood_sorts = tables.wood_sorts,
+	mesh = "kitchen_wooden_table.obj",
+	textures = {
+		["apple"] = {"luxury_decor_apple_material.png"},
+		["pine"] = {"luxury_decor_pine_material.png"},
+		["aspen"] = {"luxury_decor_aspen_material.png"},
+		["jungle"] = {"luxury_decor_jungle_material.png"},
+		["acacia"] = {"luxury_decor_acacia_material.png"}
+	},
+	groups = {choppy = 2},
+	multiply_by_color = {1},
+	paintable = true,
+	craft_recipe = {
+		recipe = {
+			{"", "wooden_board", "luxury_decor:hammer"},
+			{"wooden_plank", "default:stick", "wooden_plank"},
+			{"wooden_plank", "", "wooden_plank"}
+		},
+		replacements = {
+			{{"", ""}, {"wooden_board", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"}},
+			{{"wooden_plank", ""}, {"default:stick", ""}, {"wooden_plank", ""}},
+			{{"wooden_plank", ""}, {"", ""}, {"wooden_plank", ""}}
+		}
+	}
+})
+
+--[[minetest.register_node("luxury_decor:simple_wooden_table", {
     description = "Simple Wooden Table",
     visual_scale = 0.5,
     mesh = "simple_wooden_table.obj",
@@ -112,8 +218,8 @@ minetest.register_node("luxury_decor:simple_wooden_table", {
         type = "fixed",
         fixed = {
             {-1.45, -0.5, -0.5, 0.55, 0.5, 0.5},
-            --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
-            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
+            --{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
+            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}
         }
     },
     selection_box = {
@@ -139,8 +245,8 @@ minetest.register_node("luxury_decor:round_luxury_table", {
         type = "fixed",
         fixed = {
             {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
-            --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
-            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
+            --{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
+            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}
         }
     },
     selection_box = {
@@ -168,8 +274,8 @@ minetest.register_node("luxury_decor:kitchen_wooden_table", {
         type = "fixed",
         fixed = {
             {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
-            --[[{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
-            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}]]
+            --{-0.65, -0.3, -1.46, 0.65, 1.4, -1.66},
+            {-0.65, -0.3, 0.46, 0.65, 1.4, 0.66}
         }
     },
     selection_box = {
@@ -206,4 +312,4 @@ minetest.register_craft({
         {"default:stick", "luxury_decor:jungle_wooden_plank", "default:stick"},
         {"", "", ""}
     }
-})
+})]]

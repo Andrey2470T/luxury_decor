@@ -157,8 +157,6 @@ luxury_decor.register_seat({
 	}
 })
 
-minetest.debug("luxury_decor:simple_sofa", dump(minetest.registered_nodes["luxury_decor:simple_sofa"]))
-minetest.debug("luxury_decor:simple_armchair", dump(minetest.registered_nodes["luxury_decor:simple_armchair_with_pillow"]))
 -- FOR NOW IT HAS REPLACED TO NEW VASE
 --[[minetest.register_node("luxury_decor:simple_plastic_vase", {
     description = "Simple Plastic Vase",
