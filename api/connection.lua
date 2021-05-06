@@ -84,7 +84,7 @@ connection.connect_node = function(pos, itemstack, pointed_thing)
 	
 	if next_nodename and close_nodename then
 		itemstack = itemstack:take_item()
-		minetest.set_node(pos, {name = next_nodename, param2 = next_node_param2 or clicked_node.param2})
+		minetest.swap_node(pos, {name = next_nodename, param2 = next_node_param2 or clicked_node.param2})
 		minetest.set_node(pointed_thing.above, {name = close_nodename, param2 = close_node_param2 or clicked_node.param2})
 		return true, itemstack
 	end
@@ -127,14 +127,14 @@ connection.disconnect_node = function(pos)
 		if destr_node_part == "right" or destr_node_part == "middle" then
 			local left_node_part = connection.get_node_part(minetest.registered_nodes[adjacent_left_node.name])
 			if left_node_part == "middle" then
-				minetest.set_node(adjacent_left_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "right"), param2 = destroyed_node.param2})
+				minetest.swap_node(adjacent_left_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "right"), param2 = destroyed_node.param2})
 			elseif left_node_part == "corner" then
 				local right_node_def = minetest.registered_nodes[adjacent_left_node.name]
 				local right_node_param2 = right_node_def.paramtype2 == "facedir" and minetest.dir_to_facedir(vector.rotate_around_axis(dir, {x=0, y=1, z=0}, -math.pi/2)) or
 						right_node_def.paramtype2 == "wallmounted" and minetest.dir_to_wallmounted(vector.rotate_around_axis(dir, {x=0, y=1, z=0}, -math.pi/2))
-				minetest.set_node(adjacent_left_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "right"), param2 = right_node_param2})
+				minetest.swap_node(adjacent_left_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "right"), param2 = right_node_param2})
 			else
-				minetest.set_node(adjacent_left_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "original"), param2 = destroyed_node.param2})
+				minetest.swap_node(adjacent_left_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "original"), param2 = destroyed_node.param2})
 			end
 		end
 	end
@@ -143,12 +143,12 @@ connection.disconnect_node = function(pos)
 		if destr_node_part == "left" or destr_node_part == "middle" or destr_node_part == "corner" then
 			local right_node_part = connection.get_node_part(right_node_def)
 			if right_node_part == "middle" then
-				minetest.set_node(adjacent_right_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "left"), param2 = destroyed_node.param2})
+				minetest.swap_node(adjacent_right_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "left"), param2 = destroyed_node.param2})
 			elseif right_node_part == "corner" then
 				local right_node_param2 = minetest.dir_to_facedir(vector.rotate_around_axis(dir, {x=0, y=1, z=0}, math.pi/2))
-				minetest.set_node(adjacent_right_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "left"), param2 = adjacent_right_node.param2})
+				minetest.swap_node(adjacent_right_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "left"), param2 = adjacent_right_node.param2})
 			else
-				minetest.set_node(adjacent_right_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "original"), param2 = destroyed_node.param2})
+				minetest.swap_node(adjacent_right_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "original"), param2 = destroyed_node.param2})
 			end
 			
 			if destr_node_part == "corner" then
@@ -166,12 +166,12 @@ connection.disconnect_node = function(pos)
 					local forward_node_part = connection.get_node_part(forward_node_def)
 			
 					if forward_node_part == "middle" then
-						minetest.set_node(adjacent_forward_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "right"), param2 = adjacent_forward_node.param2})
+						minetest.swap_node(adjacent_forward_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "right"), param2 = adjacent_forward_node.param2})
 					elseif forward_node_part == "left" then
-						minetest.set_node(adjacent_forward_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "original"), param2 = adjacent_forward_node.param2})
+						minetest.swap_node(adjacent_forward_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "original"), param2 = adjacent_forward_node.param2})
 					elseif forward_node_part == "corner" then
 						forward_node_dir = vector.rotate_around_axis(forward_node_dir, {x=0, y=1, z=0}, math.pi/2)
-						minetest.set_node(adjacent_forward_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "right"), param2 = minetest.dir_to_facedir(forward_node_dir)})
+						minetest.swap_node(adjacent_forward_pos, {name = connection.get_node_name_from_part(destroyed_node_def, "right"), param2 = minetest.dir_to_facedir(forward_node_dir)})
 					end
 				end
 			end
