@@ -85,9 +85,8 @@ luxury_decor.register_seat = function(def)
 	seatdef.paintable = seatdef.paintable or false
 	seatdef.connectable = (rtype == "sofa" or rtype == "footstool") and seatdef.connectable
 	
-	if seatdef.connectable and not seatdef.connected_parts_meshes then
-		minetest.log("warning", "luxury_decor.register_seat(): Failed to register the seat! No a connected parts meshes list passed despite this is connectable!")
-		return
+	if seatdef.connectable then 
+		seatdef.groups["part_original"] = 1
 	end
 	
 	if seatdef.seat_data then
@@ -113,7 +112,11 @@ luxury_decor.register_seat = function(def)
 		if not res then
 			local def = minetest.registered_nodes[itemstack:get_name()]
 			if def and luxury_decor.get_type(def) == "sofa" then
-				res, stack = seat.connect_sofa(pos, itemstack, pointed_thing)
+				res, stack = connection.connect_node(pos, itemstack, pointed_thing)
+				
+				if not res and minetest.registered_nodes[itemstack:get_name()] then
+					minetest.set_node(pointed_thing.above, {name = itemstack:get_name()})
+				end
 			else
 				local bool = sitting.sit_player(clicker, pos)
 			
@@ -126,7 +129,7 @@ luxury_decor.register_seat = function(def)
 	end
 	
 	seatdef.on_dig = seatdef.on_dig or function(pos, node, digger)
-		seat.disconnect_sofa(pos)
+		connection.disconnect_node(pos)
 		minetest.node_dig(pos, node, digger)
 		
 		return true
@@ -161,250 +164,8 @@ luxury_decor.register_seat = function(def)
 		end
 	end
 	
-	seat.register_connected_parts(seatdef)
-end
-
-seat.register_connected_parts = function(def)
-	if not def.connectable then
-		return
+	if seatdef.item_info then
+		seatdef.description = seatdef.description .. seatdef.item_info
 	end
-	
-	for type, mesh in pairs(def.connected_parts_meshes) do
-		local copy_def = table.copy(def)
-		copy_def.mesh = mesh
-		copy_def.groups.not_in_creative_inventory = 1
-		copy_def.collision_box = copy_def.drawtype == "mesh" and {
-			type = "fixed",
-			fixed = copy_def.connected_parts_node_boxes[type]
-		}
-		copy_def.node_box = copy_def.drawtype == "nodebox" and {
-			type = "fixed",
-			fixed = copy_def.connected_parts_node_boxes[type]
-		}
-		copy_def.selection_box = {
-			type = "fixed",
-			fixed = copy_def.connected_parts_selection_boxes and copy_def.connected_parts_selection_boxes[type] or 
-				(copy_def.collision_box and copy_def.collision_box.fixed or copy_def.node_box and copy_def.node_box.fixed)
-		}
-		copy_def.drop = def.name
-		if luxury_decor.get_material(copy_def) == "wooden" and copy_def.register_wood_sorts then
-			wood.register_wooden_sorts_nodes(copy_def, type)
-		else
-			local res_name = "luxury_decor:" .. def.actual_name .. "_" .. type
-			minetest.register_node(res_name, copy_def)
-	
-			if def.paintable then
-				paint.register_colored_nodes(res_name)
-			end
-		end
-	end
-end
-
-seat.get_sofa_part = function(sofaname)
-	local def = minetest.registered_nodes[sofaname]
-	
-	if luxury_decor.get_type(def) ~= "sofa" then
-		return -1
-	end
-	
-	local splits = string.split(sofaname, "_")
-	
-	if #splits <= 1 then
-		return -1
-	end
-	
-	for i, split in ipairs(splits) do
-		if split == "left" or split == "right" or split == "corner" or split == "middle" then
-			return split
-		end
-	end
-	
-	return ""
-end
-
-seat.get_sofa_name_from_part = function(def, partname)
-	local wood_sort = luxury_decor.get_wood_sort(def)
-	local color = luxury_decor.get_color(def)
-	
-	return "luxury_decor:" .. def.actual_name .. (partname ~= "" and "_" .. partname or "") .. (wood_sort ~= -1 and "_" .. wood_sort or "") .. (color ~= -1 and color ~= def.base_color and "_" .. color or "")
-end
-
-seat.are_sofas_identical = function(sofa_def, sofa2_def)
-	local seat_type = luxury_decor.get_type(sofa_def)
-	
-	if seat_type ~= "sofa" then
-		return false
-	end
-	
-	return seat_type == luxury_decor.get_type(sofa2_def) and
-			luxury_decor.get_style(sofa_def) == luxury_decor.get_style(sofa2_def) and
-			luxury_decor.get_material(sofa_def) == luxury_decor.get_material(sofa2_def) and
-			luxury_decor.get_color(sofa_def) == luxury_decor.get_color(sofa2_def) and
-			luxury_decor.get_wood_sort(sofa_def) == luxury_decor.get_wood_sort(sofa2_def)
-end
--- Set an indentical sofa node nearby the sofa with 'pos' position and *connects* it with that.
-
--- Params:
--- 'pos' is position of clicked node.
--- 'itemstack' is a sofa node that wanted to be set and connected with the clicked sofa.
--- 'pointed_thing' is 'pointed_thing' table of the clicked node.
-seat.connect_sofa = function(pos, itemstack, pointed_thing)
-	local node = minetest.get_node(pos)
-	local clicked_sofa_def = minetest.registered_nodes[node.name]
-	local sofa_def = minetest.registered_nodes[itemstack:get_name()]
-	if not sofa_def then
-		return false, itemstack
-	end
-	local are_sofas_identical = seat.are_sofas_identical(clicked_sofa_def, sofa_def)
-		
-	if not are_sofas_identical then
-		return false, itemstack
-	end
-	local dir = clicked_sofa_def.paramtype2 == "facedir" and minetest.facedir_to_dir(node.param2)
-	
-	if not dir then
-		return false, itemstack
-	end
-	dir = vector.rotate_around_axis(dir, {x=0, y=1, z=0}, math.pi)
-
-	local close_node = minetest.get_node(pointed_thing.above)
-	if close_node.name ~= "air" then
-		return false, itemstack
-	end
-	local clicked_face_dir = vector.subtract(pointed_thing.above, pos)
-	
-	if clicked_face_dir.y ~= 0 then
-		return false, itemstack
-	end
-	
-	local dir_rot_y = vector.dir_to_rotation(dir).y
-	
-	local z_dir = vector.rotate_around_axis(dir, {x=0, y=1, z=0}, -dir_rot_y)
-	local z_clicked_face_dir = vector.rotate_around_axis(clicked_face_dir, {x=0, y=1, z=0}, -dir_rot_y)
-	
-	local clicked_face_dir_rot_y = vector.dir_to_rotation(z_clicked_face_dir).y
-	local clicked_sofa_part = seat.get_sofa_part(node.name)
-	
-	local next_nodename
-	local close_nodename
-	local next_node_param2
-	local close_node_param2
-
-	if clicked_face_dir_rot_y == math.pi/2 then
-		if clicked_sofa_part == "" then
-			next_nodename = seat.get_sofa_name_from_part(sofa_def, "left")
-			close_nodename = seat.get_sofa_name_from_part(sofa_def, "right")
-		elseif clicked_sofa_part == "left" or clicked_sofa_part == "right" then
-			next_nodename = clicked_sofa_part == "right" and seat.get_sofa_name_from_part(sofa_def, "middle")
-			close_nodename = seat.get_sofa_name_from_part(sofa_def, "right")
-		end
-	elseif clicked_face_dir_rot_y == -math.pi/2 then
-		if clicked_sofa_part == "" then
-			next_nodename = seat.get_sofa_name_from_part(sofa_def, "right")
-			close_nodename = seat.get_sofa_name_from_part(sofa_def, "left")
-		elseif clicked_sofa_part == "left" or clicked_sofa_part == "right" then
-			next_nodename = clicked_sofa_part == "left" and seat.get_sofa_name_from_part(sofa_def, "middle")
-			close_nodename = seat.get_sofa_name_from_part(sofa_def, "left")
-		end
-	elseif clicked_face_dir_rot_y == 0 then
-		if clicked_sofa_part == "left" then
-			next_nodename = seat.get_sofa_name_from_part(sofa_def, "corner")
-			close_nodename = seat.get_sofa_name_from_part(sofa_def, "left")
-			close_node_param2 = minetest.dir_to_facedir(vector.rotate_around_axis(dir, {x=0, y=1, z=0}, -math.pi/2))
-		elseif clicked_sofa_part == "right" then
-			next_nodename = seat.get_sofa_name_from_part(sofa_def, "corner")
-			next_node_param2 = minetest.dir_to_facedir(vector.rotate_around_axis(dir, {x=0, y=1, z=0}, math.pi/2))
-			close_nodename = seat.get_sofa_name_from_part(sofa_def, "right")
-			close_node_param2 = next_node_param2
-		end
-	end
-	
-	if next_nodename and close_nodename then
-		itemstack = itemstack:take_item()
-		minetest.set_node(pos, {name = next_nodename, param2 = next_node_param2 or node.param2})
-		minetest.set_node(pointed_thing.above, {name = close_nodename, param2 = close_node_param2 or node.param2})
-		return true, itemstack
-	end
-	
-	return false, itemstack
-end
-
--- Disconnect adjacent sofas nodes from the destroyed sofa node with position 'pos'.
--- Should be called *after* the node with 'pos' is removed! E.g. in 'after_dig_node' callback.
-
--- Params:
--- 'pos' is position of destroyed sofa.
-seat.disconnect_sofa = function(pos)
-	local node = minetest.get_node(pos)
-	local destroyed_sofa_def = minetest.registered_nodes[node.name]
-	
-	if luxury_decor.get_type(destroyed_sofa_def) ~= "sofa" then
-		return false
-	end
-	
-	local dir = vector.rotate_around_axis(minetest.facedir_to_dir(node.param2), {x=0, y=1, z=0}, math.pi)
-	
-	local adjacent_left_pos = vector.add(pos, vector.rotate_around_axis(dir, {x=0, y=1, z=0}, -math.pi/2))
-	local adjacent_right_pos = vector.add(pos, vector.rotate_around_axis(dir, {x=0, y=1, z=0}, math.pi/2))
-	local adjacent_left_node = minetest.get_node(adjacent_left_pos)
-	local adjacent_right_node = minetest.get_node(adjacent_right_pos)
-	
-	local are_left_and_destr_sofas_can_disconnect = seat.are_sofas_identical(minetest.registered_nodes[adjacent_left_node.name], destroyed_sofa_def) and node.param2 == adjacent_left_node.param2
-	local are_param2_vals_eq = seat.get_sofa_part(adjacent_right_node.name) == "corner" and 
-			vector.dir_to_rotation(dir).y - math.pi/2 == vector.dir_to_rotation(vector.rotate_around_axis(minetest.facedir_to_dir(adjacent_right_node.param2), {x=0, y=1, z=0}, math.pi)).y 
-			or node.param2 == adjacent_right_node.param2
-	local are_right_and_destr_sofas_can_disconnect = seat.are_sofas_identical(minetest.registered_nodes[adjacent_right_node.name], destroyed_sofa_def) and are_param2_vals_eq
-	
-	local destr_sofa_part = seat.get_sofa_part(node.name)
-	
-	if are_left_and_destr_sofas_can_disconnect then
-		if destr_sofa_part == "right" or destr_sofa_part == "middle" or destr_sofa_part == "corner" then
-			local left_sofa_part = seat.get_sofa_part(adjacent_left_node.name)
-			if left_sofa_part == "middle" then
-				minetest.set_node(adjacent_left_pos, {name = seat.get_sofa_name_from_part(destroyed_sofa_def, "right"), param2 = node.param2})
-			elseif left_sofa_part == "corner" then
-				local right_sofa_param2 = minetest.dir_to_facedir(vector.rotate_around_axis(dir, {x=0, y=1, z=0}, -math.pi/2))
-				minetest.set_node(adjacent_left_pos, {name = seat.get_sofa_name_from_part(destroyed_sofa_def, "right"), param2 = right_sofa_param2})
-			else
-				minetest.set_node(adjacent_left_pos, {name = seat.get_sofa_name_from_part(destroyed_sofa_def, ""), param2 = node.param2})
-			end
-		end
-	end
-	
-	if are_right_and_destr_sofas_can_disconnect then
-		if destr_sofa_part == "left" or destr_sofa_part == "middle" or destr_sofa_part == "corner" then
-			local right_sofa_part = seat.get_sofa_part(adjacent_right_node.name)
-			if right_sofa_part == "middle" then
-				minetest.set_node(adjacent_right_pos, {name = seat.get_sofa_name_from_part(destroyed_sofa_def, "left"), param2 = node.param2})
-			elseif right_sofa_part == "corner" then
-				local right_sofa_param2 = minetest.dir_to_facedir(vector.rotate_around_axis(dir, {x=0, y=1, z=0}, math.pi/2))
-				minetest.set_node(adjacent_right_pos, {name = seat.get_sofa_name_from_part(destroyed_sofa_def, "left"), param2 = adjacent_right_node.param2})
-			else
-				minetest.set_node(adjacent_right_pos, {name = seat.get_sofa_name_from_part(destroyed_sofa_def, ""), param2 = node.param2})
-			end
-		end
-	end
-	
-	if destr_sofa_part == "corner" then
-		local adjacent_forward_pos = vector.add(pos, dir)
-		local adjacent_forward_node = minetest.get_node(adjacent_forward_pos)
-		
-		local are_forward_sofa_can_disconnect = seat.are_sofas_identical(minetest.registered_nodes[adjacent_forward_node.name], destroyed_sofa_def)
-		local forward_sofa_dir = vector.rotate_around_axis(minetest.facedir_to_dir(adjacent_forward_node.param2), {x=0, y=1, z=0}, math.pi)
-		are_param2_vals_eq = vector.dir_to_rotation(forward_sofa_dir).y - math.pi/2 == vector.dir_to_rotation(dir).y
-		
-		if are_forward_sofa_can_disconnect and are_param2_vals_eq then
-			local forward_sofa_part = seat.get_sofa_part(adjacent_forward_node.name)
-			
-			if forward_sofa_part == "middle" then
-				minetest.set_node(adjacent_forward_pos, {name = seat.get_sofa_name_from_part(destroyed_sofa_def, "right"), param2 = adjacent_forward_node.param2})
-			elseif forward_sofa_part == "left" then
-				minetest.set_node(adjacent_forward_pos, {name = seat.get_sofa_name_from_part(destroyed_sofa_def, ""), param2 = adjacent_forward_node.param2})
-			elseif forward_sofa_part == "corner" then
-				forward_sofa_dir = vector.rotate_around_axis(forward_sofa_dir, {x=0, y=1, z=0}, math.pi/2)
-				minetest.set_node(adjacent_forward_pos, {name = seat.get_sofa_name_from_part(destroyed_sofa_def, "right"), param2 = minetest.dir_to_facedir(forward_sofa_dir)})
-			end
-		end
-	end
-	return true
+	connection.register_connected_parts(seatdef)
 end

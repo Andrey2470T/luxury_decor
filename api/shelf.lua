@@ -84,13 +84,30 @@ luxury_decor.register_shelf = function(def)
 	end
 	
 	shelfdef.paintable = shelfdef.paintable or false
+	shelfdef.connectable = shelfdef.connectable or false
+	
+	if shelfdef.connectable then
+		shelfdef.groups["part_original"] = 1
+	end
+
 	shelfdef.on_rightclick = shelfdef.on_rightclick or function(pos, node, clicker, itemstack, pointed_thing)
-		local res, brush = paint.paint_node(pos, clicker)
+		local res, stack = paint.paint_node(pos, clicker)
 		if not res then
-			minetest.item_place(itemstack, clicker, pointed_thing)
+			res, stack = connection.connect_node(pos, itemstack, pointed_thing)
+			
+			if not res and minetest.registered_nodes[itemstack:get_name()] then
+				minetest.set_node(pointed_thing.above, {name = itemstack:get_name()})
+			end
 		end
 			
-		return brush
+		return stack
+	end
+	
+	shelfdef.on_dig = shelfdef.on_dig or function(pos, node, digger)
+		connection.disconnect_node(pos)
+		minetest.node_dig(pos, node, digger)
+		
+		return true
 	end
 	
 	local res_name = "luxury_decor:" .. shelfdef.actual_name
@@ -98,13 +115,8 @@ luxury_decor.register_shelf = function(def)
 		wood.register_wooden_sorts_nodes(shelfdef)
 	else
 		shelfdef.tiles = shelfdef.textures
-			--[[if type(tile) == "table" and tile.multiply_by_color then
-				tile.color = tile.color or shelfdef.base_color
-			end]]
-		
 		shelfdef.description = shelfdef.description .. "\n" .. minetest.colorize("#1a1af1", "color: " .. shelfdef.base_color)
 		shelfdef.groups["color_" .. shelfdef.base_color] = 1
-		shelfdef.drop = shelfdef.drop or res_name
 		
 		minetest.register_node(res_name, shelfdef)
 		
@@ -125,4 +137,5 @@ luxury_decor.register_shelf = function(def)
 	if shelfdef.item_info then
 		shelfdef.description = shelfdef.description .. shelfdef.item_info
 	end
+	connection.register_connected_parts(shelfdef)
 end

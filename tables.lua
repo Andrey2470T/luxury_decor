@@ -128,9 +128,9 @@ luxury_decor.register_table({
 			{"luxury_decor:hammer", "wooden_plank", ""}
 		},
 		replacements = {
-			{{"wooden_board", ""}, {"wooden_board", ""}, {"wooden_board", ""}},
-			{{"wooden_plank", ""}, {"wooden_plank", ""}, {"wooden_plank", ""}},
-			{{"luxury_decor:hammer", "luxury_decor:hammer"}, {"", ""}, {"", ""}}
+			{"wooden_board", ""}, {"wooden_board", ""}, {"wooden_board", ""},
+			{"wooden_plank", ""}, {"wooden_plank", ""}, {"wooden_plank", ""},
+			{"luxury_decor:hammer", "luxury_decor:hammer"}, {"", ""}, {"", ""}
 		}
 	}
 })
@@ -162,9 +162,9 @@ luxury_decor.register_table({
 			{"", "wooden_plank", ""}
 		},
 		replacements = {
-			{{"", ""}, {"wooden_board", ""}, {"", ""}},
-			{{"", ""}, {"wooden_plank", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"}},
-			{{"", ""}, {"wooden_plank", ""}, {"", ""}}
+			{"", ""}, {"wooden_board", ""}, {"", ""},
+			{"", ""}, {"wooden_plank", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"},
+			{"", ""}, {"wooden_plank", ""}, {"", ""}
 		}
 	}
 })
@@ -197,9 +197,9 @@ luxury_decor.register_table({
 			{"wooden_plank", "", "wooden_plank"}
 		},
 		replacements = {
-			{{"", ""}, {"wooden_board", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"}},
-			{{"wooden_plank", ""}, {"default:stick", ""}, {"wooden_plank", ""}},
-			{{"wooden_plank", ""}, {"", ""}, {"wooden_plank", ""}}
+			{"", ""}, {"wooden_board", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"},
+			{"wooden_plank", ""}, {"default:stick", ""}, {"wooden_plank", ""},
+			{"wooden_plank", ""}, {"", ""}, {"wooden_plank", ""}
 		}
 	}
 })

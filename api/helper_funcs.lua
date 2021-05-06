@@ -103,11 +103,13 @@ end
 luxury_decor.get_wood_sort = function(def)
 	for name, val in pairs(def.groups) do
 		local splits = string.split(name, "_")
+		minetest.debug("splits (before): " .. dump(splits))
 		
 		if #splits > 1 then
 			if (splits[1] .. "_" .. splits[2]) == "wood_sort" then
-				splits[1] = nil
-				splits[2] = nil
+				table.remove(splits, 1)
+				table.remove(splits, 1)
+				minetest.debug("splits (after): " .. dump(splits))
 				return table.concat(splits, "_")
 			end
 		end

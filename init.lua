@@ -10,6 +10,7 @@ dofile(modpath.."/api/check_funcs.lua")
 dofile(modpath.."/api/helper_funcs.lua")
 
 --  API
+dofile(modpath.."/api/connection.lua")
 dofile(modpath.."/api/painting.lua")
 dofile(modpath.."/api/wood.lua")
 dofile(modpath.."/api/cooker.lua")

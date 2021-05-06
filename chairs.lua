@@ -42,9 +42,9 @@ luxury_decor.register_seat({
 			{"wooden_plank", "wooden_plank", ""}
 		},
 		replacements = {
-			{{"wooden_board", ""}, {"wooden_board", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"}},
-			{{"wooden_plank", ""}, {"wooden_plank", ""}, {"", ""}},
-			{{"wooden_plank", ""}, {"wooden_plank", ""}, {"", ""}}
+			{"wooden_board", ""}, {"wooden_board", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"},
+			{"wooden_plank", ""}, {"wooden_plank", ""}, {"", ""},
+			{"wooden_plank", ""}, {"wooden_plank", ""}, {"", ""}
 		}
 	}
 })
@@ -78,9 +78,9 @@ luxury_decor.register_seat({
 			{"luxury_decor:jungle_wooden_plank", "default:stick", "luxury_decor:jungle_wooden_plank"}
 		},
 		replacements = {
-			{{"", ""}, {"luxury_decor:jungle_wooden_board", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"}},
-			{{"luxury_decor:jungle_wooden_plank", ""}, {"wool:white", ""}, {"luxury_decor:jungle_wooden_plank", ""}},
-			{{"luxury_decor:jungle_wooden_plank", ""}, {"default:stick", ""}, {"luxury_decor:jungle_wooden_plank", ""}}
+			{"", ""}, {"luxury_decor:jungle_wooden_board", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"},
+			{"luxury_decor:jungle_wooden_plank", ""}, {"wool:white", ""}, {"luxury_decor:jungle_wooden_plank", ""},
+			{"luxury_decor:jungle_wooden_plank", ""}, {"default:stick", ""}, {"luxury_decor:jungle_wooden_plank", ""}
 		}
 	}
 })
@@ -131,9 +131,9 @@ luxury_decor.register_seat({
 			{"default:stick", "default:stick", "luxury_decor:hammer"}
 		},
 		replacements = {
-			{{"wooden_board", ""}, {"wooden_plank", ""}, {"wooden_plank", ""}},
-			{{"wooden_board", ""}, {"wooden_plank", ""}, {"wooden_plank", ""}},
-			{{"default:stick", ""}, {"default:stick", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"}}
+			{"wooden_board", ""}, {"wooden_plank", ""}, {"wooden_plank", ""},
+			{"wooden_board", ""}, {"wooden_plank", ""}, {"wooden_plank", ""},
+			{"default:stick", ""}, {"default:stick", ""}, {"luxury_decor:hammer", "luxury_decor:hammer"}
 		}
 	}
 })
@@ -182,9 +182,9 @@ luxury_decor.register_seat({
 			{"luxury_decor:hammer", "", ""}
 		},
 		replacements = {
-			{{"default:stick", ""}, {"wooden_board", ""}, {"default:stick", ""}},
-			{{"default:stick", ""}, {"wooden_plank", ""}, {"default:stick", ""}},
-			{{"luxury_decor:hammer", "luxury_decor:hammer"}, {"", ""}, {"", ""}}
+			{"default:stick", ""}, {"wooden_board", ""}, {"default:stick", ""},
+			{"default:stick", ""}, {"wooden_plank", ""}, {"default:stick", ""},
+			{"luxury_decor:hammer", "luxury_decor:hammer"}, {"", ""}, {"", ""}
 		}
 	}
 })

@@ -21,6 +21,7 @@ wood.register_wooden_sorts_nodes = function(def, part_type)
 				minetest.colorize("#f9e900", "wood_sort: " .. wood_sort)
 		copy_def.groups["color_" .. copy_def.base_color] = 1
 		copy_def.groups["wood_sort_" .. wood_sort] = 1
+		copy_def.drop = def.drop or "luxury_decor:" .. def.actual_name .. "_" .. wood_sort
 		
 		minetest.register_node(result_name, copy_def)
 		
@@ -52,17 +53,10 @@ wood.register_wooden_sorts_nodes = function(def, part_type)
 				end
 			end
 			
-			minetest.debug("name: " .. result_name)
-			minetest.debug("craft: " .. dump(recipe))
 			minetest.register_craft(recipe)
 		end
 		if def.paintable then
 			paint.register_colored_nodes(result_name)
 		end
 	end
-	
-	def.base_color = nil
-	def.textures = nil
-	def.inventory_image = nil
-	def.wield_image = nil
 end

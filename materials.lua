@@ -19,9 +19,7 @@ for _, wood_sort in ipairs(luxury_decor.wood_sorts) do
 		type = "shapeless", 
 		output = wooden_board_itemstr .. " 3",
 		recipe = {luxury_decor.build_wooden_item_string("wooden_slab", wood_sort), "luxury_decor:saw"},
-		replacements = {
-			{{luxury_decor.build_wooden_item_string("wooden_slab", wood_sort),""}, {"luxury_decor:saw", "luxury_decor:saw"}}
-		}
+		replacements = {{luxury_decor.build_wooden_item_string("wooden_slab", wood_sort), ""}, {"luxury_decor:saw", "luxury_decor:saw"}}
 	})
 	
 	local wooden_plank_itemstr = luxury_decor.build_wooden_item_string("wooden_plank", wood_sort)
@@ -35,9 +33,7 @@ for _, wood_sort in ipairs(luxury_decor.wood_sorts) do
 		type = "shapeless", 
 		output = wooden_plank_itemstr .. " 2",
 		recipe = {wooden_board_itemstr, "luxury_decor:saw"},
-		replacements = {
-			{{wooden_board_itemstr ,""}, {"luxury_decor:saw", "luxury_decor:saw"}}
-		}
+		replacements = {{wooden_board_itemstr , ""}, {"luxury_decor:saw", "luxury_decor:saw"}}
 	})
 	
 	local wooden_drawer_itemstr = luxury_decor.build_wooden_item_string("wooden_drawer", wood_sort)
@@ -408,9 +404,9 @@ minetest.register_craft({
         {"", "", ""}
     },
     replacements = {
-        {{"wool:white", ""}, {"luxury_decor:brass_ingot", ""}, {"", ""}},
-        {{"luxury_decor:steel_scissors", "luxury_decor:steel_scissors"}, {"", ""}, {"", ""}},
-        {{"", ""}, {"", ""}, {"", ""}}
+        {"wool:white", ""}, {"luxury_decor:brass_ingot", ""}, {"", ""},
+        {"luxury_decor:steel_scissors", "luxury_decor:steel_scissors"}, {"", ""}, {"", ""},
+        {"", ""}, {"", ""}, {"", ""}
     }
 })
 
@@ -488,9 +484,7 @@ minetest.register_craft({
     type = "shapeless",
     output = "luxury_decor:glass_vase 2",
     recipe = {"stairs:slab_glass", "luxury_decor:saw"},
-    replacements = {
-        {{"stairs:slab_glass", ""}, {"luxury_decor:saw", "luxury_decor:saw"}}
-    }
+    replacements = {{"stairs:slab_glass", ""}, {"luxury_decor:saw", "luxury_decor:saw"}}
 })
 
 minetest.register_craft({

@@ -29,6 +29,13 @@ function sitting.sit_player(player, node_pos)
 	if not player then
 		return false
 	end
+	
+	local prev_mesh_data = minetest.deserialize(player:get_meta():get_string("previous_mesh_data"))
+	
+	if prev_mesh_data ~= nil and prev_mesh_data ~= "" then
+		return false
+	end
+	
 	local meta = minetest.get_meta(node_pos)
 	local is_busy_by = meta:get_string("is_busy")
 	local playername = player:get_player_name()

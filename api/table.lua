@@ -87,8 +87,9 @@ luxury_decor.register_table = function(def)
 	tabledef.paintable = tabledef.paintable or false
 	tabledef.on_rightclick = tabledef.on_rightclick or function(pos, node, clicker, itemstack, pointed_thing)
 		local res, brush = paint.paint_node(pos, clicker)
-		if not res then
-			minetest.item_place(itemstack, clicker, pointed_thing)
+		
+		if not res and minetest.registered_nodes[itemstack:get_name()] then
+			minetest.set_node(pointed_thing.above, {name = itemstack:get_name()})
 		end
 			
 		return brush

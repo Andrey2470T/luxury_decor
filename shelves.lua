@@ -10,6 +10,7 @@ luxury_decor.register_shelf({
 	},
 	register_wood_sorts = shelf.wood_sorts,
 	visual_scale = 1,
+	--paramtype2 = "wallmounted",
 	drawtype = "nodebox",
 	node_box = {
 		{-0.4, 0.4, -0.5, 0.4, 0.5, 0.5},-- upper box
@@ -26,6 +27,27 @@ luxury_decor.register_shelf({
 	},
 	multiply_by_color = {1},
 	paintable = true,
+	connectable = true,
+	connected_parts_node_boxes = {
+		left = {
+			{-0.4, 0.4, -0.5, 0.5, 0.5, 0.5},-- upper box
+			{-0.4, -0.5, -0.5, 0.5, -0.4, 0.5}, -- lower box
+			{-0.5, -0.5, -0.5, -0.4, 0.5, 0.5}, -- left box
+		},
+		right = {
+			{-0.5, 0.4, -0.5, 0.4, 0.5, 0.5},-- upper box
+			{-0.5, -0.5, -0.5, 0.4, -0.4, 0.5}, -- lower box
+			{0.4, -0.5, -0.5, 0.5, 0.5, 0.5} -- right box
+		},
+		middle = {
+			{-0.5, 0.4, -0.5, 0.5, 0.5, 0.5},-- upper box
+			{-0.5, -0.5, -0.5, 0.5, -0.4, 0.5} -- lower box
+		},
+		corner = {
+			{-0.5, 0.4, -0.5, 0.5, 0.5, 0.5},-- upper box
+			{-0.5, -0.5, -0.5, 0.5, -0.4, 0.5} -- lower box
+		},
+	},
 	craft_recipe = {
 		recipe = {
             {"wooden_board", "wooden_board", "luxury_decor:hammer"},
@@ -52,6 +74,7 @@ luxury_decor.register_shelf({
 	},
 	register_wood_sorts = shelf.wood_sorts,
 	visual_scale = 1,
+	--paramtype2 = "wallmounted",
 	drawtype = "nodebox",
 	node_box = {
 		{-0.4, 0.4, -0.5, 0.4, 0.5, 0.5},-- upper box
@@ -69,6 +92,32 @@ luxury_decor.register_shelf({
 	},
     multiply_by_color = {1},                         
 	paintable = true,
+	connectable = true,
+	connected_parts_node_boxes = {
+		left = {
+			{-0.4, 0.4, -0.5, 0.5, 0.5, 0.5},-- upper box
+			{-0.4, -0.5, -0.5, 0.5, -0.4, 0.5}, -- lower box
+			{-0.5, -0.5, -0.5, -0.4, 0.5, 0.5}, -- left box
+			{-0.5, -0.5, 0.4, 0.5, 0.5, 0.5} -- back box
+		},
+		right = {
+			{-0.5, 0.4, -0.5, 0.4, 0.5, 0.5},-- upper box
+			{-0.5, -0.5, -0.5, 0.4, -0.4, 0.5}, -- lower box
+			{0.4, -0.5, -0.5, 0.5, 0.5, 0.5}, -- right box
+			{-0.5, -0.5, 0.4, 0.5, 0.5, 0.5} -- back box
+		},
+		middle = {
+			{-0.5, 0.4, -0.5, 0.5, 0.5, 0.5},-- upper box
+			{-0.5, -0.5, -0.5, 0.5, -0.4, 0.5}, -- lower box
+			{-0.5, -0.5, 0.4, 0.5, 0.5, 0.5} -- back box
+		},
+		corner = {
+			{-0.4, 0.4, -0.5, 0.5, 0.5, 0.5},-- upper box
+			{-0.4, -0.5, -0.5, 0.5, -0.4, 0.5}, -- lower box
+			{-0.5, -0.5, -0.5, -0.4, 0.5, 0.5}, -- left box
+			{-0.5, -0.5, 0.4, 0.5, 0.5, 0.5} -- back box
+		},
+	},
 	craft_recipe = {
 		recipe = {
             {"wooden_board", "wooden_board", "luxury_decor:hammer"},
