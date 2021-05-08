@@ -518,7 +518,12 @@ minetest.register_on_craft(function (itemstack, player, old_craft_grid, craft_in
         
         if name == "luxury_decor:steel_scissors" then
             minetest.sound_play("steel_scissors", {to_player=player:get_player_name()})
-            return
         end
+                          
+		if name == "luxury_decor:hammer" then
+			minetest.sound_play("hammer", {to_player=player:get_player_name()})
+		end
 	end
+                          
+	return
 end)
